@@ -4,23 +4,28 @@
 #include "Canvas.h"
 #include "Defaults.h"
 #include "Element.h"
+#include "Group.h"
 
 namespace Constellation {
 
 	// Represents an entire drawing with elements (shapes, curves, etc.) and a pattern
 	class Drawing
 	{
-		//private:
 	public:
-		// Pattern pattern;
-		std::vector<Element*> elements;
+		Drawing();
+
+		ULONG new_id() { return next_id++; }
+
+		void draw(Canvas& canvas);
+		Element* get_element(ULONG id) { return elements.get_element(id); }
+
 		Defaults defaults;
 
-		~Drawing();
+		// Pattern pattern;
+		Group elements;
 
-	public:
-		void draw(Canvas& canvas);
-		void add_element(Element* element);
+	private:
+		ULONG next_id = 0;	// unique IDs for elements
 	};
 
 }

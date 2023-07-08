@@ -1,5 +1,7 @@
 #include <thread>
 #include <windowsx.h>
+
+#include "BezierTool.h"
 #include "ConstellationApp.h"
 #include "Logger.h"
 
@@ -8,6 +10,8 @@ namespace Constellation {
     ConstellationApp::ConstellationApp() :
         canvas(1.0, 0.0, 0.0)
     {
+        currentTool = new BezierTool(drawing);
+
         // Get screen refresh rate and calculate refresh interval
         DEVMODEA* dm = new DEVMODEA();
         dm->dmSize = sizeof(DEVMODEA);
@@ -45,11 +49,46 @@ namespace Constellation {
         canvas.finish_draw();
     }
 
+    void ConstellationApp::undo() {
+        if (undo_stack.size() > 0) {
+            Action* last = undo_stack.top();
+            last->undo(drawing);
+            undo_stack.pop();
+            redo_stack.push(last);
+        }
+    }
+
+    void ConstellationApp::redo() {
+        if (redo_stack.size() > 0) {
+            Action* next = redo_stack.top();
+            next->apply(drawing);
+            redo_stack.pop();
+            undo_stack.push(next);
+        }
+    }
+
+    void ConstellationApp::do_action(Action* action) {
+        action->apply(drawing);
+        canvas.redraw();
+
+        undo_stack.push(action);
+
+        // Since we are performing a new action, clear the redo stack.
+        Action* stale_action;
+        while (redo_stack.size() > 0) {
+            stale_action = redo_stack.top();
+            delete stale_action;
+            redo_stack.pop();
+        }
+    }
+
     void ConstellationApp::handleMouseEvent(UINT message, WPARAM wParam, LPARAM lParam) {
         int xPos = GET_X_LPARAM(lParam);
         int yPos = GET_Y_LPARAM(lParam);
 
-        currentTool->handleMouseEvent(message, wParam, lParam);
+        Action* action = currentTool->handleMouseEvent(message, wParam, lParam);
+        if (action != nullptr)
+            do_action(action);
     }
 
     void ConstellationApp::refresh_if_necessary() {

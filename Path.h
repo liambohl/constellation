@@ -21,12 +21,14 @@ namespace Constellation {
         INT n_points = 0;
 
     public:
-        Path(Gdiplus::Pen* pen) : pen(pen) {}
+        Path(ULONG id, Gdiplus::Pen* pen) : Element(id), pen(pen) {}
+        //Path(const Path& other);
         ~Path();
         void draw(Canvas& canvas) override;
         void add_point(int xPos, int yPos);
         void add_points(Path& other);
         void pop_point();
+
         Gdiplus::Pen* pen;
     };
 

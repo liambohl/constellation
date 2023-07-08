@@ -1,8 +1,8 @@
 #include "SelectTool.h"
 
 namespace Constellation {
-	void SelectTool::handleMouseEvent(UINT message, WPARAM wParam, LPARAM lParam) {
-
+	Action* SelectTool::handleMouseEvent(UINT message, WPARAM wParam, LPARAM lParam) {
+		return nullptr;
 	}
 
 	void SelectTool::draw(Canvas& canvas) {

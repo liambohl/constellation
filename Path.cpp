@@ -4,6 +4,14 @@
 
 namespace Constellation {
 
+	//Path::Path(const Path& other) :
+	//	Element(other.id),
+	//	control_points(other.control_points),
+	//	n_points(other.n_points)
+	//{
+	//	pen = other.pen->Clone();
+	//}
+
 	Path::~Path() {
 		delete pen;
 	}

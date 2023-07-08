@@ -2,26 +2,13 @@
 
 namespace Constellation {
 
-	Drawing::~Drawing() {
-		for (int i = 0; i < elements.size(); ++i)
-		{
-			delete elements[i];
-		}
-	}
+	Drawing::Drawing() : elements(new_id()) {}
 
 	// Draw this drawing to the window
 	void Drawing::draw(Canvas& canvas) {
 		canvas.graphics->Clear(defaults.background);
 
-		for (auto element : elements)
-		{
-			element->draw(canvas);
-		}
+		elements.draw(canvas);
 	}
-
-	void Drawing::add_element(Element* element) {
-		elements.push_back(element);
-	}
-
 
 }

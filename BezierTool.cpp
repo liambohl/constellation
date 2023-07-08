@@ -1,12 +1,13 @@
 #include <windowsx.h>
 
+#include "ActionAddElement.h"
 #include "BezierTool.h"
 #include "Element.h"
 #include "Logger.h"
 
 namespace Constellation {
 
-	void BezierTool::handleMouseEvent(UINT message, WPARAM wParam, LPARAM lParam) {
+	Action* BezierTool::handleMouseEvent(UINT message, WPARAM wParam, LPARAM lParam) {
 		int x_pos = GET_X_LPARAM(lParam);
 		int y_pos = GET_Y_LPARAM(lParam);
 		
@@ -16,12 +17,12 @@ namespace Constellation {
 		switch (state) {
 		case FIRST_DOWN:
 			if (message == WM_LBUTTONDOWN) {
-				wip_path = new Path(drawing.defaults.wip_pen->Clone());
+				wip_path = new Path(drawing.new_id(), drawing.defaults.wip_pen->Clone());
 				wip_path->add_point(x_pos, y_pos);
 
 				// For now, the temp path is a line segment. As we move the cursor, the 3rd and 4th points will move with it.
 				// Only the first point is set in stone.
-				tool_path = new Path(drawing.defaults.tool_pen->Clone());
+				tool_path = new Path(drawing.new_id(), drawing.defaults.tool_pen->Clone());
 				tool_path->add_point(x_pos, y_pos);
 				tool_path->add_point(x_pos, y_pos);
 				tool_path->add_point(x_pos, y_pos);
@@ -80,7 +81,7 @@ namespace Constellation {
 				// For now, the temp path is a line segment. As we move the cursor, the 3rd and 4th points will move with it.
 				// The first two points are set in stone.
 				delete tool_path;
-				tool_path = new Path(drawing.defaults.tool_pen->Clone());
+				tool_path = new Path(drawing.new_id(), drawing.defaults.tool_pen->Clone());
 				tool_path->add_point(next_node_x, next_node_y);
 				tool_path->add_point(x_pos, y_pos);
 				tool_path->add_point(x_pos, y_pos);
@@ -104,12 +105,17 @@ namespace Constellation {
 			}
 			else if (message == WM_RBUTTONDOWN) {
 				wip_path->pen = drawing.defaults.pen->Clone();
-				drawing.elements.push_back(wip_path);
 				state = FIRST_DOWN;
+				// Hand over wip_path to the drawing.
+				Path* final_path = wip_path;
+				wip_path = nullptr;
+				return new ActionAddElement(final_path);
 			}
 			break;
 
 		}
+		
+		return nullptr;
 	}
 
 	void BezierTool::draw(Canvas& canvas) {
