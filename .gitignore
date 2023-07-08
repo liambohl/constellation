@@ -1,0 +1,8 @@
+.vs
+x64
+
+Constellation.aps
+Constellation.sln
+Constellation.vcxproj
+Constellation.vcxproj.*
+*.log
