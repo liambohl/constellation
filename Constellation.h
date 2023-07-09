@@ -8,3 +8,4 @@
 #include "ConstellationApp.h"
 #include "GdiPlusInitializer.h"
 #include "Logger.h"
+#include "utilities.h"

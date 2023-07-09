@@ -25,9 +25,10 @@ namespace Constellation {
         //Path(const Path& other);
         ~Path();
         void draw(Canvas& canvas) override;
-        void add_point(int xPos, int yPos);
+        void add_point(int xPos, int yPos, int count=1);
         void add_points(Path& other);
-        void pop_point();
+        void pop_point(int count=1);
+        Gdiplus::Point top();
 
         Gdiplus::Pen* pen;
     };

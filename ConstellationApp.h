@@ -14,7 +14,7 @@ namespace Constellation {
 	private:
 		Canvas canvas;
 		Drawing drawing;
-		Tool* currentTool = nullptr;
+		Tool* current_tool = nullptr;
 		std::stack<Action*> undo_stack; // bottom is oldest action performed and not undone. top is youngest action performed and not undone.
 		std::stack<Action*> redo_stack; // bottom is youngest action undone. top is oldest action ondone. The undo and redo stacks are kissing at the present moment. :)
 
@@ -29,10 +29,17 @@ namespace Constellation {
 
 		void draw(HWND hWnd);
 
+		// Edit menu
 		void undo();
 		void redo();
 
-		void handleMouseEvent(UINT message, WPARAM wParam, LPARAM lParam);
+		// Draw menu
+		void set_tool_new_path();
+		void set_tool_select();
+
+		void handle_escape();
+
+		void handle_mouse_event(UINT message, WPARAM wParam, LPARAM lParam);
 
 		void refresh_if_necessary();
 	};

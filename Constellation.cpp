@@ -3,7 +3,6 @@
 
 #include "framework.h"
 #include "Constellation.h"
-#include "Hotkeys.h"
 
 using namespace Constellation;
 
@@ -18,7 +17,6 @@ ConstellationApp* application = nullptr;        // Current state of this Constel
 // Forward declarations of functions included in this code module:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
-void register_hotkeys(const HWND& hWnd);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 
@@ -113,19 +111,10 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 		return FALSE;
 	}
 
-	register_hotkeys(hWnd);
-
 	ShowWindow(hWnd, nCmdShow);
 	UpdateWindow(hWnd);
 
 	return TRUE;
-}
-
-// This function allows us to receive WM_HOTKEY commands when the registered hotkeys are pressed.
-void register_hotkeys(const HWND& hWnd)
-{
-	RegisterHotKey(hWnd, HOTKEY_UNDO, MOD_CONTROL, 0x5A);
-	RegisterHotKey(hWnd, HOTKEY_REDO, MOD_CONTROL, 0x59);
 }
 
 //
@@ -169,17 +158,35 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 
-		case WM_HOTKEY:
+		case WM_KEYDOWN:
+		{
 			switch (wParam)
 			{
-			case HOTKEY_UNDO:
-				application->undo();
+				// Edit menu
+			case VK_Z: // Ctrl+Z
+				if (control_key_down())
+					application->undo();
 				break;
-			case HOTKEY_REDO:
-				application->redo();
+			case VK_Y: // Ctrl+Y
+				if (control_key_down())
+					application->redo();
+				break;
+
+				// Draw menu
+			case VK_S:
+				application->set_tool_select();
+				break;
+			case VK_P:
+				application->set_tool_new_path();
+				break;
+
+				// Other keys
+			case VK_ESCAPE: // ESC
+				application->handle_escape();
 				break;
 			}
-			break;
+		}
+		break;
 
 		case WM_PAINT:
 			application->draw(hWnd);
@@ -192,7 +199,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case WM_RBUTTONDOWN:
 		case WM_RBUTTONUP:
 		case WM_MOUSEMOVE:
-			application->handleMouseEvent(message, wParam, lParam);
+			application->handle_mouse_event(message, wParam, lParam);
 			break;
 
 			//case WM_CLOSE:

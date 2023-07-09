@@ -1,7 +1,8 @@
 #include <thread>
 #include <windowsx.h>
 
-#include "BezierTool.h"
+#include "ToolNewPath.h"
+#include "ToolSelect.h"
 #include "ConstellationApp.h"
 #include "Logger.h"
 
@@ -10,7 +11,7 @@ namespace Constellation {
     ConstellationApp::ConstellationApp() :
         canvas(1.0, 0.0, 0.0)
     {
-        currentTool = new BezierTool(drawing);
+        current_tool = new ToolSelect(drawing);
 
         // Get screen refresh rate and calculate refresh interval
         DEVMODEA* dm = new DEVMODEA();
@@ -45,11 +46,14 @@ namespace Constellation {
     void ConstellationApp::draw(HWND hWnd) {
         canvas.begin_draw(hWnd);
         drawing.draw(canvas);
-        currentTool->draw(canvas);
+        current_tool->draw(canvas);
         canvas.finish_draw();
     }
 
     void ConstellationApp::undo() {
+        if (current_tool->undo())
+            return;
+
         if (undo_stack.size() > 0) {
             Action* last = undo_stack.top();
             last->undo(drawing);
@@ -64,6 +68,24 @@ namespace Constellation {
             next->apply(drawing);
             redo_stack.pop();
             undo_stack.push(next);
+        }
+    }
+
+    void ConstellationApp::set_tool_new_path() {
+        delete current_tool;
+        current_tool = new ToolNewPath(drawing);
+    }
+
+    void ConstellationApp::set_tool_select() {
+        delete current_tool;
+        current_tool = new ToolSelect(drawing);
+    }
+
+    // Cancel whatever the current tool is doing.
+    // If the current tool is not in the middle of anything, then switch to the select tool
+    void ConstellationApp::handle_escape() {
+        if (!current_tool->handle_escape()) {
+            set_tool_select();
         }
     }
 
@@ -82,11 +104,11 @@ namespace Constellation {
         }
     }
 
-    void ConstellationApp::handleMouseEvent(UINT message, WPARAM wParam, LPARAM lParam) {
+    void ConstellationApp::handle_mouse_event(UINT message, WPARAM wParam, LPARAM lParam) {
         int xPos = GET_X_LPARAM(lParam);
         int yPos = GET_Y_LPARAM(lParam);
 
-        Action* action = currentTool->handleMouseEvent(message, wParam, lParam);
+        Action* action = current_tool->handle_mouse_event(message, wParam, lParam);
         if (action != nullptr)
             do_action(action);
     }

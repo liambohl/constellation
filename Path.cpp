@@ -28,9 +28,11 @@ namespace Constellation {
 		canvas.graphics->DrawBeziers(pen, control_points.data(), n_points);
 	}
 
-	void Path::add_point(int xPos, int yPos) {
-		control_points.push_back(Gdiplus::Point(xPos, yPos));
-		++n_points;
+	void Path::add_point(int xPos, int yPos, int count) {
+		for (int i = 0; i < count; ++i) {
+			control_points.push_back(Gdiplus::Point(xPos, yPos));
+			++n_points;
+		}
 	}
 	
 	void Path::add_points(Path& other) {
@@ -41,9 +43,15 @@ namespace Constellation {
 		}
 	}
 
-	void Path::pop_point() {
-		control_points.pop_back();
-		--n_points;
+	void Path::pop_point(int count) {
+		for (int i = 0; i < count; ++i) {
+			control_points.pop_back();
+			--n_points;
+		}
+	}
+
+	Gdiplus::Point Path::top() {
+		return control_points.back();
 	}
 
 }
