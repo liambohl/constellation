@@ -3,6 +3,7 @@
 
 #include "framework.h"
 #include "Constellation.h"
+#include "Hotkeys.h"
 
 using namespace Constellation;
 
@@ -17,48 +18,49 @@ ConstellationApp* application = nullptr;        // Current state of this Constel
 // Forward declarations of functions included in this code module:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
+void register_hotkeys(const HWND& hWnd);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 
 // Application entry point, called by OS
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
-                     _In_opt_ HINSTANCE hPrevInstance,
-                     _In_ LPWSTR    lpCmdLine,
-                     _In_ int       nCmdShow)
+	_In_opt_ HINSTANCE hPrevInstance,
+	_In_ LPWSTR    lpCmdLine,
+	_In_ int       nCmdShow)
 {
-    UNREFERENCED_PARAMETER(hPrevInstance);
-    UNREFERENCED_PARAMETER(lpCmdLine);
+	UNREFERENCED_PARAMETER(hPrevInstance);
+	UNREFERENCED_PARAMETER(lpCmdLine);
 
-    // Start up GDI Plus system
-    GdiPlusInitializer gdiPlusInitializer;
-    application = new ConstellationApp();
+	// Start up GDI Plus system
+	GdiPlusInitializer gdiPlusInitializer;
+	application = new ConstellationApp();
 
-    // Initialize global strings
-    LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
-    LoadStringW(hInstance, IDC_CONSTELLATION, szWindowClass, MAX_LOADSTRING);
-    MyRegisterClass(hInstance);
+	// Initialize global strings
+	LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
+	LoadStringW(hInstance, IDC_CONSTELLATION, szWindowClass, MAX_LOADSTRING);
+	MyRegisterClass(hInstance);
 
-    // Perform application initialization:
-    if (!InitInstance (hInstance, nCmdShow))
-    {
-        return FALSE;
-    }
+	// Perform application initialization:
+	if (!InitInstance(hInstance, nCmdShow))
+	{
+		return FALSE;
+	}
 
-    HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_CONSTELLATION));
+	HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_CONSTELLATION));
 
-    MSG msg;
+	MSG msg;
 
-    // Main message loop:
-    while (GetMessage(&msg, nullptr, 0, 0))
-    {
-        if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
-        {
-            TranslateMessage(&msg);
-            DispatchMessage(&msg);
-        }
-    }
+	// Main message loop:
+	while (GetMessage(&msg, nullptr, 0, 0))
+	{
+		if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
+		{
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
+	}
 
-    return (int) msg.wParam;
+	return (int)msg.wParam;
 }
 
 
@@ -70,9 +72,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 //
 ATOM MyRegisterClass(HINSTANCE hInstance)
 {
-    WNDCLASSEXW wcex;
+	WNDCLASSEXW wcex;
 
-    wcex.cbSize = sizeof(WNDCLASSEX);
+	wcex.cbSize = sizeof(WNDCLASSEX);
 
     wcex.style          = CS_HREDRAW | CS_VREDRAW;
     wcex.lpfnWndProc    = WndProc;
@@ -86,7 +88,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.lpszMenuName   = MAKEINTRESOURCEW(IDC_CONSTELLATION);
     wcex.lpszClassName  = szWindowClass;
 
-    return RegisterClassExW(&wcex);
+	return RegisterClassExW(&wcex);
 }
 
 //
@@ -101,20 +103,29 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 //
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
-   hInst = hInstance; // Store instance handle in our global variable
+	hInst = hInstance; // Store instance handle in our global variable
 
-   HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-      CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
+	HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
+		CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
 
-   if (!hWnd)
-   {
-      return FALSE;
-   }
+	if (!hWnd)
+	{
+		return FALSE;
+	}
 
-   ShowWindow(hWnd, nCmdShow);
-   UpdateWindow(hWnd);
+	register_hotkeys(hWnd);
 
-   return TRUE;
+	ShowWindow(hWnd, nCmdShow);
+	UpdateWindow(hWnd);
+
+	return TRUE;
+}
+
+// This function allows us to receive WM_HOTKEY commands when the registered hotkeys are pressed.
+void register_hotkeys(const HWND& hWnd)
+{
+	RegisterHotKey(hWnd, HOTKEY_UNDO, MOD_CONTROL, 0x5A);
+	RegisterHotKey(hWnd, HOTKEY_REDO, MOD_CONTROL, 0x59);
 }
 
 //
@@ -129,93 +140,103 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    try {
-        Logger::get_instance()->log_message(message);
-        switch (message)
-        {
-            // application menu
-        case WM_COMMAND:
-        {
-            int wmId = LOWORD(wParam);
-            // Parse the menu selections:
-            switch (wmId)
-            {
-            case ID_EDIT_UNDO:
-                application->undo();
-                break;
-            case ID_EDIT_REDO:
-                application->redo();
-                break;
-            case IDM_ABOUT:
-                DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
-                break;
-            case IDM_EXIT:
-                DestroyWindow(hWnd);
-                break;
-            default:
-                return DefWindowProc(hWnd, message, wParam, lParam);
-            }
-        }
-        break;
+	try {
+		Logger::get_instance()->log_message(message);
+		switch (message)
+		{
+			// application menu
+		case WM_COMMAND:
+		{
+			int wmId = LOWORD(wParam);
+			// Parse the menu selections:
+			switch (wmId)
+			{
+			case ID_EDIT_UNDO:
+				application->undo();
+				break;
+			case ID_EDIT_REDO:
+				application->redo();
+				break;
+			case IDM_ABOUT:
+				DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
+				break;
+			case IDM_EXIT:
+				DestroyWindow(hWnd);
+				break;
+			default:
+				return DefWindowProc(hWnd, message, wParam, lParam);
+			}
+		}
+		break;
 
-        case WM_PAINT:
-        {
-            application->draw(hWnd);
-            break;
-        }
+		case WM_HOTKEY:
+			switch (wParam)
+			{
+			case HOTKEY_UNDO:
+				application->undo();
+				break;
+			case HOTKEY_REDO:
+				application->redo();
+				break;
+			}
+			break;
 
-        case WM_LBUTTONDOWN:
-        case WM_LBUTTONUP:
-        case WM_MBUTTONDOWN:
-        case WM_MBUTTONUP:
-        case WM_RBUTTONDOWN:
-        case WM_RBUTTONUP:
-        case WM_MOUSEMOVE:
-            application->handleMouseEvent(message, wParam, lParam);
-            break;
+		case WM_PAINT:
+			application->draw(hWnd);
+			break;
 
-            //case WM_CLOSE:
-            //    if (MessageBox(hWnd, L"Are you sure you want to quit?", L"Constellation", MB_OKCANCEL) == IDOK)
-            //    {
-            //        DestroyWindow(hWnd);
-            //    }
-            //    break;
-        case WM_DESTROY:
-            PostQuitMessage(0);
-            break;
-        default:
-            return DefWindowProc(hWnd, message, wParam, lParam);
-        }
+		case WM_LBUTTONDOWN:
+		case WM_LBUTTONUP:
+		case WM_MBUTTONDOWN:
+		case WM_MBUTTONUP:
+		case WM_RBUTTONDOWN:
+		case WM_RBUTTONUP:
+		case WM_MOUSEMOVE:
+			application->handleMouseEvent(message, wParam, lParam);
+			break;
 
-        if (message != WM_PAINT) {
-            application->refresh_if_necessary();
-        }
+			//case WM_CLOSE:
+			//    if (MessageBox(hWnd, L"Are you sure you want to quit?", L"Constellation", MB_OKCANCEL) == IDOK)
+			//    {
+			//        DestroyWindow(hWnd);
+			//    }
+			//    break;
+		case WM_DESTROY:
+			PostQuitMessage(0);
+			break;
+		default:
+			return DefWindowProc(hWnd, message, wParam, lParam);
+		}
 
-        return 0;
-    }
+		if (message != WM_PAINT) {
+			application->refresh_if_necessary();
+		}
 
-    // Log all errors to errors.log
-    catch (std::exception e) {
-        Logger::get_instance()->log(e.what());
-    }
+		return 0;
+	}
+
+	// Log all errors to errors.log
+	catch (std::exception e) {
+		Logger::get_instance()->log(e.what());
+	}
 }
 
 // Message handler for about box.
 INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    UNREFERENCED_PARAMETER(lParam);
-    switch (message)
-    {
-    case WM_INITDIALOG:
-        return (INT_PTR)TRUE;
+	UNREFERENCED_PARAMETER(lParam);
+	switch (message)
+	{
+	case WM_INITDIALOG:
+		return (INT_PTR)TRUE;
 
-    case WM_COMMAND:
-        if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
-        {
-            EndDialog(hDlg, LOWORD(wParam));
-            return (INT_PTR)TRUE;
-        }
-        break;
-    }
-    return (INT_PTR)FALSE;
+	case WM_COMMAND:
+		if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
+		{
+			EndDialog(hDlg, LOWORD(wParam));
+			return (INT_PTR)TRUE;
+		}
+		break;
+	}
+	return (INT_PTR)FALSE;
 }
