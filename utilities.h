@@ -30,3 +30,4 @@
 #define VK_Z 0x5A
 
 bool control_key_down();
+bool shift_key_down();

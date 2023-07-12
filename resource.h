@@ -14,18 +14,17 @@
 #define IDC_ICON3                       133
 #define IDC_ICON5                       135
 #define IDC_BUTTON1                     1002
-#define ID_DRAW_CURVE                   32771
 #define ID_FILE_NEW                     32772
 #define ID_FILE_OPEN                    32773
 #define ID_FILE_SAVE                    32774
-#define ID_FILE_SAVEAS                  32775
+#define ID_FILE_SAVE_AS                 32775
 #define ID_EDIT_CUT                     32776
 #define ID_EDIT_COPY                    32777
 #define ID_EDIT_PASTE                   32778
 #define ID_EDIT_UNDO                    32779
 #define ID_EDIT_REDO                    32780
-#define ID_PATH                         32781
-#define ID_DRAW_SELECT                  32782
+#define ID_DRAW_SELECT                  32781
+#define ID_DRAW_PATH                    32782
 #define IDC_STATIC                      -1
 
 // Next default values for new objects
@@ -34,7 +33,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        134
-#define _APS_NEXT_COMMAND_VALUE         32783
+#define _APS_NEXT_COMMAND_VALUE         32784
 #define _APS_NEXT_CONTROL_VALUE         1004
 #define _APS_NEXT_SYMED_VALUE           110
 #endif

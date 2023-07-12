@@ -140,18 +140,40 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			// Parse the menu selections:
 			switch (wmId)
 			{
+				// File menu
+			case ID_FILE_NEW:
+				application->new_drawing();
+				break;
+			case ID_FILE_OPEN:
+				application->open();
+				break;
+			case ID_FILE_SAVE:
+				application->save();
+				break;
+			case ID_FILE_SAVE_AS:
+				application->save_as();
+				break;
+				// Edit menu
 			case ID_EDIT_UNDO:
 				application->undo();
 				break;
 			case ID_EDIT_REDO:
 				application->redo();
 				break;
+				// Draw menu
+			case ID_DRAW_SELECT:
+				application->set_tool_select();
+				break;
+			case ID_DRAW_PATH:
+				application->set_tool_new_path();
+				break;
+				// Help menu
 			case IDM_ABOUT:
 				DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
 				break;
-			case IDM_EXIT:
-				DestroyWindow(hWnd);
-				break;
+			//case IDM_EXIT:
+			//	DestroyWindow(hWnd);
+			//	break;
 			default:
 				return DefWindowProc(hWnd, message, wParam, lParam);
 			}
@@ -160,30 +182,45 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		case WM_KEYDOWN:
 		{
-			switch (wParam)
-			{
-				// Edit menu
-			case VK_Z: // Ctrl+Z
-				if (control_key_down())
+			if (control_key_down()) {
+				switch (wParam) {
+					// File menu
+				case VK_N:
+					application->new_drawing();
+					break;
+				case VK_O:
+					application->open();
+					break;
+				case VK_S:
+					if (shift_key_down())
+						application->save_as();
+					else
+						application->save();
+					break;
+					// Edit menu
+				case VK_Z: // Ctrl+Z
 					application->undo();
-				break;
-			case VK_Y: // Ctrl+Y
-				if (control_key_down())
+					break;
+				case VK_Y: // Ctrl+Y
 					application->redo();
-				break;
+					break;
+				}
+			}
+			else {
+				switch (wParam) {
+					// Draw menu
+				case VK_S:
+					application->set_tool_select();
+					break;
+				case VK_P:
+					application->set_tool_new_path();
+					break;
 
-				// Draw menu
-			case VK_S:
-				application->set_tool_select();
-				break;
-			case VK_P:
-				application->set_tool_new_path();
-				break;
-
-				// Other keys
-			case VK_ESCAPE: // ESC
-				application->handle_escape();
-				break;
+					// Other keys
+				case VK_ESCAPE: // ESC
+					application->handle_escape();
+					break;
+				}
 			}
 		}
 		break;

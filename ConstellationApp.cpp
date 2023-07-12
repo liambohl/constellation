@@ -50,6 +50,26 @@ namespace Constellation {
         canvas.finish_draw();
     }
 
+    void ConstellationApp::new_drawing() {
+
+    }
+
+    void ConstellationApp::open() {
+        PWSTR new_file_path = open_cst_file();
+        if (new_file_path != nullptr) {
+            file_path = new_file_path;
+            *Logger::get_instance() << "Opened file \"" << file_path << "\"" << std::endl;
+        }
+    }
+
+    void ConstellationApp::save() {
+
+    }
+
+    void ConstellationApp::save_as() {
+
+    }
+
     void ConstellationApp::undo() {
         if (current_tool->undo())
             return;
