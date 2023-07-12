@@ -14,6 +14,9 @@
 #include <gdiplus.h>
 //using namespace Gdiplus;
 #pragma comment(lib, "gdiplus.lib")
+#pragma comment(lib, "comctl32.lib") 
+#pragma comment(lib, "propsys.lib")
+#pragma comment(lib, "shlwapi.lib") 
 
 //#include <windef.h>
 //#include <winbase.h>
