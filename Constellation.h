@@ -6,6 +6,6 @@
 
 #include "Canvas.h"
 #include "ConstellationApp.h"
-#include "GdiPlusInitializer.h"
+#include "Initializer.h"
 #include "Logger.h"
 #include "utilities.h"

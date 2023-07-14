@@ -2,6 +2,8 @@
 #include <chrono>
 #include <stack>
 
+#include <shobjidl.h>	// For IShellItem
+
 #include "Action.h"
 #include "Drawing.h"
 #include "file.h"
@@ -17,7 +19,9 @@ namespace Constellation {
 		Drawing drawing;
 		Tool* current_tool = nullptr;
 
-		PWSTR file_path = nullptr;		// full path and name of the currently open file. If nullptr or empty, we are editing a new, never-saved drawing.
+		// Name and location of currrently open file. If nullptr, we are editing a new, never-saved drawing.
+		PWSTR drawing_file_path = nullptr;		// full path
+		IShellItem* drawing_folder = nullptr;
 
 		std::stack<Action*> undo_stack; // bottom is oldest action performed and not undone. top is youngest action performed and not undone.
 		std::stack<Action*> redo_stack; // bottom is youngest action undone. top is oldest action ondone. The undo and redo stacks are kissing at the present moment. :)

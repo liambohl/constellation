@@ -51,23 +51,37 @@ namespace Constellation {
     }
 
     void ConstellationApp::new_drawing() {
-
+        drawing_file_path = nullptr;
+        drawing_folder = nullptr;
+        // TODO: new file
+        *Logger::get_instance() << "New file" << std::endl;
     }
 
     void ConstellationApp::open() {
-        PWSTR new_file_path = open_cst_file();
-        if (new_file_path != nullptr) {
-            file_path = new_file_path;
-            *Logger::get_instance() << "Opened file \"" << file_path << "\"" << std::endl;
+        if (open_cst_file(&drawing_file_path, drawing_folder)) {
+            // TODO: open file
+            *Logger::get_instance() << "Opened file \"" << drawing_file_path << "\"" << std::endl;
         }
     }
 
     void ConstellationApp::save() {
+        // If working on new file, choose save location.
+        if (drawing_file_path == nullptr) {
+            save_as_cst_file(&drawing_file_path, drawing_folder);
+        }
 
+        // If save location has been chosen, save.
+        if (drawing_file_path != nullptr) {
+            // TODO: save file
+            *Logger::get_instance() << "Saved file \"" << drawing_file_path << "\"" << std::endl;
+        }
     }
 
     void ConstellationApp::save_as() {
-
+        if (save_as_cst_file(&drawing_file_path, drawing_folder)) {
+            // TODO: save file
+            *Logger::get_instance() << "Saved file as \"" << drawing_file_path << "\"" << std::endl;
+        }
     }
 
     void ConstellationApp::undo() {

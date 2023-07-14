@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <cstring>
 #include <new>
 
@@ -15,6 +16,7 @@
 #include <shtypes.h>      // for COMDLG_FILTERSPEC
 
 #include "file.h"
+#include "utilities.h"
 
 #pragma comment(linker, "\"/manifestdependency:type='Win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
@@ -113,11 +115,46 @@ namespace Constellation {
         return hr;
     }
 
-    // Use the Windows Open dialog to obtain a file path. Return the file path if a file was selected, else nullptr
-    PWSTR open_cst_file() {
-        // CoCreate the File Open Dialog object.
+    PWSTR file_name_only(const PWSTR& path) {
+        PWSTR file_name = wcsrchr(path, L'\\');
+        if (file_name != NULL)
+            file_name++; // Move past the backslash character
+        else
+            file_name = path; // No backslash found, the whole path is the filename
+
+        return file_name;
+    }
+
+    enum choose_file_mode {
+        open,
+        save
+    };
+
+    bool choose_cst_file(enum choose_file_mode mode, PWSTR* file_name, IShellItem* folder);
+
+    bool open_cst_file(PWSTR* file_path, IShellItem* folder) {
+        return choose_cst_file(open, file_path, folder);
+    }
+
+    bool save_as_cst_file(PWSTR* file_path, IShellItem* folder) {
+        return choose_cst_file(save, file_path, folder);
+    }
+
+    // Use the Windows Common Item Dialog to obtain a file path.
+    // If a file is selected, set file_name and folder accordingly.
+    // Otherwise, no change.
+    bool choose_cst_file(enum choose_file_mode mode, PWSTR* file_path, IShellItem* folder) {
+        assert(file_path != nullptr);
+
         IFileDialog* pfd = NULL;
-        HRESULT hr = CoCreateInstance(CLSID_FileOpenDialog,
+        IID dialog_id;
+        if (mode == open)
+            dialog_id = CLSID_FileOpenDialog;
+        else
+            dialog_id = CLSID_FileSaveDialog;
+
+        // CoCreate the Dialog object.
+        HRESULT hr = CoCreateInstance(dialog_id,
             NULL,
             CLSCTX_INPROC_SERVER,
             IID_PPV_ARGS(&pfd));
@@ -158,6 +195,12 @@ namespace Constellation {
                                     hr = pfd->SetDefaultExtension(L"cst");
                                     if (SUCCEEDED(hr))
                                     {
+                                        // Set the file name, if one was given.
+                                        if (mode == save && *file_path != nullptr) {
+                                            pfd->SetFolder(folder);
+                                            PWSTR file_name = file_name_only(*file_path);
+                                            pfd->SetFileName(file_name);
+                                        }
                                         // Show the dialog
                                         hr = pfd->Show(NULL);
                                         if (SUCCEEDED(hr))
@@ -169,18 +212,17 @@ namespace Constellation {
                                             hr = pfd->GetResult(&psiResult);
                                             if (SUCCEEDED(hr))
                                             {
-                                                // We are just going to print out the 
-                                                // name of the file for sample sake.
                                                 PWSTR pszFilePath = NULL;
                                                 hr = psiResult->GetDisplayName(SIGDN_FILESYSPATH,
                                                     &pszFilePath);
                                                 if (SUCCEEDED(hr))
                                                 {
                                                     size_t count = wcslen(pszFilePath) + 1;
-                                                    PWSTR file_path = new WCHAR[count];
-                                                    wcscpy_s(file_path, count, pszFilePath);
+                                                    *file_path = new WCHAR[count];
+                                                    wcscpy_s(*file_path, count, pszFilePath);
                                                     CoTaskMemFree(pszFilePath);
-                                                    return file_path;
+                                                    psiResult->GetParent(&folder);
+                                                    return true;
                                                 }
                                                 psiResult->Release();
                                             }
@@ -197,7 +239,7 @@ namespace Constellation {
             }
             pfd->Release();
         }
-        return nullptr;
+        return false;
 	}
 
 }

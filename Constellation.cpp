@@ -30,7 +30,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
 	// Start up GDI Plus system
-	GdiPlusInitializer gdiPlusInitializer;
+	Initializer gdiPlusInitializer;
 	application = new ConstellationApp();
 
 	// Initialize global strings
