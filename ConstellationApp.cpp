@@ -1,3 +1,4 @@
+#include <fstream>
 #include <thread>
 #include <windowsx.h>
 
@@ -22,26 +23,7 @@ namespace Constellation {
             refresh_rate = 60;
         refresh_interval_ns = 1000000000 / refresh_rate;
         *Logger::get_instance() << "refresh interval: " << refresh_interval_ns << std::endl;
-
-        //previous_refresh_time = std::chrono::high_resolution_clock::now();
-
-        //*Logger::get_instance() << "refresh rate: " << refresh_rate << std::endl;
-        //std::thread refresh_thread(&ConstellationApp::refresh_periodically, this, refresh_rate);
-        //refresh_thread.detach();
 	}
-
-    //void ConstellationApp::refresh_periodically(int refresh_rate) {
-    //    int refresh_interval_ns = 1000000000 / refresh_rate;
-    //    *Logger::get_instance() << "refresh interval: " << refresh_interval_ns << std::endl;
-    //    while (true) {
-    //        auto now = std::chrono::high_resolution_clock::now();
-    //        auto frame_time = now - previous_refresh_time;
-    //        *Logger::get_instance() << "frame time: " << frame_time.count() << std::endl;
-    //        previous_refresh_time = now;
-    //        canvas.redraw();
-    //        std::this_thread::sleep_for(std::chrono::nanoseconds(refresh_interval_ns));
-    //    }
-    //}
 
     void ConstellationApp::draw(HWND hWnd) {
         canvas.begin_draw(hWnd);
@@ -59,7 +41,7 @@ namespace Constellation {
 
     void ConstellationApp::open() {
         if (open_cst_file(&drawing_file_path, drawing_folder)) {
-            // TODO: open file
+            open_file();
             *Logger::get_instance() << "Opened file \"" << drawing_file_path << "\"" << std::endl;
         }
     }
@@ -72,14 +54,14 @@ namespace Constellation {
 
         // If save location has been chosen, save.
         if (drawing_file_path != nullptr) {
-            // TODO: save file
+            save_file();
             *Logger::get_instance() << "Saved file \"" << drawing_file_path << "\"" << std::endl;
         }
     }
 
     void ConstellationApp::save_as() {
         if (save_as_cst_file(&drawing_file_path, drawing_folder)) {
-            // TODO: save file
+            save_file();
             *Logger::get_instance() << "Saved file as \"" << drawing_file_path << "\"" << std::endl;
         }
     }
@@ -136,6 +118,28 @@ namespace Constellation {
             delete stale_action;
             redo_stack.pop();
         }
+    }
+
+    void ConstellationApp::save_file() {
+        std::ofstream stream(drawing_file_path);
+        stream << drawing.to_json().dump();
+        stream.close();
+    }
+
+    void ConstellationApp::open_file() {
+        std::ifstream stream(drawing_file_path);
+        json drawing_json = json::parse(stream);
+
+        auto  defaults = drawing_json["defaults"];
+        auto  elements = drawing_json["elements"];
+
+        *Logger::get_instance() << "next_id: " << drawing_json["next_id"] << std::endl;
+        *Logger::get_instance() << "defaults: " << drawing_json["defaults"] << std::endl;
+        *Logger::get_instance() << "elements: " << drawing_json["elements"] << std::endl;
+
+        drawing = Drawing(drawing_json);
+        // TODO: reset canvas
+        stream.close();
     }
 
     void ConstellationApp::handle_mouse_event(UINT message, WPARAM wParam, LPARAM lParam) {

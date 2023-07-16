@@ -1,6 +1,7 @@
 #pragma once
 
-#include<vector>
+#include <memory>
+#include <vector>
 
 #include "Element.h"
 
@@ -11,18 +12,20 @@ namespace Constellation {
 	{
 	public:
 		Group(ULONG id) : Element(id) {}
-		~Group();
+		Group(json group_json);
 
 		void draw(Canvas& canvas) override;
 
+		json to_json() override;
+
 		// Sometimes we need to get an element by id because we may not have a pointer to that elemet,
 		// as it may have been destroyed and recreated by undoing and redoing.
-		virtual Element* get_element(ULONG id);
-		void add_element(Element* element);
+		std::shared_ptr<Element> get_element(ULONG id) override;
+		void add_element(std::shared_ptr<Element> element);
 		bool remove_element(ULONG id);
 
 	private:
-		std::vector<Element*> elements;
+		std::vector<std::shared_ptr<Element>> elements;
 	};
 
 }

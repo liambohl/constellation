@@ -1,5 +1,8 @@
 #pragma once
 #include "framework.h"
+#include "json.hpp"
+
+using json = nlohmann::json;
 
 namespace Constellation {
 
@@ -17,11 +20,10 @@ namespace Constellation {
 		Gdiplus::Brush* brush = nullptr;		// elements in the drawing
 		Gdiplus::Color background;				// "transparent" color shown where there are no elements
 
-		//Gdiplus::Pen* clone_tool_pen() { return tool_pen->Clone(); }
-		//Gdiplus::Pen* clone_pen() { return pen->Clone(); }
-		//Gdiplus::Brush* clone_brush() { return brush->Clone(); }
-
 		Defaults();
+		Defaults(json defaults_json);
+
+		json to_json();
 	};
 
 }

@@ -8,14 +8,13 @@ namespace Constellation {
         public Action
     {
     public:
-        ActionAddElement(Element* element) : element(element) {}
-        ~ActionAddElement();
+        ActionAddElement(std::shared_ptr<Element> element) : element(element) {}
 
         void apply(Drawing& drawing);
         void undo(Drawing& drawing);
 
     private:
-        Element* element;
+        std::shared_ptr<Element> element;
     };
 
 }

@@ -1,9 +1,9 @@
 #pragma once
 #include<vector>
 
-#include "framework.h"
-#include "element.h"
 #include "Canvas.h"
+#include "element.h"
+#include "framework.h"
 
 namespace Constellation {
 
@@ -22,9 +22,13 @@ namespace Constellation {
 
     public:
         Path(ULONG id, Gdiplus::Pen* pen) : Element(id), pen(pen) {}
+        Path(json path_json);
         //Path(const Path& other);
         ~Path();
         void draw(Canvas& canvas) override;
+
+        json to_json() override;
+
         void add_point(int xPos, int yPos, int count=1);
         void add_points(Path& other);
         void pop_point(int count=1);

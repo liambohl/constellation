@@ -93,7 +93,7 @@ namespace Constellation {
 				// Hand over wip_path to the drawing.
 				Path* final_path = wip_path;
 				wip_path = nullptr;
-				return new ActionAddElement(final_path);
+				return new ActionAddElement(std::shared_ptr<Element>(final_path));
 			}
 			break;
 

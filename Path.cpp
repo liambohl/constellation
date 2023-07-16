@@ -1,8 +1,19 @@
 #include <string>
-#include "Path.h"
+
+#include "json_converters.h"
 #include "Logger.h"
+#include "Path.h"
 
 namespace Constellation {
+
+	Path::Path(json path_json):
+		Element(path_json),
+		pen(pen_from_json(path_json["pen"]))
+	{
+		for (json point_json : path_json["control_points"])
+			control_points.emplace_back(point_from_json(point_json));
+		n_points = control_points.size();
+	}
 
 	//Path::Path(const Path& other) :
 	//	Element(other.id),
@@ -26,6 +37,22 @@ namespace Constellation {
 		}
 
 		canvas.graphics->DrawBeziers(pen, control_points.data(), n_points);
+	}
+
+	json Path::to_json() {
+		json output = {
+			{"type", "Path"},
+			{"id", id},
+			{"pen", pen_to_json(pen)},
+			{"control_points", {}}
+		};
+
+		// Populate control points
+		for (Gdiplus::Point point : control_points) {
+			output["control_points"].push_back(point_to_json(point));
+		}
+
+		return output;
 	}
 
 	void Path::add_point(int xPos, int yPos, int count) {

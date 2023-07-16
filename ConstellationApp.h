@@ -32,6 +32,9 @@ namespace Constellation {
 
 		void do_action(Action* action);
 
+		void save_file();
+		void open_file();
+
 	public:
 		ConstellationApp();
 

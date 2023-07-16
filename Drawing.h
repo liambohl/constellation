@@ -5,6 +5,9 @@
 #include "Defaults.h"
 #include "Element.h"
 #include "Group.h"
+#include "json.hpp"
+
+using json = nlohmann::json;
 
 namespace Constellation {
 
@@ -13,11 +16,14 @@ namespace Constellation {
 	{
 	public:
 		Drawing();
+		Drawing(json drawing_json);
 
 		ULONG new_id() { return next_id++; }
 
 		void draw(Canvas& canvas);
-		Element* get_element(ULONG id) { return elements.get_element(id); }
+		std::shared_ptr<Element> get_element(ULONG id) { return elements.get_element(id); }
+
+		json to_json();
 
 		Defaults defaults;
 
