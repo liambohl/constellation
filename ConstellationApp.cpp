@@ -36,6 +36,7 @@ namespace Constellation {
         drawing_file_path = nullptr;
         drawing_folder = nullptr;
         // TODO: new file
+        // TODO: call reset_unsaved_changes()
         *Logger::get_instance() << "New file" << std::endl;
     }
 
@@ -75,6 +76,8 @@ namespace Constellation {
             last->undo(drawing);
             undo_stack.pop();
             redo_stack.push(last);
+
+            --unsaved_changes;
         }
     }
 
@@ -84,6 +87,8 @@ namespace Constellation {
             next->apply(drawing);
             redo_stack.pop();
             undo_stack.push(next);
+
+            ++unsaved_changes;
         }
     }
 
@@ -111,6 +116,10 @@ namespace Constellation {
 
         undo_stack.push(action);
 
+        if (unsaved_changes < 0)
+            unchanged_state_reachable = false; // This action prevents us from using redo to get to an unchanged state.
+        ++unsaved_changes;
+
         // Since we are performing a new action, clear the redo stack.
         Action* stale_action;
         while (redo_stack.size() > 0) {
@@ -118,12 +127,16 @@ namespace Constellation {
             delete stale_action;
             redo_stack.pop();
         }
+
+        *Logger::get_instance() << "unsaved_changes: " << unsaved_changes << ", unchanged_state_reachable: " << unchanged_state_reachable << std::endl;
     }
 
     void ConstellationApp::save_file() {
         std::ofstream stream(drawing_file_path);
         stream << drawing.to_json().dump();
         stream.close();
+
+        reset_unsaved_changes();
     }
 
     void ConstellationApp::open_file() {
@@ -140,6 +153,13 @@ namespace Constellation {
         drawing = Drawing(drawing_json);
         // TODO: reset canvas
         stream.close();
+
+        reset_unsaved_changes();
+    }
+
+    void ConstellationApp::reset_unsaved_changes() {
+        unsaved_changes = 0;
+        unchanged_state_reachable = true;
     }
 
     void ConstellationApp::handle_mouse_event(UINT message, WPARAM wParam, LPARAM lParam) {

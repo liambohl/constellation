@@ -13,12 +13,15 @@ HINSTANCE hInst;                                // current instance
 WCHAR szTitle[MAX_LOADSTRING];                  // The title bar text
 WCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
 ConstellationApp* application = nullptr;        // Current state of this Constellation window
+bool canceled = false;							// Was the current operation canceled?
 
 // Forward declarations of functions included in this code module:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
+INT_PTR CALLBACK    SavePrompt(HWND, UINT, WPARAM, LPARAM);
+void				PromptToSaveBeforeAction(HWND hWnd, const std::function<void ()>& callback);
 
 // Application entry point, called by OS
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
@@ -142,10 +145,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			{
 				// File menu
 			case ID_FILE_NEW:
-				application->new_drawing();
+				PromptToSaveBeforeAction(hWnd, []() { application->new_drawing(); });
 				break;
 			case ID_FILE_OPEN:
-				application->open();
+				PromptToSaveBeforeAction(hWnd, []() { application->open(); });
 				break;
 			case ID_FILE_SAVE:
 				application->save();
@@ -186,10 +189,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				switch (wParam) {
 					// File menu
 				case VK_N:
-					application->new_drawing();
+					PromptToSaveBeforeAction(hWnd, []() { application->new_drawing(); });
 					break;
 				case VK_O:
-					application->open();
+					PromptToSaveBeforeAction(hWnd, []() { application->open(); });
 					break;
 				case VK_S:
 					if (shift_key_down())
@@ -239,12 +242,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			application->handle_mouse_event(message, wParam, lParam);
 			break;
 
-			//case WM_CLOSE:
-			//    if (MessageBox(hWnd, L"Are you sure you want to quit?", L"Constellation", MB_OKCANCEL) == IDOK)
-			//    {
-			//        DestroyWindow(hWnd);
-			//    }
-			//    break;
+		case WM_CLOSE:
+			PromptToSaveBeforeAction(hWnd, [hWnd]() { DestroyWindow(hWnd); });
+			break;
 		case WM_DESTROY:
 			PostQuitMessage(0);
 			break;
@@ -263,6 +263,75 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	catch (std::exception e) {
 		Logger::get_instance()->log(e.what());
 	}
+}
+
+void PromptToSaveBeforeAction(HWND hWnd, const std::function<void ()>& callback) {
+	if (application->has_unsaved_changes()) {
+		// Give the user a chance to save their changes and, unless they choose cancel, perform the callback.
+		canceled = false;
+		DialogBox(hInst, MAKEINTRESOURCE(IDD_SAVE_CHANGES), hWnd, SavePrompt);
+
+		if (!canceled) {
+			callback();
+		}
+	}
+	else {
+		callback();
+	}
+}
+
+// Message handler for "Would you like to save your changes?" box
+// Returns true if the message was handled.
+INT_PTR CALLBACK SavePrompt(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	UNREFERENCED_PARAMETER(lParam);
+	switch (message)
+	{
+	case WM_INITDIALOG:
+		return true;
+
+	case WM_COMMAND:
+		switch (LOWORD(wParam)) {
+		case IDC_SAVE_CANCEL:
+			canceled = true;
+			EndDialog(hDlg, LOWORD(wParam));
+			return true;
+		case IDC_SAVE_SAVE:
+			application->save();
+			// fall through
+		case IDC_SAVE_DONT_SAVE:
+			EndDialog(hDlg, LOWORD(wParam));
+			return true;
+		default:
+			return false;
+		}
+
+	//case WM_KEYDOWN:
+		//switch (wParam) {
+		//case VK_C:
+		//case VK_ESCAPE:
+			//canceled = true;
+			//EndDialog(hDlg, LOWORD(wParam));
+			//return true;
+		//case VK_S:
+			//application->save();
+			// fall through
+		//case VK_N:
+			//EndDialog(hDlg, LOWORD(wParam));
+			//return true;
+		//default:
+			//return false;
+		//}
+
+	case WM_CLOSE:
+		canceled = true;
+		EndDialog(hDlg, LOWORD(wParam));
+		return true;
+
+	default:
+		return false;
+	}
+	return false;
 }
 
 // Message handler for about box.
