@@ -37,6 +37,7 @@ namespace Constellation {
         drawing_folder = nullptr;
         drawing = Drawing();
         reset_unsaved_changes();
+        reset_history();
         *Logger::get_instance() << "New file" << std::endl;
     }
 
@@ -142,24 +143,29 @@ namespace Constellation {
     void ConstellationApp::open_file() {
         std::ifstream stream(drawing_file_path);
         json drawing_json = json::parse(stream);
-
-        auto  defaults = drawing_json["defaults"];
-        auto  elements = drawing_json["elements"];
-
-        *Logger::get_instance() << "next_id: " << drawing_json["next_id"] << std::endl;
-        *Logger::get_instance() << "defaults: " << drawing_json["defaults"] << std::endl;
-        *Logger::get_instance() << "elements: " << drawing_json["elements"] << std::endl;
-
         drawing = Drawing(drawing_json);
-        // TODO: reset canvas
         stream.close();
 
+        // TODO: reset canvas
         reset_unsaved_changes();
+        reset_history();
     }
 
     void ConstellationApp::reset_unsaved_changes() {
         unsaved_changes = 0;
         unchanged_state_reachable = true;
+    }
+
+    // Clear undo and redo stacks and free the action pointers therein
+    void ConstellationApp::reset_history() {
+        while (!undo_stack.empty()) {
+            delete undo_stack.top();
+            undo_stack.pop();
+        }
+        while (!redo_stack.empty()) {
+            delete redo_stack.top();
+            redo_stack.pop();
+        }
     }
 
     void ConstellationApp::handle_mouse_event(UINT message, WPARAM wParam, LPARAM lParam) {

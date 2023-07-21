@@ -23,6 +23,7 @@ namespace Constellation {
 		void open_file();
 
 		void reset_unsaved_changes();
+		void reset_history();
 
 		Canvas canvas;
 		Drawing drawing;
