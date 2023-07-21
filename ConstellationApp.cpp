@@ -35,8 +35,8 @@ namespace Constellation {
     void ConstellationApp::new_drawing() {
         drawing_file_path = nullptr;
         drawing_folder = nullptr;
-        // TODO: new file
-        // TODO: call reset_unsaved_changes()
+        drawing = Drawing();
+        reset_unsaved_changes();
         *Logger::get_instance() << "New file" << std::endl;
     }
 
