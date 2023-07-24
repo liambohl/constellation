@@ -21,7 +21,7 @@ namespace Constellation {
         INT n_points = 0;
 
     public:
-        Path(ULONG id, Gdiplus::Pen* pen) : Element(id), pen(pen) {}
+        Path(Gdiplus::Pen* pen) : pen(pen) {}
         Path(json path_json);
         //Path(const Path& other);
         ~Path();

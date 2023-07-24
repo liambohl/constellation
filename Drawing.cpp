@@ -3,8 +3,6 @@
 
 namespace Constellation {
 
-	Drawing::Drawing() : elements(new_id()) {}
-
 	Drawing::Drawing(json drawing_json) :
 		next_id(drawing_json["next_id"]),
 		defaults(drawing_json["defaults"]),

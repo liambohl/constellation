@@ -7,7 +7,7 @@ namespace Constellation {
 	}
 
 	void ActionAddElement::undo(Drawing& drawing) {
-		drawing.elements.remove_element(element->id);
+		drawing.elements.remove_element(element);
 	}
 
 }

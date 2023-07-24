@@ -3,7 +3,7 @@
 
 namespace Constellation {
 
-	Group::Group(json group_json) : Element(group_json) {
+	Group::Group(json group_json) {
 		for (json element_json : group_json["elements"]) {
 			std::string type = element_json["type"];
 			if (type == "Group") {
@@ -28,7 +28,6 @@ namespace Constellation {
 	json Group::to_json() {
 		json output = {
 			{"type", "Group"},
-			{"id", id},
 			{"elements", {}}
 		};
 
@@ -40,26 +39,15 @@ namespace Constellation {
 		return output;
 	}
 
-	std::shared_ptr<Element> Group::get_element(ULONG id) {
-		if (this->id == id)
-			return std::shared_ptr<Element>(this);
-
-		for (std::shared_ptr<Element> element : elements) {
-			std::shared_ptr<Element> found_element = element->get_element(id);
-			if (found_element != nullptr)
-				return found_element;
-		}
-		return nullptr;
-	}
-
 	void Group::add_element(std::shared_ptr<Element> element) {
 		elements.push_back(element);
 	}
 
-	bool Group::remove_element(ULONG id) {
-		for (auto element = elements.begin(); element != elements.end(); ++element) {
-			if ((*element)->id == id) {
-				elements.erase(element);
+	// Remove an element if it is a direct child of this group
+	bool Group::remove_element(std::shared_ptr<Element> element) {
+		for (auto i = elements.begin(); i != elements.end(); ++i) {
+			if (*i == element) {
+				elements.erase(i);
 				return true;
 			}
 		}

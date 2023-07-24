@@ -7,12 +7,11 @@
 namespace Constellation {
 
 	Path::Path(json path_json):
-		Element(path_json),
 		pen(pen_from_json(path_json["pen"]))
 	{
 		for (json point_json : path_json["control_points"])
 			control_points.emplace_back(point_from_json(point_json));
-		n_points = control_points.size();
+		n_points = (int)control_points.size();
 	}
 
 	//Path::Path(const Path& other) :
@@ -42,7 +41,6 @@ namespace Constellation {
 	json Path::to_json() {
 		json output = {
 			{"type", "Path"},
-			{"id", id},
 			{"pen", pen_to_json(pen)},
 			{"control_points", {}}
 		};

@@ -15,13 +15,10 @@ namespace Constellation {
 	class Drawing
 	{
 	public:
-		Drawing();
+		Drawing() {}
 		Drawing(json drawing_json);
 
-		ULONG new_id() { return next_id++; }
-
 		void draw(Canvas& canvas);
-		std::shared_ptr<Element> get_element(ULONG id) { return elements.get_element(id); }
 
 		json to_json();
 
