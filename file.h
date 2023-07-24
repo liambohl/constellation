@@ -1,10 +1,6 @@
 #pragma once
 #include <shobjidl.h>
 
-namespace Constellation {
+bool open_cst_file(PWSTR* file_path, IShellItem* folder);
 
-	bool open_cst_file(PWSTR* file_path, IShellItem* folder);
-
-	bool save_as_cst_file(PWSTR* file_path, IShellItem* folder);
-
-}
+bool save_as_cst_file(PWSTR* file_path, IShellItem* folder);

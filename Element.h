@@ -5,17 +5,13 @@
 
 using json = nlohmann::json;
 
-namespace Constellation {
-
-	class Element
-	{
-	public:
-		virtual void draw(Canvas& canvas) = 0;
+class Element
+{
+public:
+	virtual void draw(Canvas& canvas) = 0;
 		
-		virtual json to_json() = 0;
+	virtual json to_json() = 0;
 
-	protected:
-		Element() {}
-	};
-
-}
+protected:
+	Element() {}
+};

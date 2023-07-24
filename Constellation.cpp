@@ -4,8 +4,6 @@
 #include "framework.h"
 #include "Constellation.h"
 
-using namespace Constellation;
-
 #define MAX_LOADSTRING 100
 
 // Global Variables:
