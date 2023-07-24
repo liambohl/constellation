@@ -13,7 +13,6 @@ HINSTANCE hInst;                                // current instance
 WCHAR szTitle[MAX_LOADSTRING];                  // The title bar text
 WCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
 ConstellationApp* application = nullptr;        // Current state of this Constellation window
-bool canceled = false;							// Was the current operation canceled?
 
 // Forward declarations of functions included in this code module:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -274,10 +273,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 void PromptToSaveBeforeAction(HWND hWnd, const std::function<void ()>& callback) {
 	if (application->has_unsaved_changes()) {
 		// Give the user a chance to save their changes and, unless they choose cancel, perform the callback.
-		canceled = false;
-		DialogBox(hInst, MAKEINTRESOURCE(IDD_SAVE_CHANGES), hWnd, SavePrompt);
-
-		if (!canceled) {
+		if (DialogBox(hInst, MAKEINTRESOURCE(IDD_SAVE_CHANGES), hWnd, SavePrompt)) {
 			callback();
 		}
 	}
@@ -288,6 +284,7 @@ void PromptToSaveBeforeAction(HWND hWnd, const std::function<void ()>& callback)
 
 // Message handler for "Would you like to save your changes?" box
 // Returns true if the message was handled.
+// DialogBox call returns true if the operation should proceed; that is, unless "Cancel" button, "Escape" key, or "X" is pressed
 INT_PTR CALLBACK SavePrompt(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	UNREFERENCED_PARAMETER(lParam);
@@ -298,46 +295,26 @@ INT_PTR CALLBACK SavePrompt(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPara
 
 	case WM_COMMAND:
 		switch (LOWORD(wParam)) {
-		case IDC_SAVE_CANCEL:
-			canceled = true;
-			EndDialog(hDlg, LOWORD(wParam));
+		case IDCANCEL:		// "Escape" key sends this command
+			EndDialog(hDlg, false);
 			return true;
-		case IDC_SAVE_SAVE:
+		case IDC_SAVE:
 			application->save();
 			// fall through
-		case IDC_SAVE_DONT_SAVE:
-			EndDialog(hDlg, LOWORD(wParam));
+		case IDC_DONT_SAVE:
+			EndDialog(hDlg, true);
 			return true;
 		default:
 			return false;
 		}
 
-	//case WM_KEYDOWN:
-		//switch (wParam) {
-		//case VK_C:
-		//case VK_ESCAPE:
-			//canceled = true;
-			//EndDialog(hDlg, LOWORD(wParam));
-			//return true;
-		//case VK_S:
-			//application->save();
-			// fall through
-		//case VK_N:
-			//EndDialog(hDlg, LOWORD(wParam));
-			//return true;
-		//default:
-			//return false;
-		//}
-
 	case WM_CLOSE:
-		canceled = true;
-		EndDialog(hDlg, LOWORD(wParam));
+		EndDialog(hDlg, false);
 		return true;
 
 	default:
 		return false;
 	}
-	return false;
 }
 
 // Message handler for about box.

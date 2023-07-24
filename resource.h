@@ -10,15 +10,10 @@
 #define IDM_EXIT                        105
 #define IDC_CONSTELLATION               109
 #define IDR_MAINFRAME                   128
-#define IDB_PNG1                        132
-#define IDC_ICON3                       133
 #define IDD_SAVE_CHANGES                134
 #define IDC_ICON5                       135
-#define IDC_BUTTON1                     1002
 #define IDC_SAVE                        1004
-#define IDC_SAVE_SAVE                   1004
-#define IDC_SAVE_CANCEL                 1005
-#define IDC_SAVE_DONT_SAVE              1006
+#define IDC_DONT_SAVE					1006
 #define IDC_SAVE_PROMPT                 1007
 #define ID_FILE_NEW                     32772
 #define ID_FILE_OPEN                    32773
