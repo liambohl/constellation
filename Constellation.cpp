@@ -181,48 +181,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 
 		case WM_KEYDOWN:
-		{
-			if (control_key_down()) {
-				switch (wParam) {
-					// File menu
-				case VK_N:
-					PromptToSaveBeforeAction(hWnd, []() { application->new_drawing(); });
-					break;
-				case VK_O:
-					PromptToSaveBeforeAction(hWnd, []() { application->open(); });
-					break;
-				case VK_S:
-					if (shift_key_down())
-						application->save_as();
-					else
-						application->save();
-					break;
-					// Edit menu
-				case VK_Z: // Ctrl+Z
-					application->undo();
-					break;
-				case VK_Y: // Ctrl+Y
-					application->redo();
-					break;
-				}
+			switch (wParam) {
+			case VK_ESCAPE: // ESC
+				application->handle_escape();
+				break;
 			}
-			else {
-				switch (wParam) {
-					// Draw menu
-				case VK_S:
-					application->set_tool(ConstellationApp::SELECT);
-					break;
-				case VK_P:
-					application->set_tool(ConstellationApp::NEW_PATH);
-					break;
-
-					// Other keys
-				case VK_ESCAPE: // ESC
-					application->handle_escape();
-					break;
-				}
-			}
-		}
 		break;
 
 		case WM_PAINT:
