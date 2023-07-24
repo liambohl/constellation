@@ -233,13 +233,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			break;
 
 		case WM_LBUTTONDOWN:
-		case WM_LBUTTONUP:
 		case WM_MBUTTONDOWN:
-		case WM_MBUTTONUP:
 		case WM_RBUTTONDOWN:
-		case WM_RBUTTONUP:
+			SetCapture(hWnd);	// On mouse button down, capture mouse input before handling event.
+			application->handle_mouse_event(message, wParam, lParam);
+			break;
 		case WM_MOUSEMOVE:
 			application->handle_mouse_event(message, wParam, lParam);
+			break;
+		case WM_LBUTTONUP:
+		case WM_MBUTTONUP:
+		case WM_RBUTTONUP:
+			application->handle_mouse_event(message, wParam, lParam);
+			ReleaseCapture();	// On mouse button up, release capture after handling event.
 			break;
 
 		case WM_CLOSE:
