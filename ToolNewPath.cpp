@@ -17,12 +17,12 @@ namespace Constellation {
 		switch (state) {
 		case FIRST_DOWN:
 			if (message == WM_LBUTTONDOWN) {
-				wip_path = new Path(drawing.defaults.wip_pen->Clone());
+				wip_path = new Path(defaults.wip_pen->Clone());
 				wip_path->add_point(x_pos, y_pos);
 
 				// For now, the temp path is a line segment. As we move the cursor, the 3rd and 4th points will move with it.
 				// Only the first point is set in stone.
-				tool_path = new Path(drawing.defaults.tool_pen->Clone());
+				tool_path = new Path(defaults.tool_pen->Clone());
 				tool_path->add_point(x_pos, y_pos, 4);
 				state = FIRST_RELEASE;
 			}
@@ -68,7 +68,7 @@ namespace Constellation {
 				// For now, the temp path is a line segment. As we move the cursor, the 3rd and 4th points will move with it.
 				// The first two points are set in stone.
 				delete tool_path;
-				tool_path = new Path(drawing.defaults.tool_pen->Clone());
+				tool_path = new Path(defaults.tool_pen->Clone());
 				tool_path->add_point(next_node_x, next_node_y);
 				tool_path->add_point(x_pos, y_pos, 3);
 				state = NTH_DOWN;
@@ -88,9 +88,9 @@ namespace Constellation {
 				state = NTH_RELEASE;
 			}
 			else if (message == WM_RBUTTONDOWN) {
-				wip_path->pen = drawing.defaults.pen->Clone();
+				wip_path->pen = defaults.pen->Clone();
 				state = FIRST_DOWN;
-				// Hand over wip_path to the drawing.
+				// Hand over wip_path to the drawing
 				Path* final_path = wip_path;
 				wip_path = nullptr;
 				return new ActionAddElement(std::shared_ptr<Element>(final_path));
@@ -143,7 +143,7 @@ namespace Constellation {
 			tool_path->pop_point();
 			Gdiplus::Point p2 = tool_path->top();
 
-			tool_path = new Path(drawing.defaults.tool_pen->Clone());
+			tool_path = new Path(defaults.tool_pen->Clone());
 			tool_path->add_point(p0.X, p0.Y);
 			tool_path->add_point(p1.X, p1.Y);
 			tool_path->add_point(p2.X, p2.Y);

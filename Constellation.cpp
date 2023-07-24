@@ -165,10 +165,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				break;
 				// Draw menu
 			case ID_DRAW_SELECT:
-				application->set_tool_select();
+				application->set_tool(ConstellationApp::SELECT);
 				break;
 			case ID_DRAW_PATH:
-				application->set_tool_new_path();
+				application->set_tool(ConstellationApp::NEW_PATH);
 				break;
 				// Help menu
 			case IDM_ABOUT:
@@ -213,10 +213,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				switch (wParam) {
 					// Draw menu
 				case VK_S:
-					application->set_tool_select();
+					application->set_tool(ConstellationApp::SELECT);
 					break;
 				case VK_P:
-					application->set_tool_new_path();
+					application->set_tool(ConstellationApp::NEW_PATH);
 					break;
 
 					// Other keys

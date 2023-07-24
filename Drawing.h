@@ -2,7 +2,6 @@
 #include <vector>
 
 #include "Canvas.h"
-#include "Defaults.h"
 #include "Element.h"
 #include "Group.h"
 #include "json.hpp"
@@ -15,20 +14,18 @@ namespace Constellation {
 	class Drawing
 	{
 	public:
-		Drawing() {}
+		Drawing();
 		Drawing(json drawing_json);
 
 		void draw(Canvas& canvas);
 
 		json to_json();
 
-		Defaults defaults;
-
 		// Pattern pattern;
 		Group elements;
 
 	private:
-		ULONG next_id = 0;	// unique IDs for elements
+		Gdiplus::Color background;				// "transparent" color shown where there are no elements
 	};
 
 }

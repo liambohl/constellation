@@ -5,6 +5,7 @@
 #include <shobjidl.h>	// For IShellItem
 
 #include "Action.h"
+#include "Defaults.h"
 #include "Drawing.h"
 #include "file.h"
 #include "Tool.h"
@@ -26,6 +27,7 @@ namespace Constellation {
 		void reset_history();
 
 		Canvas canvas;
+		Defaults defaults;
 		Drawing drawing;
 		Tool* current_tool = nullptr;
 
@@ -49,6 +51,11 @@ namespace Constellation {
 		std::chrono::time_point<std::chrono::steady_clock> previous_refresh_time;
 
 	public:
+		enum tool {
+			NEW_PATH,
+			SELECT
+		};
+
 		ConstellationApp();
 
 		void draw(HWND hWnd);
@@ -64,8 +71,7 @@ namespace Constellation {
 		void redo();
 
 		// Draw menu
-		void set_tool_new_path();
-		void set_tool_select();
+		void set_tool(enum tool);
 
 		void handle_escape();
 

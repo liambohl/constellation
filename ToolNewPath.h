@@ -25,7 +25,7 @@ namespace Constellation {
 		int next_node_y = 0;
 
 	public:
-		ToolNewPath(Drawing& drawing) : Tool(drawing) { }
+		ToolNewPath(Defaults& defaults) : Tool(defaults) { }
 
 		Action* handle_mouse_event(UINT message, WPARAM wParam, LPARAM lParam);
 		void draw(Canvas& canvas);

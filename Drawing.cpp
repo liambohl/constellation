@@ -1,25 +1,28 @@
 #include "Drawing.h"
+#include "json_converters.h"
 #include "Logger.h"
 
 namespace Constellation {
 
+	Drawing::Drawing() {
+		background = Gdiplus::Color(255, 80, 80, 80);
+	}
+
 	Drawing::Drawing(json drawing_json) :
-		next_id(drawing_json["next_id"]),
-		defaults(drawing_json["defaults"]),
+		background(color_from_json(drawing_json["background"])),
 		elements(drawing_json["elements"])
 	{}
 
 	// Draw this drawing to the window
 	void Drawing::draw(Canvas& canvas) {
-		canvas.graphics->Clear(defaults.background);
+		canvas.graphics->Clear(background);
 
 		elements.draw(canvas);
 	}
 
 	json Drawing::to_json() {
 		return {
-			{"next_id", next_id},
-			{"defaults", defaults.to_json()},
+			{"background", color_to_json(background)},
 			{"elements", elements.to_json()}
 		};
 	}

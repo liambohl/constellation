@@ -18,7 +18,6 @@ namespace Constellation {
 		Gdiplus::Pen* wip_pen = nullptr;		// works in progress: elements currently being created by a tool
 		Gdiplus::Pen* tool_pen = nullptr;		// the cutting edge
 		Gdiplus::Brush* brush = nullptr;		// elements in the drawing
-		Gdiplus::Color background;				// "transparent" color shown where there are no elements
 
 		Defaults();
 		Defaults(json defaults_json);

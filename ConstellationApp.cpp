@@ -12,7 +12,7 @@ namespace Constellation {
     ConstellationApp::ConstellationApp() :
         canvas(1.0, 0.0, 0.0)
     {
-        current_tool = new ToolSelect(drawing);
+        set_tool(SELECT);
 
         // Get screen refresh rate and calculate refresh interval
         DEVMODEA* dm = new DEVMODEA();
@@ -93,21 +93,23 @@ namespace Constellation {
         }
     }
 
-    void ConstellationApp::set_tool_new_path() {
+    void ConstellationApp::set_tool(enum tool tool_type) {
         delete current_tool;
-        current_tool = new ToolNewPath(drawing);
-    }
-
-    void ConstellationApp::set_tool_select() {
-        delete current_tool;
-        current_tool = new ToolSelect(drawing);
+        switch (tool_type) {
+        case NEW_PATH:
+            current_tool = new ToolNewPath(defaults);
+            break;
+        case SELECT:
+            current_tool = new ToolSelect(defaults);
+            break;
+        }
     }
 
     // Cancel whatever the current tool is doing.
     // If the current tool is not in the middle of anything, then switch to the select tool
     void ConstellationApp::handle_escape() {
         if (!current_tool->handle_escape()) {
-            set_tool_select();
+            set_tool(SELECT);
         }
     }
 

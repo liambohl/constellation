@@ -1,16 +1,16 @@
 #pragma once
 #include "Action.h"
 #include "Canvas.h"
-#include "Drawing.h"
+#include "Defaults.h"
 
 namespace Constellation {
 		
 	class Tool
 	{
 	protected:
-		Drawing& drawing;
+		Defaults& defaults;
 
-		Tool(Drawing& drawing) : drawing(drawing) {}
+		Tool(Defaults& defaults) : defaults(defaults) {}
 
 	public:
 		// If an action is completed, return a pointer to that action. Else, return nullptr.
