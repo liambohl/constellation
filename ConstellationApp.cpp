@@ -7,8 +7,7 @@
 #include "ConstellationApp.h"
 #include "Logger.h"
 
-ConstellationApp::ConstellationApp() :
-    canvas(1.0, 0.0, 0.0)
+ConstellationApp::ConstellationApp()
 {
     set_tool(SELECT);
 
@@ -169,12 +168,17 @@ void ConstellationApp::reset_history() {
 }
 
 void ConstellationApp::handle_mouse_event(UINT message, WPARAM wParam, LPARAM lParam) {
-    int xPos = GET_X_LPARAM(lParam);
-    int yPos = GET_Y_LPARAM(lParam);
+    // Give the canvas a chance to handle the event. If it can't, the current tool should handle it.
+    if (canvas.handle_mouse_event(message, wParam, lParam))
+        return;
 
     Action* action = current_tool->handle_mouse_event(message, wParam, lParam);
     if (action != nullptr)
         do_action(action);
+}
+
+void ConstellationApp::handle_mouse_wheel_event(UINT message, WPARAM wParam, LPARAM lParam) {
+    canvas.handle_mouse_wheel_event(message, wParam, lParam);
 }
 
 void ConstellationApp::refresh_if_necessary() {

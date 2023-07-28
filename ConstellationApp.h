@@ -74,7 +74,7 @@ public:
 	void handle_escape();
 
 	void handle_mouse_event(UINT message, WPARAM wParam, LPARAM lParam);
-
+	void handle_mouse_wheel_event(UINT message, WPARAM wParam, LPARAM lParam);
 	void refresh_if_necessary();
 
 	// Does the current drawing have any unsaved changes?

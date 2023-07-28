@@ -6,27 +6,32 @@
 class Canvas
 {
 private:
+	void pan(int delta_x, int delta_y);
+	void zoom(float scale_factor, float x_pos, float y_pos);
+
 	PAINTSTRUCT ps;
-	HWND hWnd = nullptr;             // handle to the window
-	Gdiplus::Image* screen_buffer = nullptr;	 // Image that we draw to before drawing to the screen
+	HWND hWnd = nullptr;						// handle to the window
+	Gdiplus::Image* screen_buffer = nullptr;	// Image that we draw to before drawing to the screen
+
+	// Cursor position, in pixels, measured from top-left of client area, last time a mouse event was handled.
+	// Used for panning the view with middle mouse button drag.
+	int prev_x_pos = 0;
+	int prev_y_pos = 0;
 
 public:
-	double zoom = 1.0;               // Drawing pixels per window pixel
+	// If this canvas can handle the event, do so and return true. Else, return false.
+	bool handle_mouse_event(UINT message, WPARAM wParam, LPARAM lParam);
+	bool handle_mouse_wheel_event(UINT message, WPARAM wParam, LPARAM lParam);
 
-	// These values represent the point on the drawing where the window is "focused"
-	double offsetX = 0.0;            // X-position of center of window on canvas
-	double offsetY = 0.0;            // Y-position of center of window on canvas
-
-	LONG windowWidth = 0;            // in window pixels
-	LONG windowHeight = 0;           // in window pixels
-
-	HDC hdc = NULL;                  // Handle to device context; this is the window we paint to
-	Gdiplus::Graphics* graphics = nullptr;    // GDI+ graphics object we use to draw
-
-	Canvas(double zoom, double offsetX, double offsetY);
-	~Canvas();
-		
 	void begin_draw(HWND hWnd);
 	void finish_draw();
 	void redraw();
+
+	Gdiplus::Matrix transform;					// transformation from world space to page space
+
+	LONG windowWidth = 0;						// in window pixels
+	LONG windowHeight = 0;						// in window pixels
+
+	HDC hdc = NULL;								// Handle to device context; this is the window we paint to
+	Gdiplus::Graphics* graphics = nullptr;		// GDI+ graphics object we use to draw
 };

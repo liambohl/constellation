@@ -192,20 +192,31 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			application->draw(hWnd);
 			break;
 
+		// Mouse events
 		case WM_LBUTTONDOWN:
 		case WM_MBUTTONDOWN:
 		case WM_RBUTTONDOWN:
 			SetCapture(hWnd);	// On mouse button down, capture mouse input before handling event.
 			application->handle_mouse_event(message, wParam, lParam);
 			break;
+
 		case WM_MOUSEMOVE:
 			application->handle_mouse_event(message, wParam, lParam);
 			break;
+
 		case WM_LBUTTONUP:
 		case WM_MBUTTONUP:
 		case WM_RBUTTONUP:
 			application->handle_mouse_event(message, wParam, lParam);
 			ReleaseCapture();	// On mouse button up, release capture after handling event.
+			break;
+
+		// Mouse wheel events (also two-finger drag on trackpad)
+		// Separated from mouse events primarily because Windows provides cursor position
+		// in client coordinates for mouse events and window coordinates for mouse wheel events
+		case WM_MOUSEWHEEL:		// vertical
+		case WM_MOUSEHWHEEL:	// horizontal
+			application->handle_mouse_wheel_event(message, wParam, lParam);
 			break;
 
 		case WM_CLOSE:
