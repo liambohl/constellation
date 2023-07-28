@@ -49,15 +49,15 @@ Gdiplus::Brush* brush_from_json(json brush_json) {
 	}
 }
 
-json point_to_json(Gdiplus::Point point) {
+json point_to_json(Gdiplus::PointF point) {
 	return {
 		{"X", point.X},
 		{"Y", point.Y}
 	};
 }
 
-Gdiplus::Point point_from_json(json point_json) {
+Gdiplus::PointF point_from_json(json point_json) {
 	int X = point_json["X"];
 	int Y = point_json["Y"];
-	return Gdiplus::Point(X, Y);
+	return Gdiplus::PointF(X, Y);
 }

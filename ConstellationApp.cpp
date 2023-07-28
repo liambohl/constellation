@@ -172,17 +172,32 @@ void ConstellationApp::reset_history() {
 }
 
 void ConstellationApp::handle_mouse_event(UINT message, WPARAM wParam, LPARAM lParam) {
+    // Unpack parameters
+    int x_pos = GET_X_LPARAM(lParam);
+    int y_pos = GET_Y_LPARAM(lParam);
+    int key_state = GET_KEYSTATE_WPARAM(wParam);
+
     // Give the canvas a chance to handle the event. If it can't, the current tool should handle it.
-    if (canvas.handle_mouse_event(message, wParam, lParam))
+    if (canvas.handle_mouse_event(message, x_pos, y_pos, key_state))
         return;
 
-    Action* action = current_tool->handle_mouse_event(message, wParam, lParam);
+    // translate cursor position to world space before passing to tool
+    Gdiplus::PointF cursor_pos((float)x_pos, (float)y_pos);
+    canvas.page_to_world_coordinates(&cursor_pos);
+
+    Action* action = current_tool->handle_mouse_event(message, cursor_pos.X, cursor_pos.Y, key_state);
     if (action != nullptr)
         do_action(action);
 }
 
 void ConstellationApp::handle_mouse_wheel_event(UINT message, WPARAM wParam, LPARAM lParam) {
-    canvas.handle_mouse_wheel_event(message, wParam, lParam);
+    // Unpack parameters
+    int x_pos_window = GET_X_LPARAM(lParam);
+    int y_pos_window = GET_Y_LPARAM(lParam);
+    int key_state = GET_KEYSTATE_WPARAM(wParam);
+    int wheel_delta = GET_WHEEL_DELTA_WPARAM(wParam);
+
+    canvas.handle_mouse_wheel_event(message, x_pos_window, y_pos_window, key_state, wheel_delta);
 }
 
 void ConstellationApp::refresh_if_necessary() {

@@ -19,13 +19,13 @@ private:
 	Path* tool_path = nullptr;	// The last segment of path which we are editing and may or may not make it into the drawing
 	BezierState state = FIRST_DOWN;
 	int n_nodes = 0;			// number of nodes in wip_path
-	int next_node_x = 0;
-	int next_node_y = 0;
+	float next_node_x = 0;
+	float next_node_y = 0;
 
 public:
 	ToolNewPath(Defaults& defaults) : Tool(defaults) { }
 
-	Action* handle_mouse_event(UINT message, WPARAM wParam, LPARAM lParam);
+	Action* handle_mouse_event(UINT message, float x_pos, float y_pos, int key_state);
 	void draw(Canvas& canvas);
 
 	boolean undo() override;

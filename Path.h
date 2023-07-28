@@ -16,7 +16,7 @@ private:
     // Every third control point, starting with the first, is a point on the path.
     // The other points simply "pull" the curve toward them.
     // Thus, any path should have n=3k+1 points for some positive integer k.
-    std::vector<Gdiplus::Point> control_points;
+    std::vector<Gdiplus::PointF> control_points;
     INT n_points = 0;
 
 public:
@@ -28,10 +28,10 @@ public:
 
     json to_json() override;
 
-    void add_point(int xPos, int yPos, int count=1);
+    void add_point(float xPos, float yPos, int count=1);
     void add_points(Path& other);
     void pop_point(int count=1);
-    Gdiplus::Point top();
+    Gdiplus::PointF top();
 
     Gdiplus::Pen* pen;
 };

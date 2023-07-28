@@ -12,6 +12,8 @@ private:
 	PAINTSTRUCT ps;
 	HWND hWnd = nullptr;						// handle to the window
 	Gdiplus::Image* screen_buffer = nullptr;	// Image that we draw to before drawing to the screen
+	
+	Gdiplus::Matrix transform;					// transformation from world space to page space
 
 	// Cursor position, in pixels, measured from top-left of client area, last time a mouse event was handled.
 	// Used for panning the view with middle mouse button drag.
@@ -24,15 +26,15 @@ private:
 
 public:
 	// If this canvas can handle the event, do so and return true. Else, return false.
-	bool handle_mouse_event(UINT message, WPARAM wParam, LPARAM lParam);
-	bool handle_mouse_wheel_event(UINT message, WPARAM wParam, LPARAM lParam);
+	bool handle_mouse_event(UINT message, int x_pos, int y_pos, int key_state);
+	bool handle_mouse_wheel_event(UINT message, int x_pos_window, int y_pos_window, int key_state, int wheel_delta);
 
 	void resize(HWND hWnd, WPARAM wParam, LPARAM lParam);
 	void begin_draw(HWND hWnd);
 	void finish_draw();
 	void redraw();
 
-	Gdiplus::Matrix transform;					// transformation from world space to page space
+	void page_to_world_coordinates(Gdiplus::PointF* point_page);
 
 	LONG windowWidth = 0;						// in window pixels
 	LONG windowHeight = 0;						// in window pixels

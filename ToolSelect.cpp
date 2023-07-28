@@ -1,6 +1,6 @@
 #include "ToolSelect.h"
 
-Action* ToolSelect::handle_mouse_event(UINT message, WPARAM wParam, LPARAM lParam) {
+Action* ToolSelect::handle_mouse_event(UINT message, float x_pos, float y_pos, int key_state) {
 	return nullptr;
 }
 

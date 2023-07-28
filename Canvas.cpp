@@ -19,12 +19,7 @@ void Canvas::zoom(float scale_factor, float x_pos, float y_pos) {
 	transform.Translate(x_pos, y_pos, Gdiplus::MatrixOrderAppend);
 }
 
-bool Canvas::handle_mouse_event(UINT message, WPARAM wParam, LPARAM lParam) {
-	// Unpack parameters
-	int x_pos = GET_X_LPARAM(lParam);
-	int y_pos = GET_Y_LPARAM(lParam);
-	int key_state = GET_KEYSTATE_WPARAM(wParam);
-
+bool Canvas::handle_mouse_event(UINT message, int x_pos, int y_pos, int key_state) {
 	// Unpack key state
 	bool middle_button_down = key_state & MK_MBUTTON;
 
@@ -46,13 +41,7 @@ bool Canvas::handle_mouse_event(UINT message, WPARAM wParam, LPARAM lParam) {
 	return false;
 }
 
-bool Canvas::handle_mouse_wheel_event(UINT message, WPARAM wParam, LPARAM lParam) {
-	// Unpack parameters
-	int x_pos_window = GET_X_LPARAM(lParam);
-	int y_pos_window = GET_Y_LPARAM(lParam);
-	int key_state = GET_KEYSTATE_WPARAM(wParam);
-	int wheel_delta = GET_WHEEL_DELTA_WPARAM(wParam);
-
+bool Canvas::handle_mouse_wheel_event(UINT message, int x_pos_window, int y_pos_window, int key_state, int wheel_delta) {
 	// Unpack key state
 	bool shift_pressed = key_state & MK_SHIFT;
 	bool control_pressed = key_state & MK_CONTROL;
@@ -144,4 +133,10 @@ void Canvas::finish_draw() {
 
 void Canvas::redraw() {
 	InvalidateRect(hWnd, NULL, FALSE);
+}
+
+void Canvas::page_to_world_coordinates(Gdiplus::PointF* point_page) {
+	transform.Invert();
+	transform.TransformPoints(point_page);
+	transform.Invert();
 }

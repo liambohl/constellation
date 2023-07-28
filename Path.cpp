@@ -44,16 +44,16 @@ json Path::to_json() {
 	};
 
 	// Populate control points
-	for (Gdiplus::Point point : control_points) {
+	for (Gdiplus::PointF point : control_points) {
 		output["control_points"].push_back(point_to_json(point));
 	}
 
 	return output;
 }
 
-void Path::add_point(int xPos, int yPos, int count) {
+void Path::add_point(float xPos, float yPos, int count) {
 	for (int i = 0; i < count; ++i) {
-		control_points.push_back(Gdiplus::Point(xPos, yPos));
+		control_points.push_back(Gdiplus::PointF(xPos, yPos));
 		++n_points;
 	}
 }
@@ -73,6 +73,6 @@ void Path::pop_point(int count) {
 	}
 }
 
-Gdiplus::Point Path::top() {
+Gdiplus::PointF Path::top() {
 	return control_points.back();
 }
