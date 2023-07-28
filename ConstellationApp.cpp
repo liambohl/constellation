@@ -22,6 +22,10 @@ ConstellationApp::ConstellationApp()
     *Logger::get_instance() << "refresh interval: " << refresh_interval_ns << std::endl;
 }
 
+void ConstellationApp::resize(HWND hWnd, WPARAM wParam, LPARAM lParam) {
+    canvas.resize(hWnd, wParam, lParam);
+}
+
 void ConstellationApp::draw(HWND hWnd) {
     canvas.begin_draw(hWnd);
     drawing.draw(canvas);

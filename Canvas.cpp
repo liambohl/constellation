@@ -92,6 +92,30 @@ bool Canvas::handle_mouse_wheel_event(UINT message, WPARAM wParam, LPARAM lParam
 	return false;
 }
 
+void Canvas::resize(HWND hWnd, WPARAM wParam, LPARAM lParam) {
+	if (wParam != SIZE_MINIMIZED) {
+		int width = LOWORD(lParam);
+		int height = HIWORD(lParam);
+
+		*Logger::get_instance() << "rezising. width = " << width << ", height = " << height << std::endl;
+
+		// Keep drawing centered in the client area
+		pan((width - prev_width) / 2.0f, (height - prev_height) / 2.0f);
+
+		// Zoom to fill the same amount of the client area
+		if (prev_width != 0 && prev_height != 0) {
+			float scale_x = (float)width / prev_width;
+			float scale_y = (float)height / prev_height;
+			float scale = pow(scale_x * scale_y, 0.5);	// geometric mean
+			*Logger::get_instance() << "rezising. scale_x = " << scale_x << ", scale_y = " << scale_y << ", scale = " << scale << std::endl;
+			zoom(scale, width / 2.0f, height / 2.0f);
+		}
+
+		prev_width = width;
+		prev_height = height;
+	}
+}
+
 void Canvas::begin_draw(HWND hWnd) {
 	this->hWnd = hWnd;
 	hdc = BeginPaint(hWnd, &ps);

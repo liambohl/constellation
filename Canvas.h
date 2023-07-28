@@ -18,11 +18,16 @@ private:
 	int prev_x_pos = 0;
 	int prev_y_pos = 0;
 
+	// Window size, in pixels
+	int prev_width = 0;
+	int prev_height = 0;
+
 public:
 	// If this canvas can handle the event, do so and return true. Else, return false.
 	bool handle_mouse_event(UINT message, WPARAM wParam, LPARAM lParam);
 	bool handle_mouse_wheel_event(UINT message, WPARAM wParam, LPARAM lParam);
 
+	void resize(HWND hWnd, WPARAM wParam, LPARAM lParam);
 	void begin_draw(HWND hWnd);
 	void finish_draw();
 	void redraw();

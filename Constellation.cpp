@@ -188,10 +188,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			}
 		break;
 
-		case WM_PAINT:
-			application->draw(hWnd);
-			break;
-
 		// Mouse events
 		case WM_LBUTTONDOWN:
 		case WM_MBUTTONDOWN:
@@ -217,6 +213,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case WM_MOUSEWHEEL:		// vertical
 		case WM_MOUSEHWHEEL:	// horizontal
 			application->handle_mouse_wheel_event(message, wParam, lParam);
+			break;
+
+		case WM_SIZE:
+			application->resize(hWnd, wParam, lParam);
+			break;
+
+		case WM_PAINT:
+			application->draw(hWnd);
 			break;
 
 		case WM_CLOSE:

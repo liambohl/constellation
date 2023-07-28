@@ -56,6 +56,7 @@ public:
 
 	ConstellationApp();
 
+	void resize(HWND hWnd, WPARAM wParam, LPARAM lParam);
 	void draw(HWND hWnd);
 
 	// File menu
