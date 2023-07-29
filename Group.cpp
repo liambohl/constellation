@@ -17,9 +17,9 @@ Group::Group(json group_json) {
 	}
 }
 	
-void Group::draw(Canvas& canvas) {
+void Group::draw(Gdiplus::Graphics* graphics) {
 	for (std::shared_ptr<Element> element : elements) {
-		element->draw(canvas);
+		element->draw(graphics);
 	}
 }
 

@@ -28,8 +28,8 @@ void ConstellationApp::resize(HWND hWnd, WPARAM wParam, LPARAM lParam) {
 
 void ConstellationApp::draw(HWND hWnd) {
     canvas.begin_draw(hWnd);
-    drawing.draw(canvas);
-    current_tool->draw(canvas);
+    drawing.draw(canvas.graphics);
+    current_tool->draw(canvas.graphics);
     canvas.finish_draw();
 }
 

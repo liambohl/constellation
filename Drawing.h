@@ -1,8 +1,8 @@
 #pragma once
 #include <vector>
 
-#include "Canvas.h"
 #include "Element.h"
+#include "framework.h"
 #include "Group.h"
 #include "json.hpp"
 
@@ -15,7 +15,7 @@ public:
 	Drawing();
 	Drawing(json drawing_json);
 
-	void draw(Canvas& canvas);
+	void draw(Gdiplus::Graphics* graphics);
 
 	Gdiplus::RectF* get_bounding_box();
 

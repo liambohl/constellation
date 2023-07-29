@@ -1,9 +1,7 @@
 #pragma once
 #include<vector>
 
-#include "Canvas.h"
 #include "element.h"
-#include "framework.h"
 
 
 // Discribes a cubic Bezier curve or a sequence of cubic Bezier curves.
@@ -24,7 +22,7 @@ public:
     Path(json path_json);
     //Path(const Path& other);
     ~Path();
-    void draw(Canvas& canvas) override;
+    void draw(Gdiplus::Graphics* graphics) override;
     void get_bounding_box(Gdiplus::RectF** bounding_box);
 
     json to_json() override;

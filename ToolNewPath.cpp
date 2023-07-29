@@ -97,10 +97,10 @@ Action* ToolNewPath::handle_mouse_event(UINT message, float x_pos, float y_pos, 
 	return nullptr;
 }
 
-void ToolNewPath::draw(Canvas& canvas) {
+void ToolNewPath::draw(Gdiplus::Graphics* graphics) {
 	if (state != FIRST_DOWN) {
-		wip_path->draw(canvas);
-		tool_path->draw(canvas);
+		wip_path->draw(graphics);
+		tool_path->draw(graphics);
 	}
 }
 

@@ -5,11 +5,11 @@
 #include <shobjidl.h>	// For IShellItem
 
 #include "Action.h"
+#include "Canvas.h"
 #include "Defaults.h"
 #include "Drawing.h"
 #include "file.h"
 #include "Tool.h"
-#include "Path.h"
 
 class ConstellationApp
 {

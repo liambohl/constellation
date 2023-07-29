@@ -24,7 +24,7 @@ Path::~Path() {
 	delete pen;
 }
 
-void Path::draw(Canvas& canvas) {
+void Path::draw(Gdiplus::Graphics* graphics) {
 	if (n_points < 4)
 		return;
 
@@ -33,7 +33,7 @@ void Path::draw(Canvas& canvas) {
 		*Logger::get_instance() << '(' << point.X << ", " << point.Y << ')' << std::endl;
 	}
 
-	canvas.graphics->DrawBeziers(pen, control_points.data(), n_points);
+	graphics->DrawBeziers(pen, control_points.data(), n_points);
 }
 
 void Path::get_bounding_box(Gdiplus::RectF** bounding_box) {

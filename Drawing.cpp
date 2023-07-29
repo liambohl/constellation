@@ -12,10 +12,10 @@ Drawing::Drawing(json drawing_json) :
 {}
 
 // Draw this drawing to the window
-void Drawing::draw(Canvas& canvas) {
-	canvas.graphics->Clear(background);
+void Drawing::draw(Gdiplus::Graphics* graphics) {
+	graphics->Clear(background);
 
-	elements.draw(canvas);
+	elements.draw(graphics);
 }
 
 Gdiplus::RectF* Drawing::get_bounding_box() {

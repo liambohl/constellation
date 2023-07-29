@@ -4,6 +4,6 @@ Action* ToolSelect::handle_mouse_event(UINT message, float x_pos, float y_pos, i
 	return nullptr;
 }
 
-void ToolSelect::draw(Canvas& canvas) {
+void ToolSelect::draw(Gdiplus::Graphics* graphics) {
 
 }

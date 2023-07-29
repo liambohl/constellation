@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "Element.h"
+#include "framework.h"
 
 class Group :
 	public Element
@@ -12,7 +13,7 @@ public:
 	Group() {}
 	Group(json group_json);
 
-	void draw(Canvas& canvas) override;
+	void draw(Gdiplus::Graphics* graphics) override;
 	void get_bounding_box(Gdiplus::RectF** bounding_box);
 
 	json to_json() override;
