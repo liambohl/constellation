@@ -25,6 +25,7 @@ public:
     //Path(const Path& other);
     ~Path();
     void draw(Canvas& canvas) override;
+    void get_bounding_box(Gdiplus::RectF** bounding_box);
 
     json to_json() override;
 

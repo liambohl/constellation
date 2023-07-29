@@ -23,6 +23,12 @@ void Group::draw(Canvas& canvas) {
 	}
 }
 
+void Group::get_bounding_box(Gdiplus::RectF** bounding_box) {
+	for (std::shared_ptr<Element> el : elements) {
+		el->get_bounding_box(bounding_box);
+	}
+}
+
 json Group::to_json() {
 	json output = {
 		{"type", "Group"},

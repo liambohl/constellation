@@ -9,7 +9,8 @@ class Element
 {
 public:
 	virtual void draw(Canvas& canvas) = 0;
-		
+	virtual void get_bounding_box(Gdiplus::RectF** bounding_box) = 0;
+
 	virtual json to_json() = 0;
 
 protected:

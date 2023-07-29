@@ -36,6 +36,21 @@ void Path::draw(Canvas& canvas) {
 	canvas.graphics->DrawBeziers(pen, control_points.data(), n_points);
 }
 
+void Path::get_bounding_box(Gdiplus::RectF** bounding_box) {
+	if (n_points == 0)
+		return;
+
+	if (*bounding_box == nullptr)
+		*bounding_box = new Gdiplus::RectF(control_points[0].X, control_points[0].Y, 0, 0);
+
+	for (Gdiplus::PointF point : control_points) {
+		(**bounding_box).X = min((**bounding_box).X, point.X);
+		(**bounding_box).Y = min((**bounding_box).Y, point.Y);
+		(**bounding_box).Width = max((**bounding_box).Width, point.X - (**bounding_box).X);
+		(**bounding_box).Height = max((**bounding_box).Height, point.Y - (**bounding_box).Y);
+	}
+}
+
 json Path::to_json() {
 	json output = {
 		{"type", "Path"},

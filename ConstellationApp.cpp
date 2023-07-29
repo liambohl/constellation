@@ -37,6 +37,7 @@ void ConstellationApp::new_drawing() {
     drawing_file_path = nullptr;
     drawing_folder = nullptr;
     drawing = Drawing();
+    canvas.reset_transform();
     reset_unsaved_changes();
     reset_history();
     *Logger::get_instance() << "New file" << std::endl;
@@ -149,7 +150,7 @@ void ConstellationApp::open_file() {
     drawing = Drawing(drawing_json);
     stream.close();
 
-    // TODO: reset canvas
+    canvas.fit_drawing(drawing.get_bounding_box());
     reset_unsaved_changes();
     reset_history();
 }

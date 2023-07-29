@@ -18,6 +18,16 @@ void Drawing::draw(Canvas& canvas) {
 	elements.draw(canvas);
 }
 
+Gdiplus::RectF* Drawing::get_bounding_box() {
+	Gdiplus::RectF* bounding_box = nullptr;
+	elements.get_bounding_box(&bounding_box);
+	*Logger::get_instance() << "bounding box (x, y, width, height) = ("
+		<< bounding_box->X << ", " << bounding_box->Y << ", "
+		<< bounding_box->Width << ", " << bounding_box->Height
+		<< ")" << std::endl;
+	return bounding_box;
+}
+
 json Drawing::to_json() {
 	return {
 		{"background", color_to_json(background)},

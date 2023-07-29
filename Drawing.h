@@ -17,6 +17,8 @@ public:
 
 	void draw(Canvas& canvas);
 
+	Gdiplus::RectF* get_bounding_box();
+
 	json to_json();
 
 	// Pattern pattern;

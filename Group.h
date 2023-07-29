@@ -13,6 +13,7 @@ public:
 	Group(json group_json);
 
 	void draw(Canvas& canvas) override;
+	void get_bounding_box(Gdiplus::RectF** bounding_box);
 
 	json to_json() override;
 
