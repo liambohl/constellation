@@ -149,6 +149,8 @@ boolean ToolNewPath::undo() {
 			state = SECOND_DOWN;
 		return true;
 	}
+	default:	// This should never execute, since all possible values of state are handled
+		return false;
 	}
 }
 

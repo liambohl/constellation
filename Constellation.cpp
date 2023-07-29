@@ -243,6 +243,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	// Log all errors to errors.log
 	catch (std::exception e) {
 		Logger::get_instance()->log(e.what());
+		return 1;
 	}
 }
 
