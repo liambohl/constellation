@@ -4,12 +4,12 @@
 
 #include <shobjidl.h>	// For IShellItem
 
-#include "Action.h"
+#include "actions/Action.h"
 #include "Canvas.h"
 #include "Defaults.h"
-#include "Drawing.h"
+#include "drawing/Drawing.h"
 #include "file.h"
-#include "Tool.h"
+#include "tools/Tool.h"
 
 class ConstellationApp
 {

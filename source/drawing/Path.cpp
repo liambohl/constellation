@@ -1,7 +1,7 @@
 #include <string>
 
 #include "json_converters.h"
-#include "Logger.h"
+#include "core/Logger.h"
 #include "Path.h"
 
 Path::Path(json path_json):

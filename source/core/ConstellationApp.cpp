@@ -2,8 +2,8 @@
 #include <thread>
 #include <windowsx.h>
 
-#include "ToolNewPath.h"
-#include "ToolSelect.h"
+#include "tools/ToolNewPath.h"
+#include "tools/ToolSelect.h"
 #include "ConstellationApp.h"
 #include "Logger.h"
 

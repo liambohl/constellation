@@ -17,5 +17,7 @@ float CompoundExpression::substitute(std::unordered_map<std::string, float> map)
 		return sub_left * sub_right;
 	case '/':
 		return sub_left / sub_right;
+	default:
+		throw std::exception("Invalid operation");
 	}
 }

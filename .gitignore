@@ -1,9 +1,11 @@
 .vs
 x64
 
-Constellation.aps
-Constellation.sln
-Constellation.vcxproj
-Constellation.vcxproj.*
+*.aps
+*.sln
+*/*.vcxproj
+*/*.vcxproj.*
+
 *.log
+packages
 samples

@@ -1,8 +1,5 @@
 #pragma once
 #include "framework.h"
-#include "json.hpp"
-
-using json = nlohmann::json;
 
 class Defaults
 {
@@ -18,7 +15,4 @@ public:
 	Gdiplus::Brush* brush = nullptr;		// elements in the drawing
 
 	Defaults();
-	Defaults(json defaults_json);
-
-	json to_json();
 };

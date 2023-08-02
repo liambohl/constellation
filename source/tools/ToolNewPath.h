@@ -1,6 +1,6 @@
 #pragma once
 #include "Tool.h"
-#include "Path.h"
+#include "drawing/Path.h"
 
 class ToolNewPath :
 	public Tool

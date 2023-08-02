@@ -1,6 +1,6 @@
 #pragma once
-#include "Action.h"
-#include "Defaults.h"
+#include "actions/Action.h"
+#include "core/Defaults.h"
 
 class Tool
 {
