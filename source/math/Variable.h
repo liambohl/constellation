@@ -7,7 +7,9 @@ class Variable :
 public:
     Variable(std::string name) : name(name) {}
 
-    float substitute(std::unordered_map<std::string, float> map) { return map[name]; }
+    float substitute(const std::unordered_map<std::string, float>& map) { return map.at(name); }
+    
+    std::ostream& insert(std::ostream& os) const { return os << name; }
 
 private:
     std::string name;

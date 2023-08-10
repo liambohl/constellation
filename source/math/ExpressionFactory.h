@@ -10,6 +10,6 @@ public:
 	// Examples: "3.14159", "v1_x + v2_x", "1 / x * 2 + y", "7.5 / -2.5"
 	// Order of operations: * and /, then + and -. Left-to-right.
 	// Unsupported: unary negation of variables, e.g. "-x", juxtaposition, e.g. "5x", parentheses
-	Expression* parse(const std::string& s);
+	std::shared_ptr<Expression> parse(const std::string& s);
 };
 

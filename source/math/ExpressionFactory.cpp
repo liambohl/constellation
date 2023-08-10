@@ -5,7 +5,7 @@
 
 #define max(a,b) (((a) > (b)) ? (a) : (b))
 
-Expression* ExpressionFactory::parse(const std::string& s) {
+std::shared_ptr<Expression> ExpressionFactory::parse(const std::string& s) {
 	size_t last_op;	// Index of the last operator at a given level of precedence
 
 	// Scan for + or -
@@ -21,9 +21,9 @@ Expression* ExpressionFactory::parse(const std::string& s) {
 		last_op = std::string::npos;
 
 	if (last_op != std::string::npos) {
-		Expression* left = parse(s.substr(0, last_op));
-		Expression* right = parse(s.substr(last_op + 3));
-		return new CompoundExpression(left, s[last_op + 1], right);
+		std::shared_ptr<Expression> left = parse(s.substr(0, last_op));
+		std::shared_ptr<Expression> right = parse(s.substr(last_op + 3));
+		return std::make_shared<CompoundExpression>(left, s[last_op + 1], right);
 	}
 
 	// Scan for * or /
@@ -39,15 +39,15 @@ Expression* ExpressionFactory::parse(const std::string& s) {
 		last_op = std::string::npos;
 
 	if (last_op != std::string::npos) {
-		Expression* left = parse(s.substr(0, last_op));
-		Expression* right = parse(s.substr(last_op + 3));
-		return new CompoundExpression(left, s[last_op + 1], right);
+		std::shared_ptr<Expression> left = parse(s.substr(0, last_op));
+		std::shared_ptr<Expression> right = parse(s.substr(last_op + 3));
+		return std::make_shared<CompoundExpression>(left, s[last_op + 1], right);
 	}
 
 	// Try to make a variable
 	if (isalpha(s[0]))
-		return new Variable(s);
+		return std::make_shared<Variable>(s);
 
 	// Try to make a value
-	return new Value(std::stof(s));
+	return std::make_shared<Value>(std::stof(s));
 }

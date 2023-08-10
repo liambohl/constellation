@@ -1,11 +1,7 @@
 #include "CompoundExpression.h"
 
-CompoundExpression::~CompoundExpression() {
-	delete left;
-	delete right;
-}
 
-float CompoundExpression::substitute(std::unordered_map<std::string, float> map) {
+float CompoundExpression::substitute(const std::unordered_map<std::string, float>& map) {
 	float sub_left = left->substitute(map);
 	float sub_right = right->substitute(map);
 	switch (op) {
@@ -20,4 +16,11 @@ float CompoundExpression::substitute(std::unordered_map<std::string, float> map)
 	default:
 		throw std::exception("Invalid operation");
 	}
+}
+
+std::ostream& CompoundExpression::insert(std::ostream& os) const {
+	left->insert(os);
+	os << " " << op << " ";
+	right->insert(os);
+	return os;
 }
