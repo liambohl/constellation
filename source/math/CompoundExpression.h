@@ -14,7 +14,7 @@ public:
 		right(right)
 	{}
 
-	float substitute(const std::unordered_map<std::string, float>& map);
+	float evaluate(const std::unordered_map<std::string, float>& map);
 
 	std::ostream& insert(std::ostream& os) const;
 

@@ -1,9 +1,9 @@
 #include "CompoundExpression.h"
 
 
-float CompoundExpression::substitute(const std::unordered_map<std::string, float>& map) {
-	float sub_left = left->substitute(map);
-	float sub_right = right->substitute(map);
+float CompoundExpression::evaluate(const std::unordered_map<std::string, float>& map) {
+	float sub_left = left->evaluate(map);
+	float sub_right = right->evaluate(map);
 	switch (op) {
 	case '+':
 		return sub_left + sub_right;

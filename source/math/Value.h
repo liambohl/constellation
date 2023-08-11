@@ -7,7 +7,7 @@ class Value :
 public:
     Value(float value) : value(value) {}
 
-    float substitute(const std::unordered_map<std::string, float>& map) { return value; }
+    float evaluate(const std::unordered_map<std::string, float>& map) { return value; }
     
     std::ostream& insert(std::ostream& os) const { return os << value; }
 

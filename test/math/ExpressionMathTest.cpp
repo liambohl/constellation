@@ -11,8 +11,8 @@ TEST(ExpressionMathTest, adds_and_multiplies_constants) {
 	c = factory.parse("5");
 	d = factory.parse("1");
 	result = a * b + c * d;
-	EXPECT_EQ(result->substitute({}), 12005);
-	EXPECT_NE(result->substitute({}), 1000);
+	EXPECT_EQ(result->evaluate(), 12005.0f);
+	EXPECT_NE(result->evaluate(), 1000.0f);
 }
 
 TEST(ExpressionMathTest, adds_and_multiplies_variables) {
@@ -23,5 +23,5 @@ TEST(ExpressionMathTest, adds_and_multiplies_variables) {
 	c = factory.parse("5");
 	d = factory.parse("y");
 	result = a * b + c * d;
-	EXPECT_EQ(result->substitute({ {"x", 1}, {"y", 1000} }), 5012);
+	EXPECT_EQ(result->evaluate({ {"x", 1.0f}, {"y", 1000.0f} }), 5012.0f);
 }

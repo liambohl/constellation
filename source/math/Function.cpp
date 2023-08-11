@@ -7,8 +7,8 @@ float degrees_to_radians(float angle) {
 	return (float)(angle * std::numbers::pi / 180);
 }
 
-float Function::substitute(const std::unordered_map<std::string, float>& map) {
-	float argument_value = argument->substitute(map);
+float Function::evaluate(const std::unordered_map<std::string, float>& map) {
+	float argument_value = argument->evaluate(map);
 
 	if (function == "sin")
 		return sin(degrees_to_radians(argument_value));
