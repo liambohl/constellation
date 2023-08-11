@@ -1,5 +1,6 @@
 #include "ExpressionFactory.h"
 #include "CompoundExpression.h"
+#include "Function.h"
 #include "Value.h"
 #include "Variable.h"
 
@@ -8,40 +9,44 @@
 std::shared_ptr<Expression> ExpressionFactory::parse(const std::string& s) {
 	size_t last_op;	// Index of the last operator at a given level of precedence
 
-	// Scan for + or -
-	size_t last_add = s.rfind(" + ");
-	size_t last_subtract = s.rfind(" - ");
-	if (last_add != std::string::npos && last_subtract != std::string::npos)
-		last_op = max(last_add, last_subtract);
-	else if (last_add != std::string::npos)
-		last_op = last_add;
-	else if (last_subtract != std::string::npos)
-		last_op = last_subtract;
-	else
-		last_op = std::string::npos;
-
+	// + or -
+	last_op = find_last_outside_parentheses(s, " + ", " - ");
 	if (last_op != std::string::npos) {
 		std::shared_ptr<Expression> left = parse(s.substr(0, last_op));
 		std::shared_ptr<Expression> right = parse(s.substr(last_op + 3));
 		return std::make_shared<CompoundExpression>(left, s[last_op + 1], right);
 	}
 
-	// Scan for * or /
-	size_t last_multiply = s.rfind(" * ");
-	size_t last_divide = s.rfind(" / ");
-	if (last_multiply != std::string::npos && last_divide != std::string::npos)
-		last_op = max(last_multiply, last_divide);
-	else if (last_multiply != std::string::npos)
-		last_op = last_multiply;
-	else if (last_divide != std::string::npos)
-		last_op = last_divide;
-	else
-		last_op = std::string::npos;
-
+	// * or /
+	last_op = find_last_outside_parentheses(s, " * ", " / ");
 	if (last_op != std::string::npos) {
 		std::shared_ptr<Expression> left = parse(s.substr(0, last_op));
 		std::shared_ptr<Expression> right = parse(s.substr(last_op + 3));
 		return std::make_shared<CompoundExpression>(left, s[last_op + 1], right);
+	}
+
+	// negation
+	if (s[0] == '-') {
+		// negative value
+		if (isdigit(s[1]))
+			return std::make_shared<Value>(std::stof(s));
+		// negated expression
+		else
+			return std::make_shared<CompoundExpression>(std::make_shared<Value>(-1.0f), '*', parse(s.substr(1)));
+	}
+
+	// functions and parentheses
+	if (s[s.length() - 1] == ')') {
+		// functions
+		if (isalpha(s[0])) {
+			size_t left_paren = s.find('(');
+			std::string function = s.substr(0, left_paren);
+			std::string argument = s.substr(left_paren + 1, s.length() - left_paren - 2);
+			return std::make_shared<Function>(function, parse(argument));
+		}
+
+		// parentheses
+		return parse(s.substr(1, s.length() - 2));
 	}
 
 	// Try to make a variable
@@ -50,4 +55,26 @@ std::shared_ptr<Expression> ExpressionFactory::parse(const std::string& s) {
 
 	// Try to make a value
 	return std::make_shared<Value>(std::stof(s));
+}
+
+// Assumption: the given substrings are the same length
+size_t ExpressionFactory::find_last_outside_parentheses(const std::string& s, const std::string& sub_a, const std::string& sub_b) {
+	int paren_level = 0;	// number of nested parenthese level we are currently inside
+	size_t length = s.length();
+	size_t sub_length = sub_a.length();
+
+	// Look backward through the string for instances of substring outside parentheses
+	for (size_t i = length - 1; i >= sub_length - 1; --i) {
+		if (s[i] == ')')
+			++paren_level;
+		else if (s[i] == '(')
+			--paren_level;
+		else if (paren_level == 0) {
+			std::string substring = s.substr(i - sub_length + 1, sub_length);
+			if (substring == sub_a || substring == sub_b)
+				return i - sub_length + 1;	// found it!
+		}
+	}
+
+	return std::string::npos;
 }

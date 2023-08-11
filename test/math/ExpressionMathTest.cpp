@@ -1,5 +1,3 @@
-#include <stdio.h>
-
 #include "pch.h"
 
 #include "math/expression_math.h"
