@@ -132,7 +132,7 @@ void Canvas::begin_draw(HWND hWnd) {
 		graphics->SetSmoothingMode(Gdiplus::SmoothingModeAntiAlias8x8);
 	}
 	catch (std::exception e) {
-		Logger::get_instance()->log(e.what());
+		*Logger::get_instance() << e.what();
 	}
 }
 

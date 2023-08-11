@@ -2,8 +2,6 @@
 #include <iomanip>
 
 
-const PCSTR Logger::filename = "errors.log";
-
 Logger* Logger::instance = new Logger();
 
 Logger* Logger::get_instance() {
@@ -18,10 +16,6 @@ Logger::~Logger() {
 	file.close();
 }
 
-void Logger::log(std::string s) {
-	file << s << std::endl;
-}
-
 void Logger::log_message(UINT message) {
 	PCSTR message_text;
 	try {
@@ -32,6 +26,21 @@ void Logger::log_message(UINT message) {
 	}
 
 	file << std::setw(3) << message << ' ' << message_text << std::endl;
+}
+
+Logger& Logger::operator<< (wchar_t* val) {
+	std::wstring wide(val);
+#pragma warning(push)
+#pragma warning(disable: 4244)
+	std::string narrow(wide.begin(), wide.end());	// This is only safe for ASCII and that's okay with me
+#pragma warning(pop)
+	file << narrow;
+	return *this;
+}
+
+Logger& Logger::operator<<(std::ostream& (*manip)(std::ostream&)) {
+	file << manip;
+	return *this;
 }
 
 const std::map<int, PCSTR> Logger::message_codes{
