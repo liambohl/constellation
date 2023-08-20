@@ -18,16 +18,16 @@ public:
 	SymbolicMatrix();
 
 	// A matrix representing a translation by (dx, dy)
-	static SymbolicMatrix* translate(SymbolicPoint point);
+	static SymbolicMatrix translate(SymbolicPoint point);
 
 	// A matrix representing a rotation of theta degrees counter-clockwise around a given point
-	static SymbolicMatrix* rotate(float theta, SymbolicPoint point = SymbolicPoint(0.0f, 0.0f));
+	static SymbolicMatrix rotate(float theta, SymbolicPoint point = SymbolicPoint(0.0f, 0.0f));
 
 	// A matrix representing a reflex
-	static SymbolicMatrix* reflect(SymbolicLine line);
+	static SymbolicMatrix reflect(SymbolicLine line);
 
 	// Substitute each variable in the matrix with a number
-	std::shared_ptr<Gdiplus::Matrix> evaluate(const std::unordered_map<std::string, float>& map = {});
+	Gdiplus::Matrix evaluate(const std::unordered_map<std::string, float>& map = {});
 
 private:
 	// Just like subscripting the matrix itself, subscripting this class gives a reference to a row of the matrix. 

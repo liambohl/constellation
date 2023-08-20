@@ -20,37 +20,37 @@ SymbolicMatrix::SymbolicMatrix() {
 	matrix[2][2] = std::make_shared<Value>(1.0f);
 }
 
-SymbolicMatrix* SymbolicMatrix::translate(SymbolicPoint point) {
-	auto m = new SymbolicMatrix();
-	(*m)[2][0] = point.x;
-	(*m)[2][1] = point.y;
+SymbolicMatrix SymbolicMatrix::translate(SymbolicPoint point) {
+	SymbolicMatrix m;
+	m[2][0] = point.x;
+	m[2][1] = point.y;
 	return m;
 }
 
 // ⎡ cos(θ)   -sin(θ)   -cos(θ) * x + x + sin(θ) * y ⎤
 // ⎢ sin(θ)    cos(θ)   -sin(θ) * x - cos(θ) * y + y ⎥
 // ⎣      0         0                              1 ⎦
-SymbolicMatrix* SymbolicMatrix::rotate(float theta, SymbolicPoint point) {
+SymbolicMatrix SymbolicMatrix::rotate(float theta, SymbolicPoint point) {
 	theta *= (float)std::numbers::pi / 180.0f;	// Convert from degrees to radians
 	auto sin_theta = std::make_shared<Value>((float)sin(theta));
 	auto cos_theta = std::make_shared<Value>((float)cos(theta));
 	auto x = point.x;
 	auto y = point.y;
 	
-	auto m = new SymbolicMatrix();
-	(*m)[0][0] = cos_theta;
-	(*m)[0][1] = sin_theta;
-	(*m)[1][0] = -sin_theta;
-	(*m)[1][1] = cos_theta;
-	(*m)[2][0] = -cos_theta * x + x + sin_theta * y;
-	(*m)[2][1] = -sin_theta * x - cos_theta * y + y;
+	SymbolicMatrix m;
+	m[0][0] = cos_theta;
+	m[0][1] = sin_theta;
+	m[1][0] = -sin_theta;
+	m[1][1] = cos_theta;
+	m[2][0] = -cos_theta * x + x + sin_theta * y;
+	m[2][1] = -sin_theta * x - cos_theta * y + y;
 	return m;
 }
 
 //        2      ⎡ A²  AB  AC ⎤
 // I - ------- * ⎢ AB  B²  BC ⎥
 //     A² + B²   ⎣  0   0   0 ⎦
-SymbolicMatrix* SymbolicMatrix::reflect(SymbolicLine line) {
+SymbolicMatrix SymbolicMatrix::reflect(SymbolicLine line) {
 	auto x1 = line.p1.x;
 	auto y1 = line.p1.y;
 	auto x2 = line.p2.x;
@@ -64,24 +64,24 @@ SymbolicMatrix* SymbolicMatrix::reflect(SymbolicLine line) {
 	// See comment above function
 	auto common_factor = -2.0f / (A*A + B*B);
 
-	auto m = new SymbolicMatrix();
-	(*m)[0][0] = 1.0f + A * A * common_factor;
-	(*m)[0][1] = A * B * common_factor;
-	(*m)[1][0] = A * B * common_factor;
-	(*m)[1][1] = 1.0f + B * B * common_factor; 
-	(*m)[2][0] = A * C * common_factor;
-	(*m)[2][1] = B * C * common_factor;
+	SymbolicMatrix m;
+	m[0][0] = 1.0f + A * A * common_factor;
+	m[0][1] = A * B * common_factor;
+	m[1][0] = A * B * common_factor;
+	m[1][1] = 1.0f + B * B * common_factor; 
+	m[2][0] = A * C * common_factor;
+	m[2][1] = B * C * common_factor;
 	return m;
 }
 
-std::shared_ptr<Gdiplus::Matrix> SymbolicMatrix::evaluate(const std::unordered_map<std::string, float>& map) {
+Gdiplus::Matrix SymbolicMatrix::evaluate(const std::unordered_map<std::string, float>& map) {
 	float m11 = matrix[0][0]->evaluate(map);
 	float m12 = matrix[0][1]->evaluate(map);
 	float m21 = matrix[1][0]->evaluate(map);
 	float m22 = matrix[1][1]->evaluate(map);
 	float dx  = matrix[2][0]->evaluate(map);
 	float dy  = matrix[2][1]->evaluate(map);
-	return std::make_shared<Gdiplus::Matrix>(m11, m12, m21, m22, dx, dy);
+	return Gdiplus::Matrix(m11, m12, m21, m22, dx, dy);
 }
 
 std::ostream& operator<<(std::ostream& os, const SymbolicMatrix& transform) {
