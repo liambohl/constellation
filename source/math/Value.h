@@ -13,4 +13,5 @@ public:
 
 private:
     float value;
+    friend std::shared_ptr<Value> operator-(std::shared_ptr<Value> e);
 };
