@@ -14,10 +14,17 @@ class WallpaperGroup :
 	public SymmetryGroup
 {
 public:
+	WallpaperGroup() = delete;
+
 	// Get the set of affine transforms necessary to tessalate a region.
 	// The tiled region is a parallelogram of (2 * extent + 1) x (2 * extent + 1) cells.
 	// Each matrix is an affine transformation that should be applied to each element of the drawing.
 	std::vector<Gdiplus::Matrix*> tessalate() override;
+
+	// Set v1 and ensure that v2 maintains this wallpaper group's shape
+	void set_v1(float x, float y);
+	// Set v2 and ensure that v1 maintains this wallpaper group's shape
+	void set_v2(float x, float y);
 
 private:
 	enum shape {
@@ -28,7 +35,7 @@ private:
 		SQUARE
 	};
 
-	WallpaperGroup() {}
+	WallpaperGroup(std::string name) : SymmetryGroup(name) {}
 
 	// After drawing one or more rotated, mirrored, and glide-mirrored
 	// copies of the fundamental domain to form a cell,
@@ -50,5 +57,5 @@ private:
 	// This set always includes the identity.
 	std::vector<SymbolicMatrix> cell = { SymbolicMatrix() };
 
-	friend class WallpaperGroupFactory;
+	friend class SymmetryGroupFactory;
 };

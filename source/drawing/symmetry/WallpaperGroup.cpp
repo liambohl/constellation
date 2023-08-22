@@ -1,6 +1,8 @@
 #include "WallpaperGroup.h"
 
-#include <algorithm>
+#include <cmath>
+#include <numbers>
+
 
 std::vector<Gdiplus::Matrix*> WallpaperGroup::tessalate() {
 	std::vector<Gdiplus::Matrix*> transforms;
@@ -29,4 +31,72 @@ std::vector<Gdiplus::Matrix*> WallpaperGroup::tessalate() {
 	}
 
 	return transforms;
+}
+
+void WallpaperGroup::set_v1(float x, float y) {
+	v1_x = x;
+	v1_y = y;
+
+	float v2_length = std::sqrt(v2_x * v2_x + v2_y * v2_y);
+	float v2_direction = std::atan2(v2_y, v2_x);
+
+	switch (cell_shape) {
+	case PARALLELOGRAM:
+		break;
+	case RECTANGLE:
+		// make v2 perpendicular to v1
+		v2_direction = std::atan2(v1_y, v1_x) + std::numbers::pi;
+		break;
+	case RHOMBUS:
+		// make v2 equal in length to v1
+		v2_length = std::sqrt(v1_x * v1_x + v1_y * v1_y);
+		break;
+	case DIAMOND:
+		// make v2 equal in length and 60 degrees counter-clockwise from v1
+		v2_length = std::sqrt(v1_x * v1_x + v1_y * v1_y);
+		v2_direction = std::atan2(v1_y, v1_x) + 2 / 3 * std::numbers::pi;
+		break;
+	case SQUARE:
+		// make v2 equal in length and 90 degrees counter-clockwise from v1
+		v2_length = std::sqrt(v1_x * v1_x + v1_y * v1_y);
+		v2_direction = std::atan2(v1_y, v1_x) + std::numbers::pi;
+		break;
+	}
+
+	v2_x = v2_length * std::cos(v2_direction);
+	v2_y = v2_length * std::sin(v2_direction);
+}
+
+void WallpaperGroup::set_v2(float x, float y) {
+	v2_x = x;
+	v2_y = y;
+
+	float v1_length = std::sqrt(v1_x * v1_x + v1_y * v1_y);
+	float v1_direction = std::atan2(v1_y, v1_x);
+
+	switch (cell_shape) {
+	case PARALLELOGRAM:
+		break;
+	case RECTANGLE:
+		// make v1 perpendicular to v2
+		v1_direction = std::atan2(v2_y, v2_x) + std::numbers::pi;
+		break;
+	case RHOMBUS:
+		// make v1 equal in length to v2
+		v1_length = std::sqrt(v2_x * v2_x + v2_y * v2_y);
+		break;
+	case DIAMOND:
+		// make v1 equal in length and 60 degrees counter-clockwise from v2
+		v1_length = std::sqrt(v2_x * v2_x + v2_y * v2_y);
+		v1_direction = std::atan2(v2_y, v2_x) + 2 / 3 * std::numbers::pi;
+		break;
+	case SQUARE:
+		// make v1 equal in length and 90 degrees counter-clockwise from v2
+		v1_length = std::sqrt(v2_x * v2_x + v2_y * v2_y);
+		v1_direction = std::atan2(v2_y, v2_x) + std::numbers::pi;
+		break;
+	}
+
+	v1_x = v1_length * std::cos(v1_direction);
+	v1_y = v1_length * std::sin(v1_direction);
 }
