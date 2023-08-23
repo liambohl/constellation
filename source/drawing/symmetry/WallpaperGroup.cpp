@@ -4,9 +4,7 @@
 #include <numbers>
 
 
-std::vector<Gdiplus::Matrix*> WallpaperGroup::tessalate() {
-	std::vector<Gdiplus::Matrix*> transforms;
-
+void WallpaperGroup::update_transforms() {
 	// Evaluate the cell with the current v1 and v2
 	std::unordered_map<std::string, float> vectors = { {"v1_x", v1_x}, {"v1_y", v1_y}, {"v2_x", v2_x}, {"v2_y", v2_y} };
 	std::vector<Gdiplus::Matrix*> cell_evaluated;
@@ -29,8 +27,6 @@ std::vector<Gdiplus::Matrix*> WallpaperGroup::tessalate() {
 			}
 		}
 	}
-
-	return transforms;
 }
 
 void WallpaperGroup::set_v1(float x, float y) {
@@ -65,6 +61,8 @@ void WallpaperGroup::set_v1(float x, float y) {
 
 	v2_x = v2_length * std::cos(v2_direction);
 	v2_y = v2_length * std::sin(v2_direction);
+
+	update_transforms();
 }
 
 void WallpaperGroup::set_v2(float x, float y) {
@@ -99,4 +97,11 @@ void WallpaperGroup::set_v2(float x, float y) {
 
 	v1_x = v1_length * std::cos(v1_direction);
 	v1_y = v1_length * std::sin(v1_direction);
+
+	update_transforms();
+}
+
+void WallpaperGroup::set_extent(int extent) {
+	this->extent = extent;
+	update_transforms();
 }

@@ -9,7 +9,6 @@
 #include "framework.h"
 #include "Initializer.h"
 #include "Logger.h"
-#include "SelectSymmetry.h"
 
 #define MAX_LOADSTRING 100
 
