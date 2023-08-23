@@ -1,8 +1,15 @@
 // Constellation.cpp : Defines the entry point for the application.
 //
 
+#include<string>
+
+#include "resource.h"
+
+#include "ConstellationApp.h"
 #include "framework.h"
-#include "Constellation.h"
+#include "Initializer.h"
+#include "Logger.h"
+#include "SelectSymmetry.h"
 
 #define MAX_LOADSTRING 100
 
@@ -13,11 +20,12 @@ WCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
 ConstellationApp* application = nullptr;        // Current state of this Constellation window
 
 // Forward declarations of functions included in this code module:
-ATOM                MyRegisterClass(HINSTANCE hInstance);
+ATOM                RegisterClassConstellation(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    SavePrompt(HWND, UINT, WPARAM, LPARAM);
+INT_PTR CALLBACK    SelectSymmetry(HWND, UINT, WPARAM, LPARAM);
 void				PromptToSaveBeforeAction(HWND hWnd, const std::function<void ()>& callback);
 
 // Application entry point, called by OS
@@ -36,7 +44,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	// Initialize global strings
 	LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
 	LoadStringW(hInstance, IDC_CONSTELLATION, szWindowClass, MAX_LOADSTRING);
-	MyRegisterClass(hInstance);
+	RegisterClassConstellation(hInstance);
 
 	// Perform application initialization:
 	if (!InitInstance(hInstance, nCmdShow))
@@ -63,12 +71,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 
 
-//
-//  FUNCTION: MyRegisterClass()
-//
-//  PURPOSE: Registers the window class.
-//
-ATOM MyRegisterClass(HINSTANCE hInstance)
+// Register the window class
+ATOM RegisterClassConstellation(HINSTANCE hInstance)
 {
 	WNDCLASSEXW wcex;
 
@@ -162,10 +166,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				break;
 				// Draw menu
 			case ID_DRAW_SELECT:
-				application->set_tool(ConstellationApp::SELECT);
+				application->set_tool(SELECT);
 				break;
 			case ID_DRAW_PATH:
-				application->set_tool(ConstellationApp::NEW_PATH);
+				application->set_tool(NEW_PATH);
+				break;
+				// Symmetry menu
+			case ID_SYMMETRY_SYMMETRYGROUP:
+				DialogBox(hInst, MAKEINTRESOURCE(IDD_SELECT_SYMMETRY), hWnd, SelectSymmetry);
 				break;
 				// Help menu
 			case IDM_ABOUT:
@@ -267,9 +275,6 @@ INT_PTR CALLBACK SavePrompt(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPara
 	UNREFERENCED_PARAMETER(lParam);
 	switch (message)
 	{
-	case WM_INITDIALOG:
-		return true;
-
 	case WM_COMMAND:
 		switch (LOWORD(wParam)) {
 		case IDCANCEL:		// "Escape" key sends this command
@@ -284,7 +289,113 @@ INT_PTR CALLBACK SavePrompt(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPara
 		default:
 			return false;
 		}
+	case WM_CLOSE:
+		EndDialog(hDlg, false);
+		return true;
 
+	default:
+		return false;
+	}
+}
+
+// Message handler for the symmetry selection dialog box
+// Returns true if the message was handled.
+INT_PTR CALLBACK SelectSymmetry(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	UNREFERENCED_PARAMETER(lParam);
+	switch (message)
+	{
+	case WM_INITDIALOG: {
+		// On each button, draw an image of the corresponding symmetry group.
+		std::vector<std::tuple<const wchar_t*, int, int>> symmetry_groups {
+			{L"trivial",	IDC_SYMMETRY_TRIVIAL,	IDB_SYMMETRY_TRIVIAL},
+			{L"p1",			IDC_SYMMETRY_P1,		IDB_SYMMETRY_P1},
+			{L"p2",			IDC_SYMMETRY_P2,		IDB_SYMMETRY_P2},
+			{L"pm",			IDC_SYMMETRY_PM,		IDB_SYMMETRY_PM},
+			{L"pg",			IDC_SYMMETRY_PG,		IDB_SYMMETRY_PG},
+			{L"cm",			IDC_SYMMETRY_CM,		IDB_SYMMETRY_CM},
+			{L"pmm",		IDC_SYMMETRY_PMM,		IDB_SYMMETRY_PMM},
+			{L"pmg",		IDC_SYMMETRY_PMG,		IDB_SYMMETRY_PMG},
+			{L"pgg",		IDC_SYMMETRY_PGG,		IDB_SYMMETRY_PGG},
+			{L"cmm",		IDC_SYMMETRY_CMM,		IDB_SYMMETRY_CMM},
+			{L"p4",			IDC_SYMMETRY_P4,		IDB_SYMMETRY_P4},
+			{L"p4m",		IDC_SYMMETRY_P4M,		IDB_SYMMETRY_P4M},
+			{L"p4g",		IDC_SYMMETRY_P4G,		IDB_SYMMETRY_P4G},
+			{L"p3",			IDC_SYMMETRY_P3,		IDB_SYMMETRY_P3},
+			{L"p3m1",		IDC_SYMMETRY_P3M1,		IDB_SYMMETRY_P3M1},
+			{L"p31m",		IDC_SYMMETRY_P31M,		IDB_SYMMETRY_P31M},
+			{L"p6",			IDC_SYMMETRY_P6,		IDB_SYMMETRY_P6},
+			{L"p6m",		IDC_SYMMETRY_P6M,		IDB_SYMMETRY_P6M}
+		};
+		HBITMAP bitmap;
+		for (auto [text, control_id, bitmap_id] : symmetry_groups) {
+			bitmap = LoadBitmap(hInst, MAKEINTRESOURCE(bitmap_id));
+			SendDlgItemMessage(hDlg, control_id, BM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)bitmap);
+		}
+		RECT rect;
+		GetClientRect(hDlg, &rect);
+		InvalidateRect(hDlg, &rect, false);
+		return true;
+	}
+	case WM_COMMAND:
+		switch (LOWORD(wParam)) {
+		case IDB_SYMMETRY_TRIVIAL:
+			application->set_symmetry_group(TRIVIAL);
+			break;
+		case IDB_SYMMETRY_P1:
+			application->set_symmetry_group(P1);
+			break;
+		case IDB_SYMMETRY_P2:
+			application->set_symmetry_group(P2);
+			break;
+		case IDB_SYMMETRY_PM:
+			application->set_symmetry_group(PM);
+			break;
+		case IDB_SYMMETRY_PG:
+			application->set_symmetry_group(PG);
+			break;
+		case IDB_SYMMETRY_CM:
+			application->set_symmetry_group(CM);
+			break;
+		case IDB_SYMMETRY_PMM:
+			application->set_symmetry_group(PMM);
+			break;
+		case IDB_SYMMETRY_PMG:
+			application->set_symmetry_group(PMG);
+			break;
+		case IDB_SYMMETRY_PGG:
+			application->set_symmetry_group(PGG);
+			break;
+		case IDB_SYMMETRY_CMM:
+			application->set_symmetry_group(CMM);
+			break;
+		case IDB_SYMMETRY_P4:
+			application->set_symmetry_group(P4);
+			break;
+		case IDB_SYMMETRY_P4M:
+			application->set_symmetry_group(P4M);
+			break;
+		case IDB_SYMMETRY_P4G:
+			application->set_symmetry_group(P4G);
+			break;
+		case IDB_SYMMETRY_P3:
+			application->set_symmetry_group(P3);
+			break;
+		case IDB_SYMMETRY_P3M1:
+			application->set_symmetry_group(P3M1);
+			break;
+		case IDB_SYMMETRY_P31M:
+			application->set_symmetry_group(P31M);
+			break;
+		case IDB_SYMMETRY_P6:
+			application->set_symmetry_group(P6);
+			break;
+		case IDB_SYMMETRY_P6M:
+			application->set_symmetry_group(P6M);
+			break;
+		}
+		EndDialog(hDlg, false);
+		return true;
 	case WM_CLOSE:
 		EndDialog(hDlg, false);
 		return true;

@@ -45,7 +45,7 @@ void WallpaperGroup::set_v1(float x, float y) {
 		break;
 	case RECTANGLE:
 		// make v2 perpendicular to v1
-		v2_direction = std::atan2(v1_y, v1_x) + std::numbers::pi;
+		v2_direction = (float)(std::atan2(v1_y, v1_x) + std::numbers::pi);
 		break;
 	case RHOMBUS:
 		// make v2 equal in length to v1
@@ -54,12 +54,12 @@ void WallpaperGroup::set_v1(float x, float y) {
 	case DIAMOND:
 		// make v2 equal in length and 60 degrees counter-clockwise from v1
 		v2_length = std::sqrt(v1_x * v1_x + v1_y * v1_y);
-		v2_direction = std::atan2(v1_y, v1_x) + 2 / 3 * std::numbers::pi;
+		v2_direction = (float)(std::atan2(v1_y, v1_x) + 2 / 3 * std::numbers::pi);
 		break;
 	case SQUARE:
 		// make v2 equal in length and 90 degrees counter-clockwise from v1
 		v2_length = std::sqrt(v1_x * v1_x + v1_y * v1_y);
-		v2_direction = std::atan2(v1_y, v1_x) + std::numbers::pi;
+		v2_direction = (float)(std::atan2(v1_y, v1_x) + std::numbers::pi);
 		break;
 	}
 
@@ -79,7 +79,7 @@ void WallpaperGroup::set_v2(float x, float y) {
 		break;
 	case RECTANGLE:
 		// make v1 perpendicular to v2
-		v1_direction = std::atan2(v2_y, v2_x) + std::numbers::pi;
+		v1_direction = (float)(std::atan2(v2_y, v2_x) + std::numbers::pi);
 		break;
 	case RHOMBUS:
 		// make v1 equal in length to v2
@@ -88,12 +88,12 @@ void WallpaperGroup::set_v2(float x, float y) {
 	case DIAMOND:
 		// make v1 equal in length and 60 degrees counter-clockwise from v2
 		v1_length = std::sqrt(v2_x * v2_x + v2_y * v2_y);
-		v1_direction = std::atan2(v2_y, v2_x) + 2 / 3 * std::numbers::pi;
+		v1_direction = (float)(std::atan2(v2_y, v2_x) + 2 / 3 * std::numbers::pi);
 		break;
 	case SQUARE:
 		// make v1 equal in length and 90 degrees counter-clockwise from v2
 		v1_length = std::sqrt(v2_x * v2_x + v2_y * v2_y);
-		v1_direction = std::atan2(v2_y, v2_x) + std::numbers::pi;
+		v1_direction = (float)(std::atan2(v2_y, v2_x) + std::numbers::pi);
 		break;
 	}
 

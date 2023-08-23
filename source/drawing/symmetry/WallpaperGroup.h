@@ -14,7 +14,7 @@ class WallpaperGroup :
 	public SymmetryGroup
 {
 public:
-	WallpaperGroup() = delete;
+	WallpaperGroup(std::string name) : SymmetryGroup(name) {}
 
 	// Get the set of affine transforms necessary to tessalate a region.
 	// The tiled region is a parallelogram of (2 * extent + 1) x (2 * extent + 1) cells.
@@ -34,8 +34,6 @@ private:
 		DIAMOND,		// rhombus with 60° and 120° angles
 		SQUARE
 	};
-
-	WallpaperGroup(std::string name) : SymmetryGroup(name) {}
 
 	// After drawing one or more rotated, mirrored, and glide-mirrored
 	// copies of the fundamental domain to form a cell,

@@ -4,30 +4,30 @@
 class SymmetryGroupFactory
 {
 public:
-	static SymmetryGroup* trivial();
+	static std::shared_ptr<SymmetryGroup> trivial();
 
-	static SymmetryGroup* p1(SymmetryGroup* old);
-	static SymmetryGroup* p2(SymmetryGroup* old);
-	//static SymmetryGroup* pm(SymmetryGroup* old);
-	//static SymmetryGroup* pg(SymmetryGroup* old);
-	//static SymmetryGroup* cm(SymmetryGroup* old);
-	//static SymmetryGroup* pmm(SymmetryGroup* old);
-	//static SymmetryGroup* pmg(SymmetryGroup* old);
-	//static SymmetryGroup* pgg(SymmetryGroup* old);
-	//static SymmetryGroup* cmm(SymmetryGroup* old);
-	//static SymmetryGroup* p4(SymmetryGroup* old);
-	//static SymmetryGroup* p4m(SymmetryGroup* old);
-	//static SymmetryGroup* p4g(SymmetryGroup* old);
-	//static SymmetryGroup* p3(SymmetryGroup* old);
-	//static SymmetryGroup* p3m1(SymmetryGroup* old);
-	//static SymmetryGroup* p31m(SymmetryGroup* old);
-	//static SymmetryGroup* p6(SymmetryGroup* old);
-	//static SymmetryGroup* p6m(SymmetryGroup* old);
+	static std::shared_ptr<SymmetryGroup> p1(std::shared_ptr<SymmetryGroup> old);
+	static std::shared_ptr<SymmetryGroup> p2(std::shared_ptr<SymmetryGroup> old);
+	//static std::shared_ptr<SymmetryGroup> pm(std::shared_ptr<SymmetryGroup> old);
+	//static std::shared_ptr<SymmetryGroup> pg(std::shared_ptr<SymmetryGroup> old);
+	//static std::shared_ptr<SymmetryGroup> cm(std::shared_ptr<SymmetryGroup> old);
+	//static std::shared_ptr<SymmetryGroup> pmm(std::shared_ptr<SymmetryGroup> old);
+	//static std::shared_ptr<SymmetryGroup> pmg(std::shared_ptr<SymmetryGroup> old);
+	//static std::shared_ptr<SymmetryGroup> pgg(std::shared_ptr<SymmetryGroup> old);
+	//static std::shared_ptr<SymmetryGroup> cmm(std::shared_ptr<SymmetryGroup> old);
+	//static std::shared_ptr<SymmetryGroup> p4(std::shared_ptr<SymmetryGroup> old);
+	//static std::shared_ptr<SymmetryGroup> p4m(std::shared_ptr<SymmetryGroup> old);
+	//static std::shared_ptr<SymmetryGroup> p4g(std::shared_ptr<SymmetryGroup> old);
+	//static std::shared_ptr<SymmetryGroup> p3(std::shared_ptr<SymmetryGroup> old);
+	//static std::shared_ptr<SymmetryGroup> p3m1(std::shared_ptr<SymmetryGroup> old);
+	//static std::shared_ptr<SymmetryGroup> p31m(std::shared_ptr<SymmetryGroup> old);
+	//static std::shared_ptr<SymmetryGroup> p6(std::shared_ptr<SymmetryGroup> old);
+	//static std::shared_ptr<SymmetryGroup> p6m(std::shared_ptr<SymmetryGroup> old);
 
 private:
 	// If changing from one wallpaper group to another,
 	// update v1 and v2 in our new group to match those from our old group.
 	// v1 should always match, and v2 should match length if possible and direction if possible
-	static void match_vectors(SymmetryGroup* old_group, WallpaperGroup* new_group);
+	static void match_vectors(std::shared_ptr<SymmetryGroup> old_group, std::shared_ptr<WallpaperGroup> new_group);
 };
 

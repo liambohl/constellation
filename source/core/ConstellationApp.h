@@ -4,11 +4,12 @@
 
 #include <shobjidl.h>	// For IShellItem
 
-#include "actions/Action.h"
 #include "Canvas.h"
 #include "Defaults.h"
-#include "drawing/Drawing.h"
+#include "enums.h"
 #include "file.h"
+#include "actions/Action.h"
+#include "drawing/Drawing.h"
 #include "tools/Tool.h"
 
 class ConstellationApp
@@ -49,11 +50,6 @@ private:
 	std::chrono::time_point<std::chrono::steady_clock> previous_refresh_time;
 
 public:
-	enum tool {
-		NEW_PATH,
-		SELECT
-	};
-
 	ConstellationApp();
 
 	void resize(HWND hWnd, WPARAM wParam, LPARAM lParam);
@@ -70,7 +66,10 @@ public:
 	void redo();
 
 	// Draw menu
-	void set_tool(enum tool);
+	void set_tool(enum tool tool_type);
+
+	// Symmetry menu
+	void set_symmetry_group(enum symmetry_group symmetry_group);
 
 	void handle_escape();
 

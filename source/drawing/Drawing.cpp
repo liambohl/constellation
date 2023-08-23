@@ -1,9 +1,11 @@
 #include "Drawing.h"
 #include "json_converters.h"
 #include "core/Logger.h"
+#include "symmetry/SymmetryGroupFactory.h"
 
 Drawing::Drawing() {
 	background = Gdiplus::Color(255, 80, 80, 80);
+	symmetry_group = SymmetryGroupFactory::trivial();
 }
 
 Drawing::Drawing(json drawing_json) :

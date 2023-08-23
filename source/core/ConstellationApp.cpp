@@ -2,6 +2,8 @@
 #include <thread>
 #include <windowsx.h>
 
+#include "actions/ActionChangeSymmetryGroup.h"
+#include "drawing/symmetry/SymmetryGroupFactory.h"
 #include "tools/ToolNewPath.h"
 #include "tools/ToolSelect.h"
 #include "ConstellationApp.h"
@@ -105,6 +107,26 @@ void ConstellationApp::set_tool(enum tool tool_type) {
         current_tool = new ToolSelect(defaults);
         break;
     }
+}
+
+void ConstellationApp::set_symmetry_group(enum symmetry_group symmetry_group) {
+    std::shared_ptr<SymmetryGroup> old_group = drawing.get_symmetry_group();
+    std::shared_ptr<SymmetryGroup> new_group;
+
+    switch (symmetry_group) {
+    case TRIVIAL:
+        new_group = SymmetryGroupFactory::trivial();
+        break;
+    case P1:
+        new_group = SymmetryGroupFactory::p1(old_group);
+        break;
+    case P2:
+        new_group = SymmetryGroupFactory::p2(old_group);
+        break;
+    // TODO: more cases
+    }
+
+    do_action(new ActionChangeSymmetryGroup(old_group, new_group));
 }
 
 // Cancel whatever the current tool is doing.

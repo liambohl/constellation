@@ -4,19 +4,19 @@
 //#include "math/SymbolicPoint.h"
 
 
-SymmetryGroup* SymmetryGroupFactory::trivial() {
-	return new TrivialGroup;
+std::shared_ptr<SymmetryGroup> SymmetryGroupFactory::trivial() {
+	return std::make_shared<TrivialGroup>();
 }
 
-SymmetryGroup* SymmetryGroupFactory::p1(SymmetryGroup* old) {
-	WallpaperGroup* group = new WallpaperGroup("p1");
+std::shared_ptr<SymmetryGroup> SymmetryGroupFactory::p1(std::shared_ptr<SymmetryGroup> old) {
+	auto group = std::make_shared<WallpaperGroup>("p1");
 	group->cell_shape = WallpaperGroup::PARALLELOGRAM;
 	match_vectors(old, group);
 	return group;
 }
 
-SymmetryGroup* SymmetryGroupFactory::p2(SymmetryGroup* old) {
-	WallpaperGroup* group = new WallpaperGroup("p2");
+std::shared_ptr<SymmetryGroup> SymmetryGroupFactory::p2(std::shared_ptr<SymmetryGroup> old) {
+	auto group = std::make_shared<WallpaperGroup>("p2");
 	group->cell_shape = WallpaperGroup::PARALLELOGRAM;
 	SymbolicPoint center("(v1_x + v2_x) / 2", "(v1_y + v2_y) / 2");
 	group->cell.push_back(SymbolicMatrix::rotate(180, center));
@@ -24,68 +24,68 @@ SymmetryGroup* SymmetryGroupFactory::p2(SymmetryGroup* old) {
 	return group;
 }
 
-//SymmetryGroup* SymmetryGroupFactory::pm(SymmetryGroup* old) {
+//std::shared_ptr<SymmetryGroup> SymmetryGroupFactory::pm(std::shared_ptr<SymmetryGroup> old) {
 //
 //}
 //
-//SymmetryGroup* SymmetryGroupFactory::pg(SymmetryGroup* old) {
+//std::shared_ptr<SymmetryGroup> SymmetryGroupFactory::pg(std::shared_ptr<SymmetryGroup> old) {
 //
 //}
 //
-//SymmetryGroup* SymmetryGroupFactory::cm(SymmetryGroup* old) {
+//std::shared_ptr<SymmetryGroup> SymmetryGroupFactory::cm(std::shared_ptr<SymmetryGroup> old) {
 //
 //}
 //
-//SymmetryGroup* SymmetryGroupFactory::pmm(SymmetryGroup* old) {
+//std::shared_ptr<SymmetryGroup> SymmetryGroupFactory::pmm(std::shared_ptr<SymmetryGroup> old) {
 //
 //}
 //
-//SymmetryGroup* SymmetryGroupFactory::pmg(SymmetryGroup* old) {
+//std::shared_ptr<SymmetryGroup> SymmetryGroupFactory::pmg(std::shared_ptr<SymmetryGroup> old) {
 //
 //}
 //
-//SymmetryGroup* SymmetryGroupFactory::pgg(SymmetryGroup* old) {
+//std::shared_ptr<SymmetryGroup> SymmetryGroupFactory::pgg(std::shared_ptr<SymmetryGroup> old) {
 //
 //}
 //
-//SymmetryGroup* SymmetryGroupFactory::cmm(SymmetryGroup* old) {
+//std::shared_ptr<SymmetryGroup> SymmetryGroupFactory::cmm(std::shared_ptr<SymmetryGroup> old) {
 //
 //}
 //
-//SymmetryGroup* SymmetryGroupFactory::p4(SymmetryGroup* old) {
+//std::shared_ptr<SymmetryGroup> SymmetryGroupFactory::p4(std::shared_ptr<SymmetryGroup> old) {
 //
 //}
 //
-//SymmetryGroup* SymmetryGroupFactory::p4m(SymmetryGroup* old) {
+//std::shared_ptr<SymmetryGroup> SymmetryGroupFactory::p4m(std::shared_ptr<SymmetryGroup> old) {
 //
 //}
 //
-//SymmetryGroup* SymmetryGroupFactory::p4g(SymmetryGroup* old) {
+//std::shared_ptr<SymmetryGroup> SymmetryGroupFactory::p4g(std::shared_ptr<SymmetryGroup> old) {
 //
 //}
 //
-//SymmetryGroup* SymmetryGroupFactory::p3(SymmetryGroup* old) {
+//std::shared_ptr<SymmetryGroup> SymmetryGroupFactory::p3(std::shared_ptr<SymmetryGroup> old) {
 //
 //}
 //
-//SymmetryGroup* SymmetryGroupFactory::p3m1(SymmetryGroup* old) {
+//std::shared_ptr<SymmetryGroup> SymmetryGroupFactory::p3m1(std::shared_ptr<SymmetryGroup> old) {
 //
 //}
 //
-//SymmetryGroup* SymmetryGroupFactory::p31m(SymmetryGroup* old) {
+//std::shared_ptr<SymmetryGroup> SymmetryGroupFactory::p31m(std::shared_ptr<SymmetryGroup> old) {
 //
 //}
 //
-//SymmetryGroup* SymmetryGroupFactory::p6(SymmetryGroup* old) {
+//std::shared_ptr<SymmetryGroup> SymmetryGroupFactory::p6(std::shared_ptr<SymmetryGroup> old) {
 //
 //}
 //
-//SymmetryGroup* SymmetryGroupFactory::p6m(SymmetryGroup* old) {
+//std::shared_ptr<SymmetryGroup> SymmetryGroupFactory::p6m(std::shared_ptr<SymmetryGroup> old) {
 //
 //}
 
-void SymmetryGroupFactory::match_vectors(SymmetryGroup* old_group, WallpaperGroup* new_group) {
-	if (WallpaperGroup* old_wallpaper = dynamic_cast<WallpaperGroup*>(old_group)) {
+void SymmetryGroupFactory::match_vectors(std::shared_ptr<SymmetryGroup> old_group, std::shared_ptr<WallpaperGroup> new_group) {
+	if (std::shared_ptr<WallpaperGroup> old_wallpaper = dynamic_pointer_cast<WallpaperGroup>(old_group)) {
 		new_group->set_v2(old_wallpaper->v2_x, old_wallpaper->v2_y);
 		new_group->set_v1(old_wallpaper->v1_x, old_wallpaper->v1_y);
 	}
