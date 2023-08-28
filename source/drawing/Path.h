@@ -11,6 +11,7 @@ class Path :
     public Element
 {
 private:
+    void draw_one(Gdiplus::Graphics* graphics) override;
     // Every third control point, starting with the first, is a point on the path.
     // The other points simply "pull" the curve toward them.
     // Thus, any path should have n=3k+1 points for some positive integer k.
@@ -22,7 +23,6 @@ public:
     Path(json path_json);
     //Path(const Path& other);
     ~Path();
-    void draw(Gdiplus::Graphics* graphics) override;
     void get_bounding_box(Gdiplus::RectF** bounding_box);
 
     json to_json() override;

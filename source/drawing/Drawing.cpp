@@ -16,8 +16,8 @@ Drawing::Drawing(json drawing_json) :
 // Draw this drawing to the window
 void Drawing::draw(Gdiplus::Graphics* graphics) {
 	graphics->Clear(background);
-
-	elements.draw(graphics);
+	std::vector<std::shared_ptr<Gdiplus::Matrix>> transforms = symmetry_group->get_transforms();
+	elements.draw(graphics, transforms);
 }
 
 Gdiplus::RectF* Drawing::get_bounding_box() {

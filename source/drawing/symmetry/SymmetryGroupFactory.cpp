@@ -9,19 +9,29 @@ std::shared_ptr<SymmetryGroup> SymmetryGroupFactory::trivial() {
 }
 
 std::shared_ptr<SymmetryGroup> SymmetryGroupFactory::p1(std::shared_ptr<SymmetryGroup> old) {
-	auto group = std::make_shared<WallpaperGroup>("p1");
-	group->cell_shape = WallpaperGroup::PARALLELOGRAM;
-	match_vectors(old, group);
-	return group;
+	std::vector<SymbolicMatrix> cell;
+	cell.push_back(SymbolicMatrix());
+
+	return std::make_shared<WallpaperGroup>(
+		"p1",
+		WallpaperGroup::PARALLELOGRAM,
+		cell,
+		old
+	);
 }
 
 std::shared_ptr<SymmetryGroup> SymmetryGroupFactory::p2(std::shared_ptr<SymmetryGroup> old) {
-	auto group = std::make_shared<WallpaperGroup>("p2");
-	group->cell_shape = WallpaperGroup::PARALLELOGRAM;
+	std::vector<SymbolicMatrix> cell;
+	cell.push_back(SymbolicMatrix());
 	SymbolicPoint center("(v1_x + v2_x) / 2", "(v1_y + v2_y) / 2");
-	group->cell.push_back(SymbolicMatrix::rotate(180, center));
-	match_vectors(old, group);
-	return group;
+	cell.push_back(SymbolicMatrix::rotate(180, center));
+
+	return std::make_shared<WallpaperGroup>(
+		"p1",
+		WallpaperGroup::PARALLELOGRAM,
+		cell,
+		old
+	);
 }
 
 //std::shared_ptr<SymmetryGroup> SymmetryGroupFactory::pm(std::shared_ptr<SymmetryGroup> old) {

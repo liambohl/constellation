@@ -24,14 +24,9 @@ Path::~Path() {
 	delete pen;
 }
 
-void Path::draw(Gdiplus::Graphics* graphics) {
+void Path::draw_one(Gdiplus::Graphics* graphics) {
 	if (n_points < 4)
 		return;
-
-	*Logger::get_instance() << "Drawing path:";
-	for (auto& point : control_points) {
-		*Logger::get_instance() << '(' << point.X << ", " << point.Y << ')' << std::endl;
-	}
 
 	graphics->DrawBeziers(pen, control_points.data(), n_points);
 }

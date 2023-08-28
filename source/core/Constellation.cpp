@@ -338,58 +338,58 @@ INT_PTR CALLBACK SelectSymmetry(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 	}
 	case WM_COMMAND:
 		switch (LOWORD(wParam)) {
-		case IDB_SYMMETRY_TRIVIAL:
+		case IDC_SYMMETRY_TRIVIAL:
 			application->set_symmetry_group(TRIVIAL);
 			break;
-		case IDB_SYMMETRY_P1:
+		case IDC_SYMMETRY_P1:
 			application->set_symmetry_group(P1);
 			break;
-		case IDB_SYMMETRY_P2:
+		case IDC_SYMMETRY_P2:
 			application->set_symmetry_group(P2);
 			break;
-		case IDB_SYMMETRY_PM:
+		case IDC_SYMMETRY_PM:
 			application->set_symmetry_group(PM);
 			break;
-		case IDB_SYMMETRY_PG:
+		case IDC_SYMMETRY_PG:
 			application->set_symmetry_group(PG);
 			break;
-		case IDB_SYMMETRY_CM:
+		case IDC_SYMMETRY_CM:
 			application->set_symmetry_group(CM);
 			break;
-		case IDB_SYMMETRY_PMM:
+		case IDC_SYMMETRY_PMM:
 			application->set_symmetry_group(PMM);
 			break;
-		case IDB_SYMMETRY_PMG:
+		case IDC_SYMMETRY_PMG:
 			application->set_symmetry_group(PMG);
 			break;
-		case IDB_SYMMETRY_PGG:
+		case IDC_SYMMETRY_PGG:
 			application->set_symmetry_group(PGG);
 			break;
-		case IDB_SYMMETRY_CMM:
+		case IDC_SYMMETRY_CMM:
 			application->set_symmetry_group(CMM);
 			break;
-		case IDB_SYMMETRY_P4:
+		case IDC_SYMMETRY_P4:
 			application->set_symmetry_group(P4);
 			break;
-		case IDB_SYMMETRY_P4M:
+		case IDC_SYMMETRY_P4M:
 			application->set_symmetry_group(P4M);
 			break;
-		case IDB_SYMMETRY_P4G:
+		case IDC_SYMMETRY_P4G:
 			application->set_symmetry_group(P4G);
 			break;
-		case IDB_SYMMETRY_P3:
+		case IDC_SYMMETRY_P3:
 			application->set_symmetry_group(P3);
 			break;
-		case IDB_SYMMETRY_P3M1:
+		case IDC_SYMMETRY_P3M1:
 			application->set_symmetry_group(P3M1);
 			break;
-		case IDB_SYMMETRY_P31M:
+		case IDC_SYMMETRY_P31M:
 			application->set_symmetry_group(P31M);
 			break;
-		case IDB_SYMMETRY_P6:
+		case IDC_SYMMETRY_P6:
 			application->set_symmetry_group(P6);
 			break;
-		case IDB_SYMMETRY_P6M:
+		case IDC_SYMMETRY_P6M:
 			application->set_symmetry_group(P6M);
 			break;
 		}

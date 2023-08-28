@@ -12,7 +12,7 @@ protected:
 public:
 	// If an action is completed, return a pointer to that action. Else, return nullptr.
 	virtual Action* handle_mouse_event(UINT message, float x_pos, float y_pos, int key_state) = 0;
-	virtual void draw(Gdiplus::Graphics* graphics) = 0;
+	virtual void draw(Gdiplus::Graphics* graphics, std::vector<std::shared_ptr<Gdiplus::Matrix>>& transforms) = 0;
 		
 	// Attempt to handle an undo/redo event.
 	// If this tool can perform an undo/redo, such as while drawing a long path, do so and return true.

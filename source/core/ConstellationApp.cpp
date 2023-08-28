@@ -31,7 +31,8 @@ void ConstellationApp::resize(HWND hWnd, WPARAM wParam, LPARAM lParam) {
 void ConstellationApp::draw(HWND hWnd) {
     canvas.begin_draw(hWnd);
     drawing.draw(canvas.graphics);
-    current_tool->draw(canvas.graphics);
+    std::vector<std::shared_ptr<Gdiplus::Matrix>> transforms = drawing.get_symmetry_group()->get_transforms();
+    current_tool->draw(canvas.graphics, transforms);
     canvas.finish_draw();
 }
 
