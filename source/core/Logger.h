@@ -11,8 +11,8 @@
 class Logger
 {
 private:
-	static const PCSTR filename;
-	static const std::map<int, PCSTR> message_codes;
+	const char* filename = "../errors.log";
+	static const std::map<int, const char*> message_codes;
 	static Logger* instance;
 
 	Logger();
@@ -22,10 +22,14 @@ private:
 
 public:
 	static Logger* get_instance();
-	void log(std::string s);
 	void log_message(UINT message);
 
+	// shove wide chars into chars and hope they are part of Unicode
+	Logger& operator<< (wchar_t* val);
+	// handle ostream manipulators like std::endl
+	Logger& operator<< (std::ostream& (*manip)(std::ostream&));
+
 	template<typename T>
-	std::ostream& operator<< (T val) { return file << val; }
+	Logger& operator<< (T val) { file << val; return *this; }
 };
 

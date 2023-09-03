@@ -1,7 +1,7 @@
 #include <string>
 
 #include "json_converters.h"
-#include "Logger.h"
+#include "core/Logger.h"
 #include "Path.h"
 
 Path::Path(json path_json):
@@ -24,14 +24,9 @@ Path::~Path() {
 	delete pen;
 }
 
-void Path::draw(Gdiplus::Graphics* graphics) {
+void Path::draw_one(Gdiplus::Graphics* graphics) {
 	if (n_points < 4)
 		return;
-
-	Logger::get_instance()->log("Drawing path:");
-	for (auto& point : control_points) {
-		*Logger::get_instance() << '(' << point.X << ", " << point.Y << ')' << std::endl;
-	}
 
 	graphics->DrawBeziers(pen, control_points.data(), n_points);
 }

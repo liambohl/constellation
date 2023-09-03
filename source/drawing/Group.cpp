@@ -16,10 +16,11 @@ Group::Group(json group_json) {
 			throw std::exception("Unrecognized element type");
 	}
 }
-	
-void Group::draw(Gdiplus::Graphics* graphics) {
+
+// Only non-group elements should apply transforms, to avoid drawing extra copies of elements.
+void Group::draw(Gdiplus::Graphics* graphics, std::vector<std::shared_ptr<Gdiplus::Matrix>>& transforms) {
 	for (std::shared_ptr<Element> element : elements) {
-		element->draw(graphics);
+		element->draw(graphics, transforms);
 	}
 }
 

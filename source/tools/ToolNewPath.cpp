@@ -1,9 +1,9 @@
 #include <windowsx.h>
 
-#include "ActionAddElement.h"
+#include "actions/ActionAddElement.h"
 #include "ToolNewPath.h"
-#include "Element.h"
-#include "Logger.h"
+#include "drawing/Element.h"
+#include "core/Logger.h"
 
 Action* ToolNewPath::handle_mouse_event(UINT message, float x_pos, float y_pos, int key_state) {
 	if (message != WM_MOUSEMOVE)
@@ -97,10 +97,10 @@ Action* ToolNewPath::handle_mouse_event(UINT message, float x_pos, float y_pos, 
 	return nullptr;
 }
 
-void ToolNewPath::draw(Gdiplus::Graphics* graphics) {
+void ToolNewPath::draw(Gdiplus::Graphics* graphics, std::vector<std::shared_ptr<Gdiplus::Matrix>>& transforms) {
 	if (state != FIRST_DOWN) {
-		wip_path->draw(graphics);
-		tool_path->draw(graphics);
+		wip_path->draw(graphics, transforms);
+		tool_path->draw(graphics, transforms);
 	}
 }
 

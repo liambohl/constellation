@@ -2,8 +2,10 @@
 #include <thread>
 #include <windowsx.h>
 
-#include "ToolNewPath.h"
-#include "ToolSelect.h"
+#include "actions/ActionChangeSymmetryGroup.h"
+#include "drawing/symmetry/SymmetryGroupFactory.h"
+#include "tools/ToolNewPath.h"
+#include "tools/ToolSelect.h"
 #include "ConstellationApp.h"
 #include "Logger.h"
 
@@ -29,7 +31,8 @@ void ConstellationApp::resize(HWND hWnd, WPARAM wParam, LPARAM lParam) {
 void ConstellationApp::draw(HWND hWnd) {
     canvas.begin_draw(hWnd);
     drawing.draw(canvas.graphics);
-    current_tool->draw(canvas.graphics);
+    std::vector<std::shared_ptr<Gdiplus::Matrix>> transforms = drawing.get_symmetry_group()->get_transforms();
+    current_tool->draw(canvas.graphics, transforms);
     canvas.finish_draw();
 }
 
@@ -105,6 +108,26 @@ void ConstellationApp::set_tool(enum tool tool_type) {
         current_tool = new ToolSelect(defaults);
         break;
     }
+}
+
+void ConstellationApp::set_symmetry_group(enum symmetry_group symmetry_group) {
+    std::shared_ptr<SymmetryGroup> old_group = drawing.get_symmetry_group();
+    std::shared_ptr<SymmetryGroup> new_group;
+
+    switch (symmetry_group) {
+    case TRIVIAL:
+        new_group = SymmetryGroupFactory::trivial();
+        break;
+    case P1:
+        new_group = SymmetryGroupFactory::p1(old_group);
+        break;
+    case P2:
+        new_group = SymmetryGroupFactory::p2(old_group);
+        break;
+    // TODO: more cases
+    }
+
+    do_action(new ActionChangeSymmetryGroup(old_group, new_group));
 }
 
 // Cancel whatever the current tool is doing.

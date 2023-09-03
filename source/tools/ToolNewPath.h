@@ -1,6 +1,6 @@
 #pragma once
 #include "Tool.h"
-#include "Path.h"
+#include "drawing/Path.h"
 
 class ToolNewPath :
 	public Tool
@@ -25,8 +25,8 @@ private:
 public:
 	ToolNewPath(Defaults& defaults) : Tool(defaults) { }
 
-	Action* handle_mouse_event(UINT message, float x_pos, float y_pos, int key_state);
-	void draw(Gdiplus::Graphics* graphics);
+	Action* handle_mouse_event(UINT message, float x_pos, float y_pos, int key_state) override;
+	void draw(Gdiplus::Graphics* graphics, std::vector<std::shared_ptr<Gdiplus::Matrix>>& transforms) override;
 
 	boolean undo() override;
 
