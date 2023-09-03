@@ -10,6 +10,7 @@ Drawing::Drawing() {
 
 Drawing::Drawing(json drawing_json) :
 	background(color_from_json(drawing_json["background"])),
+	symmetry_group(SymmetryGroupFactory::from_json(drawing_json["symmetry_group"])),
 	elements(drawing_json["elements"])
 {}
 
@@ -33,6 +34,7 @@ Gdiplus::RectF* Drawing::get_bounding_box() {
 json Drawing::to_json() {
 	return {
 		{"background", color_to_json(background)},
+		{"symmetry_group", symmetry_group->to_json()},
 		{"elements", elements.to_json()}
 	};
 }

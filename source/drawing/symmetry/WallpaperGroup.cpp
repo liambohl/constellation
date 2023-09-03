@@ -150,3 +150,15 @@ void WallpaperGroup::set_extent(int extent) {
 	this->extent = extent;
 	update_transforms();
 }
+
+json WallpaperGroup::to_json() {
+	return {
+		{"type", "WallpaperGroup"},
+		{"name", name},
+		{"v1_x", v1_x},
+		{"v1_y", v1_y},
+		{"v2_x", v2_x},
+		{"v2_y", v2_y},
+		{"extent", extent}
+	};
+}

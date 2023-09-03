@@ -13,4 +13,6 @@ public:
 	std::vector<std::shared_ptr<Gdiplus::Matrix>> get_transforms() override {
 		return { std::make_shared<Gdiplus::Matrix>() };
 	}
+
+	json to_json() override { return { { "type", "TrivialGroup" } }; }
 };

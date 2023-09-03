@@ -37,8 +37,9 @@ public:
 	// Make this symmetry group draw more or fewer copies of its cell
 	void set_extent(int extent);
 
-private:
+	json to_json() override;
 
+private:
 	// Calculate transforms based on current value of v1 and v2
 	void update_transforms();
 
@@ -58,6 +59,4 @@ private:
 
 	// Cached vector of concrete transforms
 	std::vector<std::shared_ptr<Gdiplus::Matrix>> transforms;
-
-	friend class SymmetryGroupFactory;
 };
