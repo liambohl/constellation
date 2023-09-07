@@ -23,11 +23,11 @@ std::shared_ptr<WallpaperGroup> SymmetryGroupFactory::p1(std::shared_ptr<Symmetr
 std::shared_ptr<WallpaperGroup> SymmetryGroupFactory::p2(std::shared_ptr<SymmetryGroup> old) {
 	std::vector<SymbolicMatrix> cell;
 	cell.push_back(SymbolicMatrix());
-	SymbolicPoint center("(v1_x + v2_x) / 2", "(v1_y + v2_y) / 2");
+	SymbolicPoint center(0, 0);
 	cell.push_back(SymbolicMatrix::rotate(180, center));
 
 	return std::make_shared<WallpaperGroup>(
-		"p1",
+		"p2",
 		WallpaperGroup::PARALLELOGRAM,
 		cell,
 		old
