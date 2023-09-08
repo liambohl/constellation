@@ -18,11 +18,28 @@ public:
 		PARALLELOGRAM,
 		RECTANGLE,
 		RHOMBUS,
-		DIAMOND,		// rhombus with 60° and 120° angles
+		HEXAGON,
 		SQUARE
 	};
 
-	WallpaperGroup(std::string name, shape cell_shape, std::vector<SymbolicMatrix> cell, std::shared_ptr<SymmetryGroup> old);
+	// This struct bundles the edges of all fundamental domains in a wallpaper group's central cell.
+	// Edges that are equivalent under one of the symmetry group's transformations should have the same type.
+	// Edges are drawn differently depending on their type (see defaults).
+	struct DomainBoundaries {
+		std::vector<SymbolicLine> mirror_lines;
+		std::vector<SymbolicLine> type_A;
+		std::vector<SymbolicLine> type_B;
+		std::vector<SymbolicLine> type_C;
+	};
+
+	WallpaperGroup(
+		std::string name,
+		shape cell_shape,
+		std::vector<SymbolicMatrix> cell,
+		std::vector<SymbolicPoint> rotation_centers,
+		DomainBoundaries domain_boundaries,
+		std::shared_ptr<SymmetryGroup> old
+	);
 	//WallpaperGroup();
 
 	// Get the set of affine transforms necessary to tessalate a region.
@@ -37,11 +54,22 @@ public:
 	// Make this symmetry group draw more or fewer copies of its cell
 	void set_extent(int extent);
 
+	void draw(Gdiplus::Graphics* graphics, Defaults& defaults, float scale) override;
+
 	json to_json() override;
 
 private:
 	// Calculate transforms based on current value of v1 and v2
 	void update_transforms();
+
+	// Draw the given boundary with the given shape
+	void draw_boundary(
+		Gdiplus::Graphics* graphics,
+		Defaults& defaults,
+		const SymbolicLine& boundary,
+		const std::unordered_map<std::string, float>& variables,
+		std::vector<Gdiplus::PointF> shape
+	);
 
 	// coordinates of the vectors that form two edges of a cell
 	float v1_x, v1_y, v2_x, v2_y;
@@ -59,4 +87,10 @@ private:
 
 	// Cached vector of concrete transforms
 	std::vector<std::shared_ptr<Gdiplus::Matrix>> transforms;
+
+	// Points around which this symmetry group has some rotational symmetry. Includes only centers inside, or on boundary of, the central cell
+	std::vector<SymbolicPoint> rotation_centers;
+
+	// Edges of all fundamental domains in the central cell
+	DomainBoundaries domain_boundaries;
 };

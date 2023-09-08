@@ -25,6 +25,7 @@ void Canvas::zoom(float scale_factor, float x_pos, float y_pos) {
 	transform->Translate(-x_pos, -y_pos, Gdiplus::MatrixOrderAppend);
 	transform->Scale(scale_factor, scale_factor, Gdiplus::MatrixOrderAppend);
 	transform->Translate(x_pos, y_pos, Gdiplus::MatrixOrderAppend);
+	scale *= scale_factor;
 }
 
 bool Canvas::handle_mouse_event(UINT message, int x_pos, int y_pos, int key_state) {
@@ -159,6 +160,7 @@ void Canvas::reset_transform() {
 void Canvas::reset_transform(int client_width, int client_height) {
 	delete transform;
 	transform = new Gdiplus::Matrix();
+	scale = 1.0;
 
 	pan(client_width / 2.0f, client_height / 2.0f);
 	zoom(DEFAULT_SCALE, client_width / 2.0f, client_height / 2.0f);

@@ -27,6 +27,9 @@ private:
 	int prev_width = 0;
 	int prev_height = 0;
 
+	// ratio of window pixels to world pixels (linear; higher is more zoomed in)
+	double scale = 1.0;
+
 public:
 	Canvas();
 	~Canvas();
@@ -45,6 +48,8 @@ public:
 	void fit_drawing(Gdiplus::RectF* bounding_box);
 
 	void page_to_world_coordinates(Gdiplus::PointF* point_page);
+
+	float get_scale() { return (float)scale; }
 
 	LONG windowWidth = 0;						// in window pixels
 	LONG windowHeight = 0;						// in window pixels

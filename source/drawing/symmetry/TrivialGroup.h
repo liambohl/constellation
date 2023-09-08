@@ -14,5 +14,7 @@ public:
 		return { std::make_shared<Gdiplus::Matrix>() };
 	}
 
+	void draw(Gdiplus::Graphics* graphics, Defaults& defaults, float scale) override {}
+
 	json to_json() override { return { { "type", "TrivialGroup" } }; }
 };

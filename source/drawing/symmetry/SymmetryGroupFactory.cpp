@@ -1,7 +1,6 @@
 #include "SymmetryGroupFactory.h"
 #include "TrivialGroup.h"
 #include "WallpaperGroup.h"
-//#include "math/SymbolicPoint.h"
 
 
 std::shared_ptr<TrivialGroup> SymmetryGroupFactory::trivial() {
@@ -10,12 +9,24 @@ std::shared_ptr<TrivialGroup> SymmetryGroupFactory::trivial() {
 
 std::shared_ptr<WallpaperGroup> SymmetryGroupFactory::p1(std::shared_ptr<SymmetryGroup> old) {
 	std::vector<SymbolicMatrix> cell;
-	cell.push_back(SymbolicMatrix());
+	cell.push_back(SymbolicMatrix());	// identity transformation
+
+	SymbolicPoint bottom_left ("(-v1_x - v2_x) / 2", "(-v1_y - v2_y) / 2");
+	SymbolicPoint top_left    ("(-v1_x + v2_x) / 2", "(-v1_y + v2_y) / 2");
+	SymbolicPoint bottom_right("( v1_x - v2_x) / 2", "( v1_y - v2_y) / 2");
+	SymbolicPoint top_right   ("( v1_x + v2_x) / 2", "( v1_y + v2_y) / 2");
+	WallpaperGroup::DomainBoundaries edges;
+	edges.type_A.push_back({ bottom_left, top_left });
+	edges.type_A.push_back({ bottom_right, top_right });
+	edges.type_B.push_back({ bottom_left, bottom_right });
+	edges.type_B.push_back({ top_left, top_right });
 
 	return std::make_shared<WallpaperGroup>(
 		"p1",
 		WallpaperGroup::PARALLELOGRAM,
 		cell,
+		std::vector<SymbolicPoint>{},
+		edges,
 		old
 	);
 }
@@ -26,10 +37,40 @@ std::shared_ptr<WallpaperGroup> SymmetryGroupFactory::p2(std::shared_ptr<Symmetr
 	SymbolicPoint center(0, 0);
 	cell.push_back(SymbolicMatrix::rotate(180, center));
 
+	SymbolicPoint bottom_left ("(-v1_x - v2_x) / 2", "(-v1_y - v2_y) / 2");
+	SymbolicPoint center_left (" -v1_x         / 2", " -v1_y         / 2");
+	SymbolicPoint top_left    ("(-v1_x + v2_x) / 2", "(-v1_y + v2_y) / 2");
+	SymbolicPoint bottom_mid  ("        -v2_x  / 2", "        -v2_y  / 2");
+	SymbolicPoint center_mid  (0, 0);
+	SymbolicPoint top_mid     ("         v2_x  / 2", "         v2_y  / 2");
+	SymbolicPoint bottom_right("( v1_x - v2_x) / 2", "( v1_y - v2_y) / 2");
+	SymbolicPoint center_right("  v1_x         / 2", "  v1_y         / 2");
+	SymbolicPoint top_right   ("( v1_x + v2_x) / 2", "( v1_y + v2_y) / 2");
+
+	std::vector<SymbolicPoint> centers{
+		top_left, top_mid, top_right,
+		center_left, center_mid, center_right,
+		bottom_left, bottom_mid, bottom_right,
+	};
+
+	WallpaperGroup::DomainBoundaries edges;
+	edges.type_A.push_back({ bottom_left, center_left });
+	edges.type_A.push_back({ top_left, center_left });
+	edges.type_A.push_back({ bottom_right, center_right });
+	edges.type_A.push_back({ top_right, center_right });
+	edges.type_B.push_back({ bottom_left, bottom_mid });
+	edges.type_B.push_back({ bottom_right, bottom_mid });
+	edges.type_B.push_back({ top_left, top_mid });
+	edges.type_B.push_back({ top_right, top_mid });
+	edges.type_C.push_back({ center_left, center_mid });
+	edges.type_C.push_back({ center_right, center_mid });
+
 	return std::make_shared<WallpaperGroup>(
 		"p2",
 		WallpaperGroup::PARALLELOGRAM,
 		cell,
+		centers,
+		edges,
 		old
 	);
 }
