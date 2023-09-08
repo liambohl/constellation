@@ -30,6 +30,8 @@ private:
 	Drawing drawing;
 	Tool* current_tool = nullptr;
 
+	bool view_symmetry = true;
+
 	// Name and location of currrently open file. If nullptr, we are editing a new, never-saved drawing.
 	PWSTR drawing_file_path = nullptr;		// full path
 	IShellItem* drawing_folder = nullptr;
@@ -70,6 +72,9 @@ public:
 
 	// Symmetry menu
 	void set_symmetry_group(enum symmetry_group symmetry_group);
+
+	// View menu
+	void set_view_symmetry(bool visible) { view_symmetry = visible; }
 
 	void handle_escape();
 
