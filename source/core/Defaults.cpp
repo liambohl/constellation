@@ -15,6 +15,13 @@ Defaults::Defaults() {
 	rotation_center_brush = new Gdiplus::SolidBrush(Gdiplus::Color(255, 255, 100, 0));
 
 	// symmetry guides - domain boundary shapes
+	mirror_line = {
+		{ 0.0f, 0.0f },		// point
+		{ 0.0f, 0.0f },
+		{ 1.0f, 0.0f },
+		{ 1.0f, 0.0f }		// point
+	};
+
 	boundary_shape_A = {
 		{ 0.0f, 0.0f },		// point
 		{ 0.0f, 0.0f },

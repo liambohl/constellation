@@ -93,8 +93,8 @@ void WallpaperGroup::set_v1(float x, float y) {
 	case PARALLELOGRAM:
 		break;
 	case RECTANGLE:
-		// make v2 perpendicular to v1
-		v2_direction = (float)(std::atan2(v1_y, v1_x) + std::numbers::pi);
+		// make v2 90 degrees counter-clockwise from v1
+		v2_direction = (float)(std::atan2(v1_y, v1_x) - std::numbers::pi / 2);
 		break;
 	case RHOMBUS:
 		// make v2 equal in length to v1
@@ -103,12 +103,12 @@ void WallpaperGroup::set_v1(float x, float y) {
 	case HEXAGON:
 		// make v2 equal in length and 60 degrees counter-clockwise from v1
 		v2_length = std::sqrt(v1_x * v1_x + v1_y * v1_y);
-		v2_direction = (float)(std::atan2(v1_y, v1_x) + 2 / 3 * std::numbers::pi);
+		v2_direction = (float)(std::atan2(v1_y, v1_x) - std::numbers::pi / 3);
 		break;
 	case SQUARE:
 		// make v2 equal in length and 90 degrees counter-clockwise from v1
 		v2_length = std::sqrt(v1_x * v1_x + v1_y * v1_y);
-		v2_direction = (float)(std::atan2(v1_y, v1_x) + std::numbers::pi);
+		v2_direction = (float)(std::atan2(v1_y, v1_x) - std::numbers::pi / 2);
 		break;
 	}
 
@@ -129,22 +129,22 @@ void WallpaperGroup::set_v2(float x, float y) {
 	case PARALLELOGRAM:
 		break;
 	case RECTANGLE:
-		// make v1 perpendicular to v2
-		v1_direction = (float)(std::atan2(v2_y, v2_x) + std::numbers::pi);
+		// make v1 90 degrees clockwise from v2
+		v1_direction = (float)(std::atan2(v2_y, v2_x) + std::numbers::pi / 2);
 		break;
 	case RHOMBUS:
 		// make v1 equal in length to v2
 		v1_length = std::sqrt(v2_x * v2_x + v2_y * v2_y);
 		break;
 	case HEXAGON:
-		// make v1 equal in length and 60 degrees counter-clockwise from v2
+		// make v1 equal in length and 60 degrees clockwise from v2
 		v1_length = std::sqrt(v2_x * v2_x + v2_y * v2_y);
-		v1_direction = (float)(std::atan2(v2_y, v2_x) + 2 / 3 * std::numbers::pi);
+		v1_direction = (float)(std::atan2(v2_y, v2_x) + std::numbers::pi / 3);
 		break;
 	case SQUARE:
-		// make v1 equal in length and 90 degrees counter-clockwise from v2
+		// make v1 equal in length and 90 degrees clockwise from v2
 		v1_length = std::sqrt(v2_x * v2_x + v2_y * v2_y);
-		v1_direction = (float)(std::atan2(v2_y, v2_x) + std::numbers::pi);
+		v1_direction = (float)(std::atan2(v2_y, v2_x) + std::numbers::pi / 2);
 		break;
 	}
 
@@ -191,14 +191,23 @@ void WallpaperGroup::draw(Gdiplus::Graphics* graphics, Defaults& defaults, float
 	graphics->FillPolygon(defaults.symmetry_cell_brush, vertices, count);
 
 	// draw domain boundaries
+	for (auto& boundary : domain_boundaries.mirror_lines)
+		draw_boundary(graphics, defaults, boundary, variables, defaults.mirror_line);
+
 	for (auto& boundary : domain_boundaries.type_A)
 		draw_boundary(graphics, defaults, boundary, variables, defaults.boundary_shape_A);
+	for (auto& boundary : domain_boundaries.type_A_mirror)
+		draw_boundary(graphics, defaults, boundary, variables, defaults.boundary_shape_A, true);
 
 	for (auto& boundary : domain_boundaries.type_B)
 		draw_boundary(graphics, defaults, boundary, variables, defaults.boundary_shape_B);
+	for (auto& boundary : domain_boundaries.type_B_mirror)
+		draw_boundary(graphics, defaults, boundary, variables, defaults.boundary_shape_B, true);
 
 	for (auto& boundary : domain_boundaries.type_C)
 		draw_boundary(graphics, defaults, boundary, variables, defaults.boundary_shape_C);
+	for (auto& boundary : domain_boundaries.type_C_mirror)
+		draw_boundary(graphics, defaults, boundary, variables, defaults.boundary_shape_C, true);
 	
 	// draw rotation centers
 	float radius = defaults.rotation_center_radius / scale;
@@ -226,7 +235,8 @@ void WallpaperGroup::draw_boundary(
 	Defaults& defaults,
 	const SymbolicLine& boundary,
 	const std::unordered_map<std::string, float>& variables,
-	std::vector<Gdiplus::PointF> shape
+	std::vector<Gdiplus::PointF> shape,
+	bool mirrored
 ) {
 	// Get actual endpoints in world space
 	float p1_x = boundary.p1.x->evaluate(variables);
@@ -237,6 +247,9 @@ void WallpaperGroup::draw_boundary(
 	// transformation from shape space to world space
 	// This transform maps (0, 0) to p1 and (1, 0) to p2 with a rotation, scale, and translation
 	Gdiplus::Matrix transform(p2_x - p1_x, p2_y - p1_y, p1_y - p2_y, p2_x - p1_x, p1_x, p1_y);
+
+	if (mirrored)
+		transform.Scale(1.0f, -1.0f);
 
 	// Actual bezier control points in world space
 	std::vector<Gdiplus::PointF> control_points = shape;

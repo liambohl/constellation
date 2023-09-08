@@ -35,7 +35,7 @@ private:
 
 	std::shared_ptr<Expression> matrix[3][3];
 
-	friend SymbolicMatrix operator*(SymbolicMatrix& left, SymbolicMatrix& right);
+	friend SymbolicMatrix operator*(SymbolicMatrix left, SymbolicMatrix right);
 	
 	friend std::ostream& operator<<(std::ostream& os, const SymbolicMatrix& transform);
 };

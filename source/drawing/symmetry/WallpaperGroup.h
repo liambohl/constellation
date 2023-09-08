@@ -28,8 +28,11 @@ public:
 	struct DomainBoundaries {
 		std::vector<SymbolicLine> mirror_lines;
 		std::vector<SymbolicLine> type_A;
+		std::vector<SymbolicLine> type_A_mirror;
 		std::vector<SymbolicLine> type_B;
+		std::vector<SymbolicLine> type_B_mirror;
 		std::vector<SymbolicLine> type_C;
+		std::vector<SymbolicLine> type_C_mirror;
 	};
 
 	WallpaperGroup(
@@ -68,7 +71,8 @@ private:
 		Defaults& defaults,
 		const SymbolicLine& boundary,
 		const std::unordered_map<std::string, float>& variables,
-		std::vector<Gdiplus::PointF> shape
+		std::vector<Gdiplus::PointF> shape,
+		bool mirrored=false
 	);
 
 	// coordinates of the vectors that form two edges of a cell

@@ -5,12 +5,12 @@
 
 Drawing::Drawing() {
 	background = Gdiplus::Color(255, 80, 80, 80);
-	symmetry_group = SymmetryGroupFactory::trivial();
+	symmetry_group = SymmetryGroupFactory::get_instance().trivial();
 }
 
 Drawing::Drawing(json drawing_json) :
 	background(color_from_json(drawing_json["background"])),
-	symmetry_group(SymmetryGroupFactory::from_json(drawing_json["symmetry_group"])),
+	symmetry_group(SymmetryGroupFactory::get_instance().from_json(drawing_json["symmetry_group"])),
 	elements(drawing_json["elements"])
 {}
 

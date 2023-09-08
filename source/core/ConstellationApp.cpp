@@ -125,15 +125,21 @@ void ConstellationApp::set_symmetry_group(enum symmetry_group symmetry_group) {
 
     switch (symmetry_group) {
     case TRIVIAL:
-        new_group = SymmetryGroupFactory::trivial();
+        new_group = SymmetryGroupFactory::get_instance().trivial();
         break;
     case P1:
-        new_group = SymmetryGroupFactory::p1(old_group);
+        new_group = SymmetryGroupFactory::get_instance().p1(old_group);
         break;
     case P2:
-        new_group = SymmetryGroupFactory::p2(old_group);
+        new_group = SymmetryGroupFactory::get_instance().p2(old_group);
         break;
-    // TODO: more cases
+    case PM:
+        new_group = SymmetryGroupFactory::get_instance().pm(old_group);
+        break;
+    case PG:
+        new_group = SymmetryGroupFactory::get_instance().pg(old_group);
+        break;
+        // TODO: more cases
     }
 
     do_action(new ActionChangeSymmetryGroup(old_group, new_group));

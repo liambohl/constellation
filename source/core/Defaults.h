@@ -21,6 +21,7 @@ public:
 
 	// symmetry guides - domain boundary shapes
 	// Each of these represents a Bezier curve from (0, 0) to (1, 0).
+	std::vector<Gdiplus::PointF> mirror_line;			// straight line
 	std::vector<Gdiplus::PointF> boundary_shape_A;		// bump out
 	std::vector<Gdiplus::PointF> boundary_shape_B;		// zig zag out
 	std::vector<Gdiplus::PointF> boundary_shape_C;		// puzzle piece key
