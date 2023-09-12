@@ -139,6 +139,15 @@ void ConstellationApp::set_symmetry_group(enum symmetry_group symmetry_group) {
     case PG:
         new_group = SymmetryGroupFactory::get_instance().pg(old_group);
         break;
+    case PMM:
+        new_group = SymmetryGroupFactory::get_instance().pmm(old_group);
+        break;
+    case PMG:
+        new_group = SymmetryGroupFactory::get_instance().pmg(old_group);
+        break;
+    case PGG:
+        new_group = SymmetryGroupFactory::get_instance().pgg(old_group);
+        break;
         // TODO: more cases
     }
 

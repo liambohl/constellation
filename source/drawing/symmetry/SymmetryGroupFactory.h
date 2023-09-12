@@ -14,9 +14,9 @@ public:
 	std::shared_ptr<WallpaperGroup> pm(std::shared_ptr<SymmetryGroup> old);
 	std::shared_ptr<WallpaperGroup> pg(std::shared_ptr<SymmetryGroup> old);
 	//std::shared_ptr<WallpaperGroup> cm(std::shared_ptr<SymmetryGroup> old);
-	//std::shared_ptr<WallpaperGroup> pmm(std::shared_ptr<SymmetryGroup> old);
-	//std::shared_ptr<WallpaperGroup> pmg(std::shared_ptr<SymmetryGroup> old);
-	//std::shared_ptr<WallpaperGroup> pgg(std::shared_ptr<SymmetryGroup> old);
+	std::shared_ptr<WallpaperGroup> pmm(std::shared_ptr<SymmetryGroup> old);
+	std::shared_ptr<WallpaperGroup> pmg(std::shared_ptr<SymmetryGroup> old);
+	std::shared_ptr<WallpaperGroup> pgg(std::shared_ptr<SymmetryGroup> old);
 	//std::shared_ptr<WallpaperGroup> cmm(std::shared_ptr<SymmetryGroup> old);
 	//std::shared_ptr<WallpaperGroup> p4(std::shared_ptr<SymmetryGroup> old);
 	//std::shared_ptr<WallpaperGroup> p4m(std::shared_ptr<SymmetryGroup> old);
@@ -34,17 +34,21 @@ private:
 
 	static SymmetryGroupFactory* instance;
 
-	// Vertices for non-hexagonal cells
+	// vertices for parallelogram cells
 	// For cm and cmm, bottom_left is actually on the left of the diagram.
 	// I named these points thinking that the y coordinate increases moving *up* the screen, but that's backward. Oh well.
 	SymbolicPoint bottom_left;
 	SymbolicPoint center_left;
 	SymbolicPoint top_left;
 	SymbolicPoint bottom_mid;
-	SymbolicPoint center_mid;
+	SymbolicPoint origin;
 	SymbolicPoint top_mid;
 	SymbolicPoint bottom_right;
 	SymbolicPoint center_right;
 	SymbolicPoint top_right;
+
+	// midlines for parallelogram cells
+	SymbolicLine horizontal_midline;
+	SymbolicLine vertical_midline;
 };
 
