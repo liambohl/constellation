@@ -8,5 +8,6 @@ void Element::draw(Gdiplus::Graphics* graphics, std::vector<std::shared_ptr<Gdip
 		draw_one(graphics);
 		transform->Invert();
 		graphics->MultiplyTransform(transform.get());
+		transform->Invert();
 	}
 }
