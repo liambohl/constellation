@@ -37,16 +37,21 @@ std::shared_ptr<WallpaperGroup> SymmetryGroupFactory::p1(std::shared_ptr<Symmetr
 	std::vector<SymbolicMatrix> cell;
 	cell.push_back(SymbolicMatrix());	// identity transformation
 
-	WallpaperGroup::DomainBoundaries edges;
-	edges.type_A.push_back({ bottom_left, top_left });
-	edges.type_A.push_back({ bottom_right, top_right });
-	edges.type_B.push_back({ bottom_left, bottom_right });
-	edges.type_B.push_back({ top_left, top_right });
+	std::vector<SymbolicPoint> drawing_area = {
+		bottom_left, top_left, top_right, bottom_right
+	};
+
+	DomainBoundaries edges;
+	edges.add_type_A({ bottom_left, top_left });
+	edges.add_type_A({ bottom_right, top_right });
+	edges.add_type_B({ bottom_left, bottom_right });
+	edges.add_type_B({ top_left, top_right });
 
 	return std::make_shared<WallpaperGroup>(
 		"p1",
 		WallpaperGroup::PARALLELOGRAM,
 		cell,
+		drawing_area,
 		std::vector<SymbolicPoint>{},
 		edges,
 		old
@@ -58,28 +63,33 @@ std::shared_ptr<WallpaperGroup> SymmetryGroupFactory::p2(std::shared_ptr<Symmetr
 	cell.push_back(SymbolicMatrix());
 	cell.push_back(SymbolicMatrix::rotate(180, origin));
 
-	std::vector<SymbolicPoint> centers {
-		top_left,		top_mid,	top_right,
-		center_left,	origin,		center_right,
-		bottom_left,	bottom_mid,	bottom_right,
+	std::vector<SymbolicPoint> drawing_area = {
+		bottom_left, top_left, top_right, bottom_right
 	};
 
-	WallpaperGroup::DomainBoundaries edges;
-	edges.type_A.push_back({ bottom_left, center_left });
-	edges.type_A.push_back({ top_left, center_left });
-	edges.type_A.push_back({ bottom_right, center_right });
-	edges.type_A.push_back({ top_right, center_right });
-	edges.type_B.push_back({ bottom_left, bottom_mid });
-	edges.type_B.push_back({ bottom_right, bottom_mid });
-	edges.type_B.push_back({ top_left, top_mid });
-	edges.type_B.push_back({ top_right, top_mid });
-	edges.type_C.push_back({ center_left, origin });
-	edges.type_C.push_back({ center_right, origin });
+	std::vector<SymbolicPoint> centers {
+		top_left, top_mid, top_right,
+			center_left, origin, center_right,
+			bottom_left, bottom_mid, bottom_right,
+	};
+
+	DomainBoundaries edges;
+	edges.add_type_A({ bottom_left, center_left });
+	edges.add_type_A({ top_left, center_left });
+	edges.add_type_A({ bottom_right, center_right });
+	edges.add_type_A({ top_right, center_right });
+	edges.add_type_B({ bottom_left, bottom_mid });
+	edges.add_type_B({ bottom_right, bottom_mid });
+	edges.add_type_B({ top_left, top_mid });
+	edges.add_type_B({ top_right, top_mid });
+	edges.add_type_C({ center_left, origin });
+	edges.add_type_C({ center_right, origin });
 
 	return std::make_shared<WallpaperGroup>(
 		"p2",
 		WallpaperGroup::PARALLELOGRAM,
 		cell,
+		drawing_area,
 		centers,
 		edges,
 		old
@@ -91,19 +101,24 @@ std::shared_ptr<WallpaperGroup> SymmetryGroupFactory::pm(std::shared_ptr<Symmetr
 	cell.push_back(SymbolicMatrix());
 	cell.push_back(SymbolicMatrix::reflect(horizontal_midline));
 
-	WallpaperGroup::DomainBoundaries edges;
-	edges.mirror_lines.push_back({ bottom_left, bottom_right });
-	edges.mirror_lines.push_back({ center_left, center_right });
-	edges.mirror_lines.push_back({ top_left, top_right });
-	edges.type_A.push_back({ bottom_left, center_left });
-	edges.type_A.push_back({ bottom_right, center_right });
-	edges.type_A_mirror.push_back({ top_left, center_left });
-	edges.type_A_mirror.push_back({ top_right, center_right });
+	std::vector<SymbolicPoint> drawing_area = {
+		bottom_left, top_left, top_right, bottom_right
+	};
+
+	DomainBoundaries edges;
+	edges.add_mirror_line({ bottom_left, bottom_right });
+	edges.add_mirror_line({ center_left, center_right });
+	edges.add_mirror_line({ top_left, top_right });
+	edges.add_type_A({ bottom_left, center_left });
+	edges.add_type_A({ bottom_right, center_right });
+	edges.add_type_A_mirror({ top_left, center_left });
+	edges.add_type_A_mirror({ top_right, center_right });
 
 	return std::make_shared<WallpaperGroup>(
 		"pm",
 		WallpaperGroup::RECTANGLE,
 		cell,
+		drawing_area,
 		std::vector<SymbolicPoint>{},
 		edges,
 		old
@@ -115,19 +130,24 @@ std::shared_ptr<WallpaperGroup> SymmetryGroupFactory::pg(std::shared_ptr<Symmetr
 	cell.push_back(SymbolicMatrix());
 	cell.push_back(SymbolicMatrix::reflect(vertical_midline) * SymbolicMatrix::translate(top_mid));
 
-	WallpaperGroup::DomainBoundaries edges;
-	edges.type_A.push_back({ bottom_left, bottom_right });
-	edges.type_A.push_back({ top_left, top_right });
-	edges.type_A_mirror.push_back({ center_right, center_left });
-	edges.type_B.push_back({ bottom_left, center_left });
-	edges.type_B.push_back({ bottom_right, center_right });
-	edges.type_B_mirror.push_back({ center_left, top_left });
-	edges.type_B_mirror.push_back({ center_right, top_right });
+	std::vector<SymbolicPoint> drawing_area = {
+		bottom_left, center_left, center_right, bottom_right
+	};
+
+	DomainBoundaries edges;
+	edges.add_type_A({ bottom_left, bottom_right });
+	edges.add_type_A({ top_left, top_right });
+	edges.add_type_A_mirror({ center_right, center_left });
+	edges.add_type_B({ bottom_left, center_left });
+	edges.add_type_B({ bottom_right, center_right });
+	edges.add_type_B_mirror({ center_left, top_left });
+	edges.add_type_B_mirror({ center_right, top_right });
 
 	return std::make_shared<WallpaperGroup>(
 		"pg",
 		WallpaperGroup::RECTANGLE,
 		cell,
+		drawing_area,
 		std::vector<SymbolicPoint>{},
 		edges,
 		old
@@ -145,24 +165,29 @@ std::shared_ptr<WallpaperGroup> SymmetryGroupFactory::pmm(std::shared_ptr<Symmet
 	cell.push_back(SymbolicMatrix::reflect(horizontal_midline));
 	cell.push_back(SymbolicMatrix::reflect(vertical_midline) * SymbolicMatrix::reflect(horizontal_midline));
 
-	std::vector<SymbolicPoint> centers {
-		top_left,		top_mid,	top_right,
-		center_left,	origin,		center_right,
-		bottom_left,	bottom_mid,	bottom_right,
+	std::vector<SymbolicPoint> drawing_area = {
+		bottom_left, top_left, top_right, bottom_right
 	};
-	
-	WallpaperGroup::DomainBoundaries edges;
-	edges.mirror_lines.push_back({ bottom_left, bottom_right });
-	edges.mirror_lines.push_back({ center_left, center_right });
-	edges.mirror_lines.push_back({ top_left, top_right });
-	edges.mirror_lines.push_back({ bottom_left, top_left });
-	edges.mirror_lines.push_back({ bottom_mid, top_mid });
-	edges.mirror_lines.push_back({ bottom_right, top_right });
+
+	std::vector<SymbolicPoint> centers {
+		top_left, top_mid, top_right,
+			center_left, origin, center_right,
+			bottom_left, bottom_mid, bottom_right,
+	};
+
+	DomainBoundaries edges;
+	edges.add_mirror_line({ bottom_left, bottom_right });
+	edges.add_mirror_line({ center_left, center_right });
+	edges.add_mirror_line({ top_left, top_right });
+	edges.add_mirror_line({ bottom_left, top_left });
+	edges.add_mirror_line({ bottom_mid, top_mid });
+	edges.add_mirror_line({ bottom_right, top_right });
 
 	return std::make_shared<WallpaperGroup>(
 		"pmm",
 		WallpaperGroup::RECTANGLE,
 		cell,
+		drawing_area,
 		centers,
 		edges,
 		old
@@ -170,46 +195,51 @@ std::shared_ptr<WallpaperGroup> SymmetryGroupFactory::pmm(std::shared_ptr<Symmet
 }
 
 std::shared_ptr<WallpaperGroup> SymmetryGroupFactory::pmg(std::shared_ptr<SymmetryGroup> old) {
-	SymbolicMatrix vertical_glide = SymbolicMatrix::reflect(vertical_midline) * SymbolicMatrix::translate(top_mid); 
+	SymbolicMatrix vertical_glide = SymbolicMatrix::reflect(vertical_midline) * SymbolicMatrix::translate(top_mid);
 	std::vector<SymbolicMatrix> cell;
 	cell.push_back(SymbolicMatrix());
 	cell.push_back(vertical_glide);
 	cell.push_back(SymbolicMatrix::reflect(horizontal_midline));
 	cell.push_back(vertical_glide * SymbolicMatrix::reflect(horizontal_midline));
 
-	SymbolicPoint one_quarter_left    = { "-v1_x / 2 - v2_x / 4", "-v1_y / 2 - v2_y / 4" };	// one quarter of the way from bottom left to top left
-	SymbolicPoint three_quarter_left  = { "-v1_x / 2 + v2_x / 4", "-v1_y / 2 + v2_y / 4" };
-	SymbolicPoint one_quarter_mid     = { "           -v2_x / 4", "           -v2_y / 4" };
-	SymbolicPoint three_quarter_mid   = { "            v2_x / 4", "            v2_y / 4" };
-	SymbolicPoint one_quarter_right   = { " v1_x / 2 - v2_x / 4", " v1_y / 2 - v2_y / 4" };
+	std::vector<SymbolicPoint> drawing_area = {
+		bottom_left, center_left, center_right, bottom_right
+	};
+
+	SymbolicPoint one_quarter_left = { "-v1_x / 2 - v2_x / 4", "-v1_y / 2 - v2_y / 4" };	// one quarter of the way from bottom left to top left
+	SymbolicPoint three_quarter_left = { "-v1_x / 2 + v2_x / 4", "-v1_y / 2 + v2_y / 4" };
+	SymbolicPoint one_quarter_mid = { "           -v2_x / 4", "           -v2_y / 4" };
+	SymbolicPoint three_quarter_mid = { "            v2_x / 4", "            v2_y / 4" };
+	SymbolicPoint one_quarter_right = { " v1_x / 2 - v2_x / 4", " v1_y / 2 - v2_y / 4" };
 	SymbolicPoint three_quarter_right = { " v1_x / 2 + v2_x / 4", " v1_y / 2 + v2_y / 4" };
 
 	std::vector<SymbolicPoint> centers {
-		three_quarter_left,	three_quarter_mid,	three_quarter_right,
-		one_quarter_left,   one_quarter_mid,    one_quarter_right,
+		three_quarter_left, three_quarter_mid, three_quarter_right,
+			one_quarter_left, one_quarter_mid, one_quarter_right,
 	};
 
-	WallpaperGroup::DomainBoundaries edges;
-	edges.mirror_lines.push_back({ bottom_left, bottom_right });
-	edges.mirror_lines.push_back({ center_left, center_right });
-	edges.mirror_lines.push_back({ top_left, top_right });
-	edges.type_A.push_back({ bottom_left, one_quarter_left });
-	edges.type_A.push_back({ center_left, one_quarter_left });
-	edges.type_A.push_back({ bottom_right, one_quarter_right });
-	edges.type_A.push_back({ center_right, one_quarter_right });
-	edges.type_A_mirror.push_back({ top_left, three_quarter_left });
-	edges.type_A_mirror.push_back({ center_left, three_quarter_left });
-	edges.type_A_mirror.push_back({ top_right, three_quarter_right });
-	edges.type_A_mirror.push_back({ center_right, three_quarter_right });
-	edges.type_B.push_back({ bottom_mid, one_quarter_mid });
-	edges.type_B.push_back({ origin, one_quarter_mid });
-	edges.type_B_mirror.push_back({ top_mid, three_quarter_mid });
-	edges.type_B_mirror.push_back({ origin, three_quarter_mid });
+	DomainBoundaries edges;
+	edges.add_mirror_line({ bottom_left, bottom_right });
+	edges.add_mirror_line({ center_left, center_right });
+	edges.add_mirror_line({ top_left, top_right });
+	edges.add_type_A({ bottom_left, one_quarter_left });
+	edges.add_type_A({ center_left, one_quarter_left });
+	edges.add_type_A({ bottom_right, one_quarter_right });
+	edges.add_type_A({ center_right, one_quarter_right });
+	edges.add_type_A_mirror({ top_left, three_quarter_left });
+	edges.add_type_A_mirror({ center_left, three_quarter_left });
+	edges.add_type_A_mirror({ top_right, three_quarter_right });
+	edges.add_type_A_mirror({ center_right, three_quarter_right });
+	edges.add_type_B({ bottom_mid, one_quarter_mid });
+	edges.add_type_B({ origin, one_quarter_mid });
+	edges.add_type_B_mirror({ top_mid, three_quarter_mid });
+	edges.add_type_B_mirror({ origin, three_quarter_mid });
 
 	return std::make_shared<WallpaperGroup>(
 		"pmg",
 		WallpaperGroup::RECTANGLE,
 		cell,
+		drawing_area,
 		centers,
 		edges,
 		old
@@ -217,10 +247,11 @@ std::shared_ptr<WallpaperGroup> SymmetryGroupFactory::pmg(std::shared_ptr<Symmet
 }
 
 std::shared_ptr<WallpaperGroup> SymmetryGroupFactory::pgg(std::shared_ptr<SymmetryGroup> old) {
-	SymbolicPoint one_quarter_left   = { "-v1_x / 2 - v2_x / 4", "-v1_y / 2 - v2_y / 4" };	// one quarter of the way from bottom left to top left
-	SymbolicPoint one_quarter_mid    = { "           -v2_x / 4", "           -v2_y / 4" };
+	SymbolicPoint one_quarter_left = { "-v1_x / 2 - v2_x / 4", "-v1_y / 2 - v2_y / 4" };	// one quarter of the way from bottom left to top left
+	SymbolicPoint one_quarter_mid = { "           -v2_x / 4", "           -v2_y / 4" };
 	SymbolicPoint bottom_one_quarter = { "-v1_x / 4 - v2_x / 2", "-v1_y / 4 - v2_x / 2" };	// one quarter of the way from bottom left to bottom right
 	SymbolicPoint center_one_quarter = { "-v1_x / 4           ", "-v1_y / 4           " };
+
 	SymbolicMatrix vertical_glide = SymbolicMatrix::reflect({ bottom_one_quarter, center_one_quarter }) * SymbolicMatrix::translate(top_mid);
 	*Logger::get_instance() << std::endl << vertical_glide << std::endl;
 	SymbolicMatrix horizontal_glide = SymbolicMatrix::reflect({ one_quarter_left, one_quarter_mid }) * SymbolicMatrix::translate(center_right);
@@ -231,30 +262,35 @@ std::shared_ptr<WallpaperGroup> SymmetryGroupFactory::pgg(std::shared_ptr<Symmet
 	cell.push_back(horizontal_glide);
 	cell.push_back(vertical_glide * horizontal_glide);
 
-	std::vector<SymbolicPoint> centers {
-		top_left,		top_mid,	top_right,
-		center_left,	origin,		center_right,
-		bottom_left,	bottom_mid,	bottom_right,
+	std::vector<SymbolicPoint> drawing_area = {
+		bottom_left, center_left, origin, bottom_mid
 	};
 
-	WallpaperGroup::DomainBoundaries edges;
-	edges.type_A.push_back({ bottom_left, center_left });
-	edges.type_A.push_back({ top_left, center_left });
-	edges.type_A.push_back({ bottom_right, center_right });
-	edges.type_A.push_back({ top_right, center_right });
-	edges.type_A_mirror.push_back({ origin, bottom_mid});
-	edges.type_A_mirror.push_back({ origin, top_mid});
-	edges.type_B.push_back({ bottom_left, bottom_mid });
-	edges.type_B.push_back({ bottom_right, bottom_mid });
-	edges.type_B.push_back({ top_left, top_mid });
-	edges.type_B.push_back({ top_right, top_mid });
-	edges.type_B_mirror.push_back({ origin, center_left });
-	edges.type_B_mirror.push_back({ origin, center_right });
+	std::vector<SymbolicPoint> centers {
+		top_left, top_mid, top_right,
+			center_left, origin, center_right,
+			bottom_left, bottom_mid, bottom_right,
+	};
+
+	DomainBoundaries edges;
+	edges.add_type_A({ bottom_left, center_left });
+	edges.add_type_A({ top_left, center_left });
+	edges.add_type_A({ bottom_right, center_right });
+	edges.add_type_A({ top_right, center_right });
+	edges.add_type_A_mirror({ origin, bottom_mid });
+	edges.add_type_A_mirror({ origin, top_mid });
+	edges.add_type_B({ bottom_left, bottom_mid });
+	edges.add_type_B({ bottom_right, bottom_mid });
+	edges.add_type_B({ top_left, top_mid });
+	edges.add_type_B({ top_right, top_mid });
+	edges.add_type_B_mirror({ origin, center_left });
+	edges.add_type_B_mirror({ origin, center_right });
 
 	return std::make_shared<WallpaperGroup>(
 		"pgg",
 		WallpaperGroup::RECTANGLE,
 		cell,
+		drawing_area,
 		centers,
 		edges,
 		old

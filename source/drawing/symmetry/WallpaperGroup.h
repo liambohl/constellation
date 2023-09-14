@@ -2,6 +2,7 @@
 
 #include <vector>
 
+#include "DomainBoundaries.h"
 #include "SymmetryGroup.h"
 #include "core/framework.h"
 #include "math/SymbolicMatrix.h"
@@ -22,23 +23,11 @@ public:
 		SQUARE
 	};
 
-	// This struct bundles the edges of all fundamental domains in a wallpaper group's central cell.
-	// Edges that are equivalent under one of the symmetry group's transformations should have the same type.
-	// Edges are drawn differently depending on their type (see defaults).
-	struct DomainBoundaries {
-		std::vector<SymbolicLine> mirror_lines;
-		std::vector<SymbolicLine> type_A;
-		std::vector<SymbolicLine> type_A_mirror;
-		std::vector<SymbolicLine> type_B;
-		std::vector<SymbolicLine> type_B_mirror;
-		std::vector<SymbolicLine> type_C;
-		std::vector<SymbolicLine> type_C_mirror;
-	};
-
 	WallpaperGroup(
 		std::string name,
 		shape cell_shape,
 		std::vector<SymbolicMatrix> cell,
+		std::vector<SymbolicPoint> drawing_area,
 		std::vector<SymbolicPoint> rotation_centers,
 		DomainBoundaries domain_boundaries,
 		std::shared_ptr<SymmetryGroup> old
@@ -65,16 +54,6 @@ private:
 	// Calculate transforms based on current value of v1 and v2
 	void update_transforms();
 
-	// Draw the given boundary with the given shape
-	void draw_boundary(
-		Gdiplus::Graphics* graphics,
-		Defaults& defaults,
-		const SymbolicLine& boundary,
-		const std::unordered_map<std::string, float>& variables,
-		std::vector<Gdiplus::PointF> shape,
-		bool mirrored=false
-	);
-
 	// coordinates of the vectors that form two edges of a cell
 	float v1_x, v1_y, v2_x, v2_y;
 
@@ -91,6 +70,13 @@ private:
 
 	// Cached vector of concrete transforms
 	std::vector<std::shared_ptr<Gdiplus::Matrix>> transforms;
+
+	// Vertices of a polygon inside which the user should draw elements.
+	// Drawing outside this area results in elements extending beyond or not reaching the edge of the tessalation.
+	std::vector<SymbolicPoint> drawing_area;
+
+	// Cached concrete drawing area
+	std::vector<Gdiplus::PointF> drawing_area_evaluated;
 
 	// Points around which this symmetry group has some rotational symmetry. Includes only centers inside, or on boundary of, the central cell
 	std::vector<SymbolicPoint> rotation_centers;

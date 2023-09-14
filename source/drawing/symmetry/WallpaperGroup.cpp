@@ -9,11 +9,12 @@ WallpaperGroup::WallpaperGroup(
 	std::string name,
 	shape cell_shape,
 	std::vector<SymbolicMatrix> cell,
+	std::vector<SymbolicPoint> drawing_area,
 	std::vector<SymbolicPoint> rotation_centers,
 	DomainBoundaries domain_boundaries,
 	std::shared_ptr<SymmetryGroup> old
 ):
-	SymmetryGroup(name), cell_shape(cell_shape), cell(cell), rotation_centers(rotation_centers), domain_boundaries(domain_boundaries)
+	SymmetryGroup(name), cell_shape(cell_shape), cell(cell), drawing_area(drawing_area), rotation_centers(rotation_centers), domain_boundaries(domain_boundaries)
 {
 	v1_x = 100.0f;
 	v1_y = 0.0f;
@@ -80,6 +81,15 @@ void WallpaperGroup::update_transforms() {
 			}
 		}
 	}
+
+	// Update drawing area
+	drawing_area_evaluated.clear();
+	for (auto& symbolic_point : drawing_area) {
+		drawing_area_evaluated.push_back({ symbolic_point.x->evaluate(vectors), symbolic_point.y->evaluate(vectors) });
+	}
+
+	// Update domain boundaries
+	domain_boundaries.update(vectors);
 }
 
 void WallpaperGroup::set_v1(float x, float y) {
@@ -167,47 +177,11 @@ void WallpaperGroup::draw(Gdiplus::Graphics* graphics, Defaults& defaults, float
 		{ "v2_y", v2_y }
 	};
 
-	// draw central cell
-	Gdiplus::PointF vertices[6];
-	int count;
-	if (cell_shape == HEXAGON) {
-		count = 6;
-		// Clockwise starting from bottom left
-		vertices[0] = { (-1 * v1_x - 1 * v2_x) / 3, (-1 * v1_y - 1 * v2_y) / 3 };
-		vertices[1] = { (-2 * v1_x + 1 * v2_x) / 3, (-2 * v1_y + 1 * v2_y) / 3 };
-		vertices[2] = { (-1 * v1_x + 2 * v2_x) / 3, (-1 * v1_y + 2 * v2_y) / 3 };
-		vertices[3] = { ( 1 * v1_x + 1 * v2_x) / 3, ( 1 * v1_y + 1 * v2_y) / 3 };
-		vertices[4] = { ( 2 * v1_x - 1 * v2_x) / 3, ( 2 * v1_y - 1 * v2_y) / 3 };
-		vertices[5] = { ( 1 * v1_x - 2 * v2_x) / 3, ( 1 * v1_y - 2 * v2_y) / 3 };
-	}
-	else {
-		count = 4;
-		// Clockwise starting from bottom left
-		vertices[0] = { (-v1_x - v2_x) / 2, (-v1_y - v2_y) / 2 };
-		vertices[1] = { (-v1_x + v2_x) / 2, (-v1_y + v2_y) / 2 };
-		vertices[2] = { ( v1_x + v2_x) / 2, ( v1_y + v2_y) / 2 };
-		vertices[3] = { ( v1_x - v2_x) / 2, ( v1_y - v2_y) / 2 };
-	}
-	graphics->FillPolygon(defaults.symmetry_cell_brush, vertices, count);
+	// draw drawing_area
+	graphics->FillPolygon(defaults.drawing_area_brush, drawing_area_evaluated.data(), (int)drawing_area_evaluated.size());
 
 	// draw domain boundaries
-	for (auto& boundary : domain_boundaries.mirror_lines)
-		draw_boundary(graphics, defaults, boundary, variables, defaults.mirror_line);
-
-	for (auto& boundary : domain_boundaries.type_A)
-		draw_boundary(graphics, defaults, boundary, variables, defaults.boundary_shape_A);
-	for (auto& boundary : domain_boundaries.type_A_mirror)
-		draw_boundary(graphics, defaults, boundary, variables, defaults.boundary_shape_A, true);
-
-	for (auto& boundary : domain_boundaries.type_B)
-		draw_boundary(graphics, defaults, boundary, variables, defaults.boundary_shape_B);
-	for (auto& boundary : domain_boundaries.type_B_mirror)
-		draw_boundary(graphics, defaults, boundary, variables, defaults.boundary_shape_B, true);
-
-	for (auto& boundary : domain_boundaries.type_C)
-		draw_boundary(graphics, defaults, boundary, variables, defaults.boundary_shape_C);
-	for (auto& boundary : domain_boundaries.type_C_mirror)
-		draw_boundary(graphics, defaults, boundary, variables, defaults.boundary_shape_C, true);
+	domain_boundaries.draw(graphics, defaults);
 	
 	// draw rotation centers
 	float radius = defaults.rotation_center_radius / scale;
@@ -228,32 +202,4 @@ json WallpaperGroup::to_json() {
 		{"v2_y", v2_y},
 		{"extent", extent}
 	};
-}
-
-void WallpaperGroup::draw_boundary(
-	Gdiplus::Graphics* graphics,
-	Defaults& defaults,
-	const SymbolicLine& boundary,
-	const std::unordered_map<std::string, float>& variables,
-	std::vector<Gdiplus::PointF> shape,
-	bool mirrored
-) {
-	// Get actual endpoints in world space
-	float p1_x = boundary.p1.x->evaluate(variables);
-	float p1_y = boundary.p1.y->evaluate(variables);
-	float p2_x = boundary.p2.x->evaluate(variables);
-	float p2_y = boundary.p2.y->evaluate(variables);
-
-	// transformation from shape space to world space
-	// This transform maps (0, 0) to p1 and (1, 0) to p2 with a rotation, scale, and translation
-	Gdiplus::Matrix transform(p2_x - p1_x, p2_y - p1_y, p1_y - p2_y, p2_x - p1_x, p1_x, p1_y);
-
-	if (mirrored)
-		transform.Scale(1.0f, -1.0f);
-
-	// Actual bezier control points in world space
-	std::vector<Gdiplus::PointF> control_points = shape;
-	transform.TransformPoints(control_points.data(), (int)control_points.size());
-
-	graphics->DrawBeziers(defaults.domain_boundary_pen, control_points.data(), (int)control_points.size());
 }
