@@ -166,10 +166,33 @@ std::shared_ptr<WallpaperGroup> SymmetryGroupFactory::pg(std::shared_ptr<Symmetr
 	);
 }
 
-//std::shared_ptr<WallpaperGroup> SymmetryGroupFactory::cm(std::shared_ptr<SymmetryGroup> old) {
-//
-//}
-//
+std::shared_ptr<WallpaperGroup> SymmetryGroupFactory::cm(std::shared_ptr<SymmetryGroup> old) {
+	std::vector<SymbolicMatrix> cell;
+	cell.push_back(SymbolicMatrix());
+	cell.push_back(SymbolicMatrix::reflect({ bottom_left, top_right }));
+
+	std::vector<SymbolicPoint> drawing_area = {
+		bottom_left, top_right, bottom_right
+	};
+
+	DomainBoundaries edges;
+	edges.add_mirror_line({ bottom_left, top_right });
+	edges.add_type_A({ bottom_left, bottom_right });
+	edges.add_type_A({ top_left, top_right });
+	edges.add_type_A_mirror({ bottom_left, top_left });
+	edges.add_type_A_mirror({ bottom_right, top_right });
+
+	return std::make_shared<WallpaperGroup>(
+		"cm",
+		WallpaperGroup::RHOMBUS,
+		cell,
+		drawing_area,
+		std::vector<SymbolicPoint>{},
+		edges,
+		old
+	);
+}
+
 std::shared_ptr<WallpaperGroup> SymmetryGroupFactory::pmm(std::shared_ptr<SymmetryGroup> old) {
 	std::vector<SymbolicMatrix> cell;
 	cell.push_back(SymbolicMatrix());
@@ -314,10 +337,49 @@ std::shared_ptr<WallpaperGroup> SymmetryGroupFactory::pgg(std::shared_ptr<Symmet
 
 }
 
-//std::shared_ptr<WallpaperGroup> SymmetryGroupFactory::cmm(std::shared_ptr<SymmetryGroup> old) {
-//
-//}
-//
+std::shared_ptr<WallpaperGroup> SymmetryGroupFactory::cmm(std::shared_ptr<SymmetryGroup> old) {
+	SymbolicMatrix mirror_one = SymbolicMatrix::reflect({ bottom_left, top_right });
+	SymbolicMatrix mirror_two = SymbolicMatrix::reflect({ top_left, bottom_right });
+
+	std::vector<SymbolicMatrix> cell;
+	cell.push_back(SymbolicMatrix());
+	cell.push_back(mirror_one);
+	cell.push_back(mirror_two);
+	cell.push_back(mirror_one * mirror_two);
+
+	std::vector<SymbolicPoint> drawing_area = {
+		bottom_left, origin, bottom_right
+	};
+
+	std::vector<SymbolicPoint> centers {
+		top_left, top_mid, top_right,
+		center_left, origin, center_right,
+		bottom_left, bottom_mid, bottom_right,
+	};
+
+	DomainBoundaries edges;
+	edges.add_mirror_line({ bottom_left, top_right });
+	edges.add_mirror_line({ top_left, bottom_right });
+	edges.add_type_A({ bottom_left, center_left });
+	edges.add_type_A({ top_left, center_left });
+	edges.add_type_A({ bottom_right, center_right });
+	edges.add_type_A({ top_right, center_right });
+	edges.add_type_A_mirror({ bottom_left, bottom_mid });
+	edges.add_type_A_mirror({ bottom_right, bottom_mid });
+	edges.add_type_A_mirror({ top_left, top_mid });
+	edges.add_type_A_mirror({ top_right, top_mid });
+
+	return std::make_shared<WallpaperGroup>(
+		"cmm",
+		WallpaperGroup::RHOMBUS,
+		cell,
+		drawing_area,
+		centers,
+		edges,
+		old
+	);
+}
+
 //std::shared_ptr<WallpaperGroup> SymmetryGroupFactory::p4(std::shared_ptr<SymmetryGroup> old) {
 //
 //}
@@ -366,12 +428,16 @@ std::shared_ptr<SymmetryGroup> SymmetryGroupFactory::from_json(json symm_json) {
 			wallpaper_group = pm(nullptr);
 		else if (name == "pg")
 			wallpaper_group = pg(nullptr);
+		else if (name == "cm")
+			wallpaper_group = cm(nullptr);
 		else if (name == "pmm")
 			wallpaper_group = pmm(nullptr);
 		else if (name == "pmg")
 			wallpaper_group = pmg(nullptr);
 		else if (name == "pgg")
 			wallpaper_group = pgg(nullptr);
+		else if (name == "cmm")
+			wallpaper_group = cmm(nullptr);
 		else {
 			std::string error_message = "error: unknown wallpaper group " + name;
 			throw std::exception(error_message.c_str());
