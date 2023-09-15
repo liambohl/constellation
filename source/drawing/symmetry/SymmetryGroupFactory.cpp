@@ -1,8 +1,20 @@
 #include "SymmetryGroupFactory.h"
+
+#include <iomanip>
+
 #include "TrivialGroup.h"
 #include "WallpaperGroup.h"
 #include "core/Logger.h"
 
+
+std::ostream& operator<<(std::ostream& os, Gdiplus::Matrix& matrix) {
+	float elements[6];
+	matrix.GetElements(elements);
+	os << "[   [ " << std::setw(4) << elements[0] << " " << std::setw(4) << elements[1] << "    0 ]" << std::endl;
+	os << "    [ " << std::setw(4) << elements[2] << " " << std::setw(4) << elements[3] << "    0 ]" << std::endl;
+	os << "    [ " << std::setw(4) << elements[4] << " " << std::setw(4) << elements[5] << "    1 ]" << std::endl;
+	return os;
+}
 
 SymmetryGroupFactory* SymmetryGroupFactory::instance = nullptr;
 
@@ -206,11 +218,11 @@ std::shared_ptr<WallpaperGroup> SymmetryGroupFactory::pmg(std::shared_ptr<Symmet
 		bottom_left, center_left, center_right, bottom_right
 	};
 
-	SymbolicPoint one_quarter_left = { "-v1_x / 2 - v2_x / 4", "-v1_y / 2 - v2_y / 4" };	// one quarter of the way from bottom left to top left
-	SymbolicPoint three_quarter_left = { "-v1_x / 2 + v2_x / 4", "-v1_y / 2 + v2_y / 4" };
-	SymbolicPoint one_quarter_mid = { "           -v2_x / 4", "           -v2_y / 4" };
-	SymbolicPoint three_quarter_mid = { "            v2_x / 4", "            v2_y / 4" };
-	SymbolicPoint one_quarter_right = { " v1_x / 2 - v2_x / 4", " v1_y / 2 - v2_y / 4" };
+	SymbolicPoint one_quarter_left    = { "-v1_x / 2 - v2_x / 4", "-v1_y / 2 - v2_y / 4" };	// one quarter of the way from bottom left to top left
+	SymbolicPoint three_quarter_left  = { "-v1_x / 2 + v2_x / 4", "-v1_y / 2 + v2_y / 4" };
+	SymbolicPoint one_quarter_mid     = { "           -v2_x / 4", "           -v2_y / 4" };
+	SymbolicPoint three_quarter_mid   = { "            v2_x / 4", "            v2_y / 4" };
+	SymbolicPoint one_quarter_right   = { " v1_x / 2 - v2_x / 4", " v1_y / 2 - v2_y / 4" };
 	SymbolicPoint three_quarter_right = { " v1_x / 2 + v2_x / 4", " v1_y / 2 + v2_y / 4" };
 
 	std::vector<SymbolicPoint> centers {
@@ -247,20 +259,24 @@ std::shared_ptr<WallpaperGroup> SymmetryGroupFactory::pmg(std::shared_ptr<Symmet
 }
 
 std::shared_ptr<WallpaperGroup> SymmetryGroupFactory::pgg(std::shared_ptr<SymmetryGroup> old) {
-	SymbolicPoint one_quarter_left = { "-v1_x / 2 - v2_x / 4", "-v1_y / 2 - v2_y / 4" };	// one quarter of the way from bottom left to top left
-	SymbolicPoint one_quarter_mid = { "           -v2_x / 4", "           -v2_y / 4" };
-	SymbolicPoint bottom_one_quarter = { "-v1_x / 4 - v2_x / 2", "-v1_y / 4 - v2_x / 2" };	// one quarter of the way from bottom left to bottom right
-	SymbolicPoint center_one_quarter = { "-v1_x / 4           ", "-v1_y / 4           " };
+	SymbolicPoint one_quarter_left   = { "-v1_x / 2 - v2_x / 4", "-v1_y / 2 - v2_y / 4" };	// one quarter of the way from bottom left to top left
+	SymbolicPoint one_quarter_mid    = { "           -v2_x / 4", "           -v2_y / 4" };
 
-	SymbolicMatrix vertical_glide = SymbolicMatrix::reflect({ bottom_one_quarter, center_one_quarter }) * SymbolicMatrix::translate(top_mid);
-	*Logger::get_instance() << std::endl << vertical_glide << std::endl;
-	SymbolicMatrix horizontal_glide = SymbolicMatrix::reflect({ one_quarter_left, one_quarter_mid }) * SymbolicMatrix::translate(center_right);
-	*Logger::get_instance() << std::endl << vertical_glide << std::endl << std::endl;
+	auto horizontal_mirror = SymbolicMatrix::reflect({ one_quarter_left, one_quarter_mid });
+	auto horizontal_translate = SymbolicMatrix::translate(center_right);
+	SymbolicMatrix horizontal_glide = horizontal_mirror * horizontal_translate;
+	SymbolicMatrix rotate_180 = SymbolicMatrix::rotate(180, origin);
+
+	//std::unordered_map<std::string, float> variables = { {"v1_x", 1.0f}, {"v1_y", 0.0f}, {"v2_x", 0.0f}, {"v2_y", 1.0f} };
+	//*Logger::get_instance() << "horizontal mirror:" << std::endl << horizontal_mirror.evaluate(variables) << std::endl;
+	//*Logger::get_instance() << "horizontal translate:" << std::endl << horizontal_translate.evaluate(variables) << std::endl;
+	//*Logger::get_instance() << "horizontal glide:" << std::endl << horizontal_glide.evaluate(variables) << std::endl;
+
 	std::vector<SymbolicMatrix> cell;
 	cell.push_back(SymbolicMatrix());
-	cell.push_back(vertical_glide);
 	cell.push_back(horizontal_glide);
-	cell.push_back(vertical_glide * horizontal_glide);
+	cell.push_back(rotate_180);
+	cell.push_back(horizontal_glide * rotate_180);
 
 	std::vector<SymbolicPoint> drawing_area = {
 		bottom_left, center_left, origin, bottom_mid
