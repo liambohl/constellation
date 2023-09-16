@@ -68,6 +68,10 @@ void WallpaperGroup::update_transforms() {
 	// For each copy of the cell
 	for (int v1_factor = -extent; v1_factor <= extent; ++v1_factor) {
 		for (int v2_factor = -extent; v2_factor <= extent; ++v2_factor) {
+			// The full extent of a hexagonal tessalation should be a big hexagon, not a bit rhombus.
+			if (cell_shape == HEXAGON && abs(v1_factor + v2_factor) > extent)
+				continue;
+
 			// linear combination of v1 and v2
 			float offset_x = v1_factor * v1_x + v2_factor * v2_x;
 			float offset_y = v1_factor * v1_y + v2_factor * v2_y;

@@ -21,11 +21,11 @@ public:
 	std::shared_ptr<WallpaperGroup> p4(std::shared_ptr<SymmetryGroup> old);
 	std::shared_ptr<WallpaperGroup> p4m(std::shared_ptr<SymmetryGroup> old);
 	std::shared_ptr<WallpaperGroup> p4g(std::shared_ptr<SymmetryGroup> old);
-	//std::shared_ptr<WallpaperGroup> p3(std::shared_ptr<SymmetryGroup> old);
-	//std::shared_ptr<WallpaperGroup> p3m1(std::shared_ptr<SymmetryGroup> old);
-	//std::shared_ptr<WallpaperGroup> p31m(std::shared_ptr<SymmetryGroup> old);
-	//std::shared_ptr<WallpaperGroup> p6(std::shared_ptr<SymmetryGroup> old);
-	//std::shared_ptr<WallpaperGroup> p6m(std::shared_ptr<SymmetryGroup> old);
+	std::shared_ptr<WallpaperGroup> p3(std::shared_ptr<SymmetryGroup> old);
+	std::shared_ptr<WallpaperGroup> p3m1(std::shared_ptr<SymmetryGroup> old);
+	std::shared_ptr<WallpaperGroup> p31m(std::shared_ptr<SymmetryGroup> old);
+	std::shared_ptr<WallpaperGroup> p6(std::shared_ptr<SymmetryGroup> old);
+	std::shared_ptr<WallpaperGroup> p6m(std::shared_ptr<SymmetryGroup> old);
 
 	std::shared_ptr<SymmetryGroup> from_json(json symm_json);
 
@@ -50,5 +50,16 @@ private:
 	// midlines for parallelogram cells
 	SymbolicLine horizontal_midline;
 	SymbolicLine vertical_midline;
+
+	// vertices for hexagon cells
+	SymbolicPoint hex_p0;
+	SymbolicPoint hex_p1;
+	SymbolicPoint hex_p2;
+	SymbolicPoint hex_p3;
+	SymbolicPoint hex_p4;
+	SymbolicPoint hex_p5;
+	SymbolicPoint hex_p6;
+	SymbolicPoint hex_p7;
+	SymbolicPoint hex_p8;
 };
 

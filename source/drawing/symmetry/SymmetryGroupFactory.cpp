@@ -39,6 +39,18 @@ SymmetryGroupFactory::SymmetryGroupFactory() {
 	// midlines for parallelogram cells
 	horizontal_midline = { center_left, center_right };
 	vertical_midline = { bottom_mid, top_mid };
+
+	// vertices for hexagon cells
+	hex_p0 = { "( 2 * v1_x -     v2_x) / 3", "( 2 * v1_y -     v2_y) / 3" };
+	hex_p1 = { "(     v1_x +     v2_x) / 3", "(     v1_y +     v2_y) / 3" };
+	hex_p2 = { "(    -v1_x + 2 * v2_x) / 3", "(    -v1_y + 2 * v2_y) / 3" };
+	hex_p3 = { "(-2 * v1_x +     v2_x) / 3", "(-2 * v1_y +     v2_y) / 3" };
+	hex_p4 = { "(    -v1_x -     v2_x) / 3", "(    -v1_y -     v2_y) / 3" };
+	hex_p5 = { "(     v1_x - 2 * v2_x) / 3", "(     v1_y - 2 * v2_y) / 3" };
+
+	hex_p6 = { "(     v1_x +     v2_x) / 6", "(     v1_y +     v2_y) / 6" };
+	hex_p7 = { "(-2 * v1_x +     v2_x) / 6", "(-2 * v1_y +     v2_y) / 6" };
+	hex_p8 = { "(     v1_x - 2 * v2_x) / 6", "(     v1_y - 2 * v2_y) / 6" };
 }
 
 std::shared_ptr<TrivialGroup> SymmetryGroupFactory::trivial() {
@@ -516,25 +528,230 @@ std::shared_ptr<WallpaperGroup> SymmetryGroupFactory::p4g(std::shared_ptr<Symmet
 	);
 }
 
-//std::shared_ptr<WallpaperGroup> SymmetryGroupFactory::p3(std::shared_ptr<SymmetryGroup> old) {
-//
-//}
-//
-//std::shared_ptr<WallpaperGroup> SymmetryGroupFactory::p3m1(std::shared_ptr<SymmetryGroup> old) {
-//
-//}
-//
-//std::shared_ptr<WallpaperGroup> SymmetryGroupFactory::p31m(std::shared_ptr<SymmetryGroup> old) {
-//
-//}
-//
-//std::shared_ptr<WallpaperGroup> SymmetryGroupFactory::p6(std::shared_ptr<SymmetryGroup> old) {
-//
-//}
-//
-//std::shared_ptr<WallpaperGroup> SymmetryGroupFactory::p6m(std::shared_ptr<SymmetryGroup> old) {
-//
-//}
+std::shared_ptr<WallpaperGroup> SymmetryGroupFactory::p3(std::shared_ptr<SymmetryGroup> old) {
+	std::vector<SymbolicMatrix> cell;
+	cell.push_back(SymbolicMatrix());
+	cell.push_back(SymbolicMatrix::rotate(120, origin));
+	cell.push_back(SymbolicMatrix::rotate(240, origin));
+
+	std::vector<SymbolicPoint> drawing_area = {
+		hex_p0, hex_p1, hex_p2, hex_p3, hex_p4, hex_p5
+	};
+
+	std::vector<SymbolicPoint> centers = {
+		hex_p0, hex_p1, hex_p2, hex_p3, hex_p4, hex_p5, origin
+	};
+
+	DomainBoundaries edges;
+	edges.add_type_A({ hex_p0, hex_p1 });
+	edges.add_type_A({ hex_p2, hex_p1 });
+	edges.add_type_A({ hex_p2, hex_p3 });
+	edges.add_type_A({ hex_p4, hex_p3 });
+	edges.add_type_A({ hex_p4, hex_p5 });
+	edges.add_type_A({ hex_p0, hex_p5 });
+
+	edges.add_type_B({ origin, hex_p0 });
+	edges.add_type_B({ origin, hex_p2 });
+	edges.add_type_B({ origin, hex_p4 });
+
+	return std::make_shared<WallpaperGroup>(
+		"p3",
+		WallpaperGroup::HEXAGON,
+		cell,
+		drawing_area,
+		centers,
+		edges,
+		old
+	);
+}
+
+std::shared_ptr<WallpaperGroup> SymmetryGroupFactory::p3m1(std::shared_ptr<SymmetryGroup> old) {
+	SymbolicMatrix mirror = SymbolicMatrix::reflect({ hex_p0, hex_p3 });
+
+	std::vector<SymbolicMatrix> cell;
+	cell.push_back(SymbolicMatrix());
+	cell.push_back(SymbolicMatrix::rotate(120, origin));
+	cell.push_back(SymbolicMatrix::rotate(240, origin));
+	cell.push_back(mirror);
+	cell.push_back(mirror * SymbolicMatrix::rotate(120, origin));
+	cell.push_back(mirror * SymbolicMatrix::rotate(240, origin));
+
+	std::vector<SymbolicPoint> drawing_area = {
+		hex_p0, hex_p1, hex_p2, hex_p3, hex_p4, hex_p5
+	};
+
+	std::vector<SymbolicPoint> centers = {
+		hex_p0, hex_p1, hex_p2, hex_p3, hex_p4, hex_p5, origin
+	};
+
+	DomainBoundaries edges;
+	edges.add_mirror_line({ hex_p0, hex_p1 });
+	edges.add_mirror_line({ hex_p1, hex_p2 });
+	edges.add_mirror_line({ hex_p2, hex_p3 });
+	edges.add_mirror_line({ hex_p3, hex_p4 });
+	edges.add_mirror_line({ hex_p4, hex_p5 });
+	edges.add_mirror_line({ hex_p5, hex_p0 });
+
+	edges.add_mirror_line({ hex_p0, hex_p3 });
+	edges.add_mirror_line({ hex_p2, hex_p5 });
+	edges.add_mirror_line({ hex_p4, hex_p1 });
+
+	return std::make_shared<WallpaperGroup>(
+		"p3m1",
+		WallpaperGroup::HEXAGON,
+		cell,
+		drawing_area,
+		centers,
+		edges,
+		old
+	);
+}
+
+std::shared_ptr<WallpaperGroup> SymmetryGroupFactory::p31m(std::shared_ptr<SymmetryGroup> old) {
+	SymbolicMatrix mirror = SymbolicMatrix::reflect({ hex_p0, hex_p4 });
+
+	std::vector<SymbolicMatrix> cell;
+	cell.push_back(SymbolicMatrix());
+	cell.push_back(SymbolicMatrix::rotate(120, origin));
+	cell.push_back(SymbolicMatrix::rotate(240, origin));
+	cell.push_back(mirror);
+	cell.push_back(mirror * SymbolicMatrix::rotate(120, origin));
+	cell.push_back(mirror * SymbolicMatrix::rotate(240, origin));
+
+	std::vector<SymbolicPoint> drawing_area = {
+		hex_p0, hex_p5, hex_p4, origin
+	};
+
+	std::vector<SymbolicPoint> centers = {
+		hex_p0, hex_p1, hex_p2, hex_p3, hex_p4, hex_p5, origin
+	};
+
+	DomainBoundaries edges;
+	edges.add_mirror_line({ hex_p0, hex_p2 });
+	edges.add_mirror_line({ hex_p2, hex_p4 });
+	edges.add_mirror_line({ hex_p4, hex_p0 });
+	edges.add_type_A({ hex_p0, hex_p1 });
+	edges.add_type_A({ hex_p2, hex_p1 });
+	edges.add_type_A({ hex_p2, hex_p3 });
+	edges.add_type_A({ hex_p4, hex_p3 });
+	edges.add_type_A({ hex_p4, hex_p5 });
+	edges.add_type_A({ hex_p0, hex_p5 });
+	edges.add_type_A_mirror({ hex_p0, origin });
+	edges.add_type_A_mirror({ hex_p2, origin });
+	edges.add_type_A_mirror({ hex_p4, origin });
+
+	return std::make_shared<WallpaperGroup>(
+		"p31m",
+		WallpaperGroup::HEXAGON,
+		cell,
+		drawing_area,
+		centers,
+		edges,
+		old
+	);
+}
+
+std::shared_ptr<WallpaperGroup> SymmetryGroupFactory::p6(std::shared_ptr<SymmetryGroup> old) {
+	SymbolicMatrix flip = SymbolicMatrix::rotate(180, hex_p8);
+
+	std::vector<SymbolicMatrix> cell;
+	cell.push_back(SymbolicMatrix());
+	cell.push_back(SymbolicMatrix::rotate(120, origin));
+	cell.push_back(SymbolicMatrix::rotate(240, origin));
+	cell.push_back(flip);
+	cell.push_back(flip * SymbolicMatrix::rotate(120, origin));
+	cell.push_back(flip * SymbolicMatrix::rotate(240, origin));
+
+	std::vector<SymbolicPoint> drawing_area = {
+		hex_p0, hex_p5, hex_p4, origin
+	};
+
+	std::vector<SymbolicPoint> centers = {
+		hex_p0, hex_p1, hex_p2, hex_p3, hex_p4, hex_p5, hex_p6, hex_p7, hex_p8, origin
+	};
+
+	DomainBoundaries edges;
+	edges.add_type_A({ hex_p0, hex_p1 });
+	edges.add_type_A({ hex_p2, hex_p1 });
+	edges.add_type_A({ hex_p2, hex_p3 });
+	edges.add_type_A({ hex_p4, hex_p3 });
+	edges.add_type_A({ hex_p4, hex_p5 });
+	edges.add_type_A({ hex_p0, hex_p5 });
+
+	edges.add_type_A({ hex_p0, origin });
+	edges.add_type_A({ hex_p2, origin });
+	edges.add_type_A({ hex_p4, origin });
+
+	edges.add_type_B({ hex_p0, hex_p6 });
+	edges.add_type_B({ hex_p2, hex_p6 });
+	edges.add_type_B({ hex_p2, hex_p7 });
+	edges.add_type_B({ hex_p4, hex_p7 });
+	edges.add_type_B({ hex_p4, hex_p8 });
+	edges.add_type_B({ hex_p0, hex_p8 });
+
+	return std::make_shared<WallpaperGroup>(
+		"p6",
+		WallpaperGroup::HEXAGON,
+		cell,
+		drawing_area,
+		centers,
+		edges,
+		old
+	);
+}
+
+std::shared_ptr<WallpaperGroup> SymmetryGroupFactory::p6m(std::shared_ptr<SymmetryGroup> old) {
+	SymbolicMatrix mirror_one = SymbolicMatrix::reflect({ hex_p0, hex_p4 });
+	SymbolicMatrix mirror_two = SymbolicMatrix::reflect({ origin, hex_p5 });
+
+	std::vector<SymbolicMatrix> cell;
+	cell.push_back(SymbolicMatrix());
+	cell.push_back(SymbolicMatrix::rotate(120, origin));
+	cell.push_back(SymbolicMatrix::rotate(240, origin));
+	cell.push_back(mirror_one);
+	cell.push_back(mirror_one * SymbolicMatrix::rotate(120, origin));
+	cell.push_back(mirror_one * SymbolicMatrix::rotate(240, origin));
+	cell.push_back(mirror_two);
+	cell.push_back(mirror_two * SymbolicMatrix::rotate(120, origin));
+	cell.push_back(mirror_two * SymbolicMatrix::rotate(240, origin));
+	cell.push_back(mirror_one * mirror_two);
+	cell.push_back(mirror_one * mirror_two * SymbolicMatrix::rotate(120, origin));
+	cell.push_back(mirror_one * mirror_two * SymbolicMatrix::rotate(240, origin));
+
+	std::vector<SymbolicPoint> drawing_area = {
+		hex_p0, hex_p5, hex_p4, origin
+	};
+
+	std::vector<SymbolicPoint> centers = {
+		hex_p0, hex_p1, hex_p2, hex_p3, hex_p4, hex_p5, hex_p6, hex_p7, hex_p8, origin
+	};
+
+	DomainBoundaries edges;
+	edges.add_mirror_line({ hex_p0, hex_p1 });
+	edges.add_mirror_line({ hex_p1, hex_p2 });
+	edges.add_mirror_line({ hex_p2, hex_p3 });
+	edges.add_mirror_line({ hex_p3, hex_p4 });
+	edges.add_mirror_line({ hex_p4, hex_p5 });
+	edges.add_mirror_line({ hex_p5, hex_p0 });
+
+	edges.add_mirror_line({ hex_p0, hex_p2 });
+	edges.add_mirror_line({ hex_p2, hex_p4 });
+	edges.add_mirror_line({ hex_p4, hex_p0 });
+
+	edges.add_mirror_line({ hex_p0, hex_p3 });
+	edges.add_mirror_line({ hex_p1, hex_p4 });
+	edges.add_mirror_line({ hex_p2, hex_p5 });
+
+	return std::make_shared<WallpaperGroup>(
+		"p6m",
+		WallpaperGroup::HEXAGON,
+		cell,
+		drawing_area,
+		centers,
+		edges,
+		old
+	);
+}
 
 std::shared_ptr<SymmetryGroup> SymmetryGroupFactory::from_json(json symm_json) {
 	std::string type = symm_json["type"];
@@ -568,6 +785,16 @@ std::shared_ptr<SymmetryGroup> SymmetryGroupFactory::from_json(json symm_json) {
 			wallpaper_group = p4m(nullptr);
 		else if (name == "p4g")
 			wallpaper_group = p4g(nullptr);
+		else if (name == "p3")
+			wallpaper_group = p3(nullptr);
+		else if (name == "p3m1")
+			wallpaper_group = p3m1(nullptr);
+		else if (name == "p31m")
+			wallpaper_group = p31m(nullptr);
+		else if (name == "p6")
+			wallpaper_group = p6(nullptr);
+		else if (name == "p6m")
+			wallpaper_group = p6m(nullptr);
 		else {
 			std::string error_message = "error: unknown wallpaper group " + name;
 			throw std::exception(error_message.c_str());

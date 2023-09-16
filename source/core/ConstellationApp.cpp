@@ -163,7 +163,21 @@ void ConstellationApp::set_symmetry_group(enum symmetry_group symmetry_group) {
     case P4G:
         new_group = SymmetryGroupFactory::get_instance().p4g(old_group);
         break;
-        // TODO: more cases
+    case P3:
+        new_group = SymmetryGroupFactory::get_instance().p3(old_group);
+        break;
+    case P3M1:
+        new_group = SymmetryGroupFactory::get_instance().p3m1(old_group);
+        break;
+    case P31M:
+        new_group = SymmetryGroupFactory::get_instance().p31m(old_group);
+        break;
+    case P6:
+        new_group = SymmetryGroupFactory::get_instance().p6(old_group);
+        break;
+    case P6M:
+        new_group = SymmetryGroupFactory::get_instance().p6m(old_group);
+        break;
     }
 
     do_action(new ActionChangeSymmetryGroup(old_group, new_group));
