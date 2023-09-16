@@ -196,3 +196,16 @@ void Canvas::page_to_world_coordinates(Gdiplus::PointF* point_page) {
 	transform->TransformPoints(point_page);
 	transform->Invert();
 }
+
+float Canvas::get_scale() {
+	// Get the matrix that represents the current transformation from world coordinates to page coordinates.
+	Gdiplus::Matrix transform;
+	graphics->GetTransform(&transform);
+	float elements[6];
+	transform.GetElements(elements);
+
+	// Assume no shear or rotation in the world-to-page transform
+	float x_scale = elements[0];
+	float y_scale = elements[3];
+	return sqrtf(x_scale * y_scale);
+}

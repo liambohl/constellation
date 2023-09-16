@@ -4,6 +4,9 @@
 
 class SymbolicLine {
 public:
+	// Zero vector
+	SymbolicLine() {}
+
 	// Construct a line from two points
 	SymbolicLine(SymbolicPoint p1, SymbolicPoint p2) : p1(p1), p2(p2) {}
 

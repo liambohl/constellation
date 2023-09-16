@@ -111,7 +111,7 @@ std::ostream& operator<<(std::ostream& os, const SymbolicMatrix& transform) {
 	return os;
 }
 
-SymbolicMatrix operator*(SymbolicMatrix& left, SymbolicMatrix& right) {
+SymbolicMatrix operator*(SymbolicMatrix left, SymbolicMatrix right) {
 	SymbolicMatrix result;
 	
 	// For each element result[i][j] of the result,

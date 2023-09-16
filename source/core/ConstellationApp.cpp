@@ -30,9 +30,18 @@ void ConstellationApp::resize(HWND hWnd, WPARAM wParam, LPARAM lParam) {
 
 void ConstellationApp::draw(HWND hWnd) {
     canvas.begin_draw(hWnd);
+
+    // drawing
     drawing.draw(canvas.graphics);
+
+    // symmetry group
+    if (view_symmetry)
+        drawing.get_symmetry_group()->draw(canvas.graphics, defaults, canvas.get_scale());
+
+    // current tool
     std::vector<std::shared_ptr<Gdiplus::Matrix>> transforms = drawing.get_symmetry_group()->get_transforms();
     current_tool->draw(canvas.graphics, transforms);
+
     canvas.finish_draw();
 }
 
@@ -116,15 +125,59 @@ void ConstellationApp::set_symmetry_group(enum symmetry_group symmetry_group) {
 
     switch (symmetry_group) {
     case TRIVIAL:
-        new_group = SymmetryGroupFactory::trivial();
+        new_group = SymmetryGroupFactory::get_instance().trivial();
         break;
     case P1:
-        new_group = SymmetryGroupFactory::p1(old_group);
+        new_group = SymmetryGroupFactory::get_instance().p1(old_group);
         break;
     case P2:
-        new_group = SymmetryGroupFactory::p2(old_group);
+        new_group = SymmetryGroupFactory::get_instance().p2(old_group);
         break;
-    // TODO: more cases
+    case PM:
+        new_group = SymmetryGroupFactory::get_instance().pm(old_group);
+        break;
+    case PG:
+        new_group = SymmetryGroupFactory::get_instance().pg(old_group);
+        break;
+    case CM:
+        new_group = SymmetryGroupFactory::get_instance().cm(old_group);
+        break;
+    case PMM:
+        new_group = SymmetryGroupFactory::get_instance().pmm(old_group);
+        break;
+    case PMG:
+        new_group = SymmetryGroupFactory::get_instance().pmg(old_group);
+        break;
+    case PGG:
+        new_group = SymmetryGroupFactory::get_instance().pgg(old_group);
+        break;
+    case CMM:
+        new_group = SymmetryGroupFactory::get_instance().cmm(old_group);
+        break;
+    case P4:
+        new_group = SymmetryGroupFactory::get_instance().p4(old_group);
+        break;
+    case P4M:
+        new_group = SymmetryGroupFactory::get_instance().p4m(old_group);
+        break;
+    case P4G:
+        new_group = SymmetryGroupFactory::get_instance().p4g(old_group);
+        break;
+    case P3:
+        new_group = SymmetryGroupFactory::get_instance().p3(old_group);
+        break;
+    case P3M1:
+        new_group = SymmetryGroupFactory::get_instance().p3m1(old_group);
+        break;
+    case P31M:
+        new_group = SymmetryGroupFactory::get_instance().p31m(old_group);
+        break;
+    case P6:
+        new_group = SymmetryGroupFactory::get_instance().p6(old_group);
+        break;
+    case P6M:
+        new_group = SymmetryGroupFactory::get_instance().p6m(old_group);
+        break;
     }
 
     do_action(new ActionChangeSymmetryGroup(old_group, new_group));

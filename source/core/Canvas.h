@@ -35,9 +35,13 @@ public:
 	bool handle_mouse_event(UINT message, int x_pos, int y_pos, int key_state);
 	bool handle_mouse_wheel_event(UINT message, int x_pos_window, int y_pos_window, int key_state, int wheel_delta);
 
+	// Resize application window
 	void resize(HWND hWnd, WPARAM wParam, LPARAM lParam);
+
 	void begin_draw(HWND hWnd);
 	void finish_draw();
+
+	// Force the client area to be redrawn
 	void redraw();
 
 	void reset_transform();
@@ -45,6 +49,9 @@ public:
 	void fit_drawing(Gdiplus::RectF* bounding_box);
 
 	void page_to_world_coordinates(Gdiplus::PointF* point_page);
+
+	// ratio of window pixels to world pixels (linear; higher is more zoomed in)
+	float get_scale();
 
 	LONG windowWidth = 0;						// in window pixels
 	LONG windowHeight = 0;						// in window pixels

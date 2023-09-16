@@ -143,3 +143,24 @@ TEST_F(SymbolicMatrixTest, applies_transforms_in_sequence) {
 	EXPECT_FLOAT_EQ(p2.X, -15.0f);
 	EXPECT_FLOAT_EQ(p2.Y, -2.0f);
 }
+
+TEST_F(SymbolicMatrixTest, applies_glide_reflections) {
+	SymbolicPoint origin = { 0, 0 };
+	SymbolicPoint one_zero = { 1, 0 };
+
+	SymbolicMatrix glide_reflection_A = SymbolicMatrix::reflect({ origin, one_zero }) * SymbolicMatrix::translate(one_zero);
+	Gdiplus::Matrix glide_reflection_A_concrete = glide_reflection_A.evaluate();
+
+	Gdiplus::PointF p1(-12.0f, 5.0f);
+	glide_reflection_A_concrete.TransformPoints(&p1);
+	EXPECT_FLOAT_EQ(p1.X, -11.0f);
+	EXPECT_FLOAT_EQ(p1.Y, -5.0f);
+
+	SymbolicMatrix glide_reflection_B = SymbolicMatrix::translate(one_zero) * SymbolicMatrix::reflect({ origin, one_zero });
+	Gdiplus::Matrix glide_reflection_B_concrete = glide_reflection_B.evaluate();
+
+	Gdiplus::PointF p2(0.25f, 22.5f);
+	glide_reflection_B_concrete.TransformPoints(&p2);
+	EXPECT_FLOAT_EQ(p2.X, 1.25f);
+	EXPECT_FLOAT_EQ(p2.Y, -22.5f);
+}

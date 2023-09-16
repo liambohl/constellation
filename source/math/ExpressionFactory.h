@@ -17,7 +17,7 @@ public:
 	//     -sin(theta) * cos(theta)
 	// Order of operations: parentheses, functions, negation, * and /, + and -. Left-to-right.
 	// Unsupported: juxtaposition, e.g. "5x
-	std::shared_ptr<Expression> parse(const std::string& s);
+	std::shared_ptr<Expression> parse(std::string s);
 
 private:
 	size_t find_last_outside_parentheses(const std::string& s, const std::string& sub_a, const std::string& sub_b);

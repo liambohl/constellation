@@ -5,6 +5,9 @@
 class SymbolicPoint
 {
 public:
+	// Origin
+	SymbolicPoint() : SymbolicPoint(0, 0) {}
+
 	// Construct a point from two numbers
 	SymbolicPoint(float x, float y) : x(std::make_shared<Value>(x)), y(std::make_shared<Value>(y)) {}
 

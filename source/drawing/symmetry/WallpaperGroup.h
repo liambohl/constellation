@@ -2,6 +2,7 @@
 
 #include <vector>
 
+#include "DomainBoundaries.h"
 #include "SymmetryGroup.h"
 #include "core/framework.h"
 #include "math/SymbolicMatrix.h"
@@ -18,11 +19,19 @@ public:
 		PARALLELOGRAM,
 		RECTANGLE,
 		RHOMBUS,
-		DIAMOND,		// rhombus with 60° and 120° angles
+		HEXAGON,
 		SQUARE
 	};
 
-	WallpaperGroup(std::string name, shape cell_shape, std::vector<SymbolicMatrix> cell, std::shared_ptr<SymmetryGroup> old);
+	WallpaperGroup(
+		std::string name,
+		shape cell_shape,
+		std::vector<SymbolicMatrix> cell,
+		std::vector<SymbolicPoint> drawing_area,
+		std::vector<SymbolicPoint> rotation_centers,
+		DomainBoundaries domain_boundaries,
+		std::shared_ptr<SymmetryGroup> old
+	);
 	//WallpaperGroup();
 
 	// Get the set of affine transforms necessary to tessalate a region.
@@ -36,6 +45,8 @@ public:
 	void set_v2(float x, float y);
 	// Make this symmetry group draw more or fewer copies of its cell
 	void set_extent(int extent);
+
+	void draw(Gdiplus::Graphics* graphics, Defaults& defaults, float scale) override;
 
 	json to_json() override;
 
@@ -59,4 +70,17 @@ private:
 
 	// Cached vector of concrete transforms
 	std::vector<std::shared_ptr<Gdiplus::Matrix>> transforms;
+
+	// Vertices of a polygon inside which the user should draw elements.
+	// Drawing outside this area results in elements extending beyond or not reaching the edge of the tessalation.
+	std::vector<SymbolicPoint> drawing_area;
+
+	// Cached concrete drawing area
+	std::vector<Gdiplus::PointF> drawing_area_evaluated;
+
+	// Points around which this symmetry group has some rotational symmetry. Includes only centers inside, or on boundary of, the central cell
+	std::vector<SymbolicPoint> rotation_centers;
+
+	// Edges of all fundamental domains in the central cell
+	DomainBoundaries domain_boundaries;
 };

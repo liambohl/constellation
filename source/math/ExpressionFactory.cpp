@@ -6,7 +6,14 @@
 
 #define max(a,b) (((a) > (b)) ? (a) : (b))
 
-std::shared_ptr<Expression> ExpressionFactory::parse(const std::string& s) {
+inline void trim(std::string& str)
+{
+	str.erase(str.find_last_not_of(' ') + 1);         //suffixing spaces
+	str.erase(0, str.find_first_not_of(' '));         //prefixing spaces
+}
+
+std::shared_ptr<Expression> ExpressionFactory::parse(std::string s) {
+	trim(s);
 	size_t last_op;	// Index of the last operator at a given level of precedence
 
 	// + or -

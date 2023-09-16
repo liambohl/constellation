@@ -143,7 +143,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			// Parse the menu selections:
 			switch (wmId)
 			{
-				// File menu
+			// File menu
 			case ID_FILE_NEW:
 				PromptToSaveBeforeAction(hWnd, []() { application->new_drawing(); });
 				break;
@@ -156,25 +156,43 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			case ID_FILE_SAVE_AS:
 				application->save_as();
 				break;
-				// Edit menu
+			// Edit menu
 			case ID_EDIT_UNDO:
 				application->undo();
 				break;
 			case ID_EDIT_REDO:
 				application->redo();
 				break;
-				// Draw menu
+			// Draw menu
 			case ID_DRAW_SELECT:
 				application->set_tool(SELECT);
 				break;
 			case ID_DRAW_PATH:
 				application->set_tool(NEW_PATH);
 				break;
-				// Symmetry menu
+			// Symmetry menu
 			case ID_SYMMETRY_SYMMETRYGROUP:
 				DialogBox(hInst, MAKEINTRESOURCE(IDD_SELECT_SYMMETRY), hWnd, SelectSymmetry);
 				break;
-				// Help menu
+			// View menu
+			case ID_VIEW_SYMMETRY:
+			{
+				HMENU hMenu = GetMenu(hWnd);
+				UINT view_symmetry_state = GetMenuState(hMenu, wmId, MF_BYCOMMAND);
+
+				if (view_symmetry_state & MF_CHECKED)
+				{
+					CheckMenuItem(hMenu, wmId, MF_UNCHECKED | MF_BYCOMMAND);
+					application->set_view_symmetry(false);
+				}
+				else
+				{
+					CheckMenuItem(hMenu, wmId, MF_CHECKED | MF_BYCOMMAND);
+					application->set_view_symmetry(true);
+				}
+			}
+			break;
+			// Help menu
 			case IDM_ABOUT:
 				DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
 				break;
@@ -249,7 +267,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 	// Log all errors to errors.log
 	catch (std::exception e) {
-		*Logger::get_instance() << e.what();
+		*Logger::get_instance() << e.what() << std::endl;
 		return 1;
 	}
 }
