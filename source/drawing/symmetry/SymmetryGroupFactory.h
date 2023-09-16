@@ -18,9 +18,9 @@ public:
 	std::shared_ptr<WallpaperGroup> pmg(std::shared_ptr<SymmetryGroup> old);
 	std::shared_ptr<WallpaperGroup> pgg(std::shared_ptr<SymmetryGroup> old);
 	std::shared_ptr<WallpaperGroup> cmm(std::shared_ptr<SymmetryGroup> old);
-	//std::shared_ptr<WallpaperGroup> p4(std::shared_ptr<SymmetryGroup> old);
-	//std::shared_ptr<WallpaperGroup> p4m(std::shared_ptr<SymmetryGroup> old);
-	//std::shared_ptr<WallpaperGroup> p4g(std::shared_ptr<SymmetryGroup> old);
+	std::shared_ptr<WallpaperGroup> p4(std::shared_ptr<SymmetryGroup> old);
+	std::shared_ptr<WallpaperGroup> p4m(std::shared_ptr<SymmetryGroup> old);
+	std::shared_ptr<WallpaperGroup> p4g(std::shared_ptr<SymmetryGroup> old);
 	//std::shared_ptr<WallpaperGroup> p3(std::shared_ptr<SymmetryGroup> old);
 	//std::shared_ptr<WallpaperGroup> p3m1(std::shared_ptr<SymmetryGroup> old);
 	//std::shared_ptr<WallpaperGroup> p31m(std::shared_ptr<SymmetryGroup> old);

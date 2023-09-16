@@ -307,8 +307,8 @@ std::shared_ptr<WallpaperGroup> SymmetryGroupFactory::pgg(std::shared_ptr<Symmet
 
 	std::vector<SymbolicPoint> centers {
 		top_left, top_mid, top_right,
-			center_left, origin, center_right,
-			bottom_left, bottom_mid, bottom_right,
+		center_left, origin, center_right,
+		bottom_left, bottom_mid, bottom_right,
 	};
 
 	DomainBoundaries edges;
@@ -380,18 +380,142 @@ std::shared_ptr<WallpaperGroup> SymmetryGroupFactory::cmm(std::shared_ptr<Symmet
 	);
 }
 
-//std::shared_ptr<WallpaperGroup> SymmetryGroupFactory::p4(std::shared_ptr<SymmetryGroup> old) {
-//
-//}
-//
-//std::shared_ptr<WallpaperGroup> SymmetryGroupFactory::p4m(std::shared_ptr<SymmetryGroup> old) {
-//
-//}
-//
-//std::shared_ptr<WallpaperGroup> SymmetryGroupFactory::p4g(std::shared_ptr<SymmetryGroup> old) {
-//
-//}
-//
+std::shared_ptr<WallpaperGroup> SymmetryGroupFactory::p4(std::shared_ptr<SymmetryGroup> old) {
+	std::vector<SymbolicMatrix> cell;
+	cell.push_back(SymbolicMatrix());
+	cell.push_back(SymbolicMatrix::rotate(90, origin));
+	cell.push_back(SymbolicMatrix::rotate(180, origin));
+	cell.push_back(SymbolicMatrix::rotate(270, origin));
+
+	std::vector<SymbolicPoint> drawing_area = {
+		bottom_left, top_left, top_right, bottom_right
+	};
+
+	std::vector<SymbolicPoint> centers = {
+		bottom_left, top_left, top_right, bottom_right, origin
+	};
+
+	DomainBoundaries edges;
+	edges.add_type_A({ bottom_left, center_left });
+	edges.add_type_A({ top_left, center_left });
+	edges.add_type_A({ top_left, top_mid });
+	edges.add_type_A({ top_right, top_mid });
+	edges.add_type_A({ top_right, center_right });
+	edges.add_type_A({ bottom_right, center_right });
+	edges.add_type_A({ bottom_right, bottom_mid });
+	edges.add_type_A({ bottom_left, bottom_mid });
+	edges.add_type_B({ center_left, origin });
+	edges.add_type_B({ top_mid, origin });
+	edges.add_type_B({ center_right, origin });
+	edges.add_type_B({ bottom_mid, origin });
+
+	return std::make_shared<WallpaperGroup>(
+		"p4",
+		WallpaperGroup::SQUARE,
+		cell,
+		drawing_area,
+		centers,
+		edges,
+		old
+	);
+}
+
+std::shared_ptr<WallpaperGroup> SymmetryGroupFactory::p4m(std::shared_ptr<SymmetryGroup> old) {
+	SymbolicMatrix mirror = SymbolicMatrix::reflect({ bottom_left, origin });
+
+	std::vector<SymbolicMatrix> cell;
+	cell.push_back(SymbolicMatrix());
+	cell.push_back(SymbolicMatrix::rotate(90, origin));
+	cell.push_back(SymbolicMatrix::rotate(180, origin));
+	cell.push_back(SymbolicMatrix::rotate(270, origin));
+	cell.push_back(mirror);
+	cell.push_back(mirror * SymbolicMatrix::rotate(90, origin));
+	cell.push_back(mirror * SymbolicMatrix::rotate(180, origin));
+	cell.push_back(mirror * SymbolicMatrix::rotate(270, origin));
+
+	std::vector<SymbolicPoint> drawing_area = {
+		bottom_left, top_left, top_right, bottom_right
+	};
+
+	std::vector<SymbolicPoint> centers {
+		top_left, top_mid, top_right,
+		center_left, origin, center_right,
+		bottom_left, bottom_mid, bottom_right,
+	};
+
+	DomainBoundaries edges;
+	edges.add_mirror_line({ bottom_left, top_left });
+	edges.add_mirror_line({ bottom_mid, top_mid });
+	edges.add_mirror_line({ bottom_right, top_right });
+	edges.add_mirror_line({ top_left, top_right });
+	edges.add_mirror_line({ center_left, center_right });
+	edges.add_mirror_line({ bottom_left, bottom_right });
+	edges.add_mirror_line({ top_left, bottom_right });
+	edges.add_mirror_line({ bottom_left, top_right });
+
+	return std::make_shared<WallpaperGroup>(
+		"p4m",
+		WallpaperGroup::SQUARE,
+		cell,
+		drawing_area,
+		centers,
+		edges,
+		old
+	);
+}
+
+std::shared_ptr<WallpaperGroup> SymmetryGroupFactory::p4g(std::shared_ptr<SymmetryGroup> old) {
+	SymbolicMatrix mirror = SymbolicMatrix::reflect({ center_left, bottom_mid });
+
+	std::vector<SymbolicMatrix> cell;
+	cell.push_back(SymbolicMatrix());
+	cell.push_back(SymbolicMatrix::rotate(90, origin));
+	cell.push_back(SymbolicMatrix::rotate(180, origin));
+	cell.push_back(SymbolicMatrix::rotate(270, origin));
+	cell.push_back(mirror);
+	cell.push_back(mirror * SymbolicMatrix::rotate(90, origin));
+	cell.push_back(mirror * SymbolicMatrix::rotate(180, origin));
+	cell.push_back(mirror * SymbolicMatrix::rotate(270, origin));
+
+	std::vector<SymbolicPoint> drawing_area = {
+		bottom_left, center_left, origin, bottom_mid
+	};
+
+	std::vector<SymbolicPoint> centers {
+		top_left, top_mid, top_right,
+		center_left, origin, center_right,
+		bottom_left, bottom_mid, bottom_right,
+	};
+
+	DomainBoundaries edges;
+	edges.add_mirror_line({ center_left, top_mid });
+	edges.add_mirror_line({ top_mid, center_right });
+	edges.add_mirror_line({ center_right, bottom_mid });
+	edges.add_mirror_line({ bottom_mid, center_left });
+	edges.add_type_A({ bottom_left, center_left });
+	edges.add_type_A({ top_left, center_left });
+	edges.add_type_A({ top_left, top_mid });
+	edges.add_type_A({ top_right, top_mid });
+	edges.add_type_A({ top_right, center_right });
+	edges.add_type_A({ bottom_right, center_right });
+	edges.add_type_A({ bottom_right, bottom_mid });
+	edges.add_type_A({ bottom_left, bottom_mid });
+	edges.add_type_A_mirror({ origin, center_left });
+	edges.add_type_A_mirror({ origin, top_mid });
+	edges.add_type_A_mirror({ origin, center_right });
+	edges.add_type_A_mirror({ origin, bottom_mid });
+
+	return std::make_shared<WallpaperGroup>(
+		"p4g",
+		WallpaperGroup::SQUARE,
+		cell,
+		drawing_area,
+		centers,
+		edges,
+		old
+	);
+}
+
 //std::shared_ptr<WallpaperGroup> SymmetryGroupFactory::p3(std::shared_ptr<SymmetryGroup> old) {
 //
 //}
@@ -438,6 +562,12 @@ std::shared_ptr<SymmetryGroup> SymmetryGroupFactory::from_json(json symm_json) {
 			wallpaper_group = pgg(nullptr);
 		else if (name == "cmm")
 			wallpaper_group = cmm(nullptr);
+		else if (name == "p4")
+			wallpaper_group = p4(nullptr);
+		else if (name == "p4m")
+			wallpaper_group = p4m(nullptr);
+		else if (name == "p4g")
+			wallpaper_group = p4g(nullptr);
 		else {
 			std::string error_message = "error: unknown wallpaper group " + name;
 			throw std::exception(error_message.c_str());
