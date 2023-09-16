@@ -57,7 +57,7 @@ DomainBoundaries::DomainBoundaries() {
 		{ 0.3f, 0.14f },
 		{ 0.33f, 0.17f },
 		{ 0.39f, 0.17f },	// point
-		{ 0.42f, 0.17f },
+		{ 0.45f, 0.17f },
 		{ 0.48f, 0.14f },
 		{ 0.48f, 0.11f },	// point
 		{ 0.48f, 0.08f },
