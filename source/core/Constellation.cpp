@@ -174,6 +174,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			case ID_SYMMETRY_SYMMETRYGROUP:
 				DialogBox(hInst, MAKEINTRESOURCE(IDD_SELECT_SYMMETRY), hWnd, SelectSymmetry);
 				break;
+			case ID_SYMMETRY_EDITSYMMETRYPARAMETERS:
+				application->set_tool(EDIT_SYMMETRY_PARAMETERS);
+				break;
 			// View menu
 			case ID_VIEW_SYMMETRY:
 			{
