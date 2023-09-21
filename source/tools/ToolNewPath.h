@@ -25,8 +25,14 @@ private:
 public:
 	ToolNewPath(Defaults& defaults) : Tool(defaults) { }
 
-	Action* handle_mouse_event(UINT message, float x_pos, float y_pos, int key_state) override;
-	void draw(Gdiplus::Graphics* graphics, std::vector<std::shared_ptr<Gdiplus::Matrix>>& transforms) override;
+	Action* handle_mouse_event(UINT message, float x_pos, float y_pos, int key_state, float scale) override;
+
+	void draw(
+		Gdiplus::Graphics* graphics,
+		Gdiplus::PointF cursor_pos,
+		std::vector<std::shared_ptr<Gdiplus::Matrix>>& transforms,
+		float scale
+	) override;
 
 	boolean undo() override;
 

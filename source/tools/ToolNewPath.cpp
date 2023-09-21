@@ -5,7 +5,7 @@
 #include "drawing/Element.h"
 #include "core/Logger.h"
 
-Action* ToolNewPath::handle_mouse_event(UINT message, float x_pos, float y_pos, int key_state) {
+Action* ToolNewPath::handle_mouse_event(UINT message, float x_pos, float y_pos, int key_state, float scale) {
 	if (message != WM_MOUSEMOVE)
 		*Logger::get_instance() << '(' << x_pos << ", " << y_pos << "), state = " << state << std::endl;
 
@@ -97,7 +97,12 @@ Action* ToolNewPath::handle_mouse_event(UINT message, float x_pos, float y_pos, 
 	return nullptr;
 }
 
-void ToolNewPath::draw(Gdiplus::Graphics* graphics, std::vector<std::shared_ptr<Gdiplus::Matrix>>& transforms) {
+void ToolNewPath::draw(
+	Gdiplus::Graphics* graphics,
+	Gdiplus::PointF cursor_pos,
+	std::vector<std::shared_ptr<Gdiplus::Matrix>>& transforms,
+	float scale
+) {
 	if (state != FIRST_DOWN) {
 		wip_path->draw(graphics, transforms);
 		tool_path->draw(graphics, transforms);

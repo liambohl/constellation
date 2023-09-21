@@ -4,6 +4,7 @@
 
 #include "actions/ActionChangeSymmetryGroup.h"
 #include "drawing/symmetry/SymmetryGroupFactory.h"
+#include "tools/ToolEditWallpaperGroup.h"
 #include "tools/ToolNewPath.h"
 #include "tools/ToolSelect.h"
 #include "ConstellationApp.h"
@@ -31,16 +32,25 @@ void ConstellationApp::resize(HWND hWnd, WPARAM wParam, LPARAM lParam) {
 void ConstellationApp::draw(HWND hWnd) {
     canvas.begin_draw(hWnd);
 
+    float scale = canvas.get_scale();
+    std::vector<std::shared_ptr<Gdiplus::Matrix>> transforms = drawing.get_symmetry_group()->get_transforms();
+
+    // get cursor position in world coordinates
+    POINT cursor_pos_client;
+    GetCursorPos(&cursor_pos_client);                       // screen coords
+    ScreenToClient(hWnd, &cursor_pos_client);               // client area coords
+    Gdiplus::PointF cursor_pos_world((float)cursor_pos_client.x, (float)cursor_pos_client.y);
+    canvas.page_to_world_coordinates(&cursor_pos_world);    // world coords
+
     // drawing
     drawing.draw(canvas.graphics);
 
     // symmetry group
     if (view_symmetry)
-        drawing.get_symmetry_group()->draw(canvas.graphics, defaults, canvas.get_scale());
+        drawing.get_symmetry_group()->draw(canvas.graphics, defaults, scale);
 
     // current tool
-    std::vector<std::shared_ptr<Gdiplus::Matrix>> transforms = drawing.get_symmetry_group()->get_transforms();
-    current_tool->draw(canvas.graphics, transforms);
+    current_tool->draw(canvas.graphics, cursor_pos_world, transforms, scale);
 
     canvas.finish_draw();
 }
@@ -52,6 +62,8 @@ void ConstellationApp::new_drawing() {
     canvas.reset_transform();
     reset_unsaved_changes();
     reset_history();
+    set_tool(SELECT);
+
     *Logger::get_instance() << "New file" << std::endl;
 }
 
@@ -115,6 +127,9 @@ void ConstellationApp::set_tool(enum tool tool_type) {
         break;
     case SELECT:
         current_tool = new ToolSelect(defaults);
+        break;
+    case EDIT_SYMMETRY_PARAMETERS:
+        current_tool = new ToolEditWallpaperGroup(defaults, std::static_pointer_cast<WallpaperGroup>(drawing.get_symmetry_group()));
         break;
     }
 }
@@ -181,6 +196,7 @@ void ConstellationApp::set_symmetry_group(enum symmetry_group symmetry_group) {
     }
 
     do_action(new ActionChangeSymmetryGroup(old_group, new_group));
+    set_tool(SELECT);
 }
 
 // Cancel whatever the current tool is doing.
@@ -229,6 +245,8 @@ void ConstellationApp::open_file() {
     canvas.fit_drawing(drawing.get_bounding_box());
     reset_unsaved_changes();
     reset_history();
+
+    set_tool(SELECT);
 }
 
 void ConstellationApp::reset_unsaved_changes() {
@@ -262,7 +280,7 @@ void ConstellationApp::handle_mouse_event(UINT message, WPARAM wParam, LPARAM lP
     Gdiplus::PointF cursor_pos((float)x_pos, (float)y_pos);
     canvas.page_to_world_coordinates(&cursor_pos);
 
-    Action* action = current_tool->handle_mouse_event(message, cursor_pos.X, cursor_pos.Y, key_state);
+    Action* action = current_tool->handle_mouse_event(message, cursor_pos.X, cursor_pos.Y, key_state, canvas.get_scale());
     if (action != nullptr)
         do_action(action);
 }

@@ -1,7 +1,8 @@
 
 enum tool {
 	NEW_PATH,
-	SELECT
+	SELECT,
+	EDIT_SYMMETRY_PARAMETERS
 };
 
 enum symmetry_group {

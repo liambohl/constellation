@@ -43,6 +43,10 @@ public:
 	void set_v1(float x, float y);
 	// Set v2 and ensure that v1 maintains this wallpaper group's shape
 	void set_v2(float x, float y);
+
+	Gdiplus::PointF get_v1() { return Gdiplus::PointF(v1_x, v1_y); }
+	Gdiplus::PointF get_v2() { return Gdiplus::PointF(v2_x, v2_y); }
+
 	// Make this symmetry group draw more or fewer copies of its cell
 	void set_extent(int extent);
 
