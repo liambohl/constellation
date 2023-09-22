@@ -1,5 +1,7 @@
 #include "Group.h"
+
 #include "Path.h"
+
 
 Group::Group(json group_json) {
 	for (json element_json : group_json["elements"]) {

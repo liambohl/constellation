@@ -1,5 +1,6 @@
 #include "json_converters.h"
 
+
 json color_to_json(Gdiplus::Color color) {
 	return {
 		{"A", color.GetA()},

@@ -1,6 +1,5 @@
 #include "DomainBoundaries.h"
 
-#include "core/Defaults.h"
 
 DomainBoundaries::DomainBoundaries() {
 	// straight line

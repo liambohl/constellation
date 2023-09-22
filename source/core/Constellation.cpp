@@ -1,7 +1,7 @@
 // Constellation.cpp : Defines the entry point for the application.
 //
 
-#include<string>
+#include <string>
 
 #include "resource.h"
 
@@ -9,6 +9,7 @@
 #include "framework.h"
 #include "Initializer.h"
 #include "Logger.h"
+
 
 #define MAX_LOADSTRING 100
 
@@ -120,23 +121,15 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	return TRUE;
 }
 
-//
-//  FUNCTION: WndProc(HWND, UINT, WPARAM, LPARAM)
-//
-//  PURPOSE: Processes messages for the main window.
-//
-//  WM_COMMAND  - process the application menu
-//  WM_PAINT    - Paint the main window
-//  WM_DESTROY  - post a quit message and return
-//
-//
+// Window procedure
+// Process messages for the main window
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	try {
 		Logger::get_instance()->log_message(message);
 		switch (message)
 		{
-			// application menu
+		// Application menu
 		case WM_COMMAND:
 		{
 			int wmId = LOWORD(wParam);
@@ -180,6 +173,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			// View menu
 			case ID_VIEW_SYMMETRY:
 			{
+				// Check or uncheck menu item and show or hide symmetry guides
 				HMENU hMenu = GetMenu(hWnd);
 				UINT view_symmetry_state = GetMenuState(hMenu, wmId, MF_BYCOMMAND);
 
@@ -208,6 +202,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 
+		// Keystrokes
+		// Note: keyboard shortcuts for application menu items are defined in the accelerator table in Constellation.rc
 		case WM_KEYDOWN:
 			switch (wParam) {
 			case VK_ESCAPE: // ESC
@@ -243,20 +239,26 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			application->handle_mouse_wheel_event(message, wParam, lParam);
 			break;
 
+		// Resize window
 		case WM_SIZE:
 			application->resize(hWnd, wParam, lParam);
 			break;
 
+		// Redraw client area
 		case WM_PAINT:
 			application->draw(hWnd);
 			break;
 
+		// Close application
 		case WM_CLOSE:
 			PromptToSaveBeforeAction(hWnd, [hWnd]() { DestroyWindow(hWnd); });
 			break;
+
+		// Destroy application
 		case WM_DESTROY:
 			PostQuitMessage(0);
 			break;
+
 		default:
 			return DefWindowProc(hWnd, message, wParam, lParam);
 		}
@@ -275,9 +277,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 }
 
+// If the current drawing has unsaved changes, prompt the user to save it.
+// When done, unless they cancel, execute the callback function.
 void PromptToSaveBeforeAction(HWND hWnd, const std::function<void ()>& callback) {
 	if (application->has_unsaved_changes()) {
-		// Give the user a chance to save their changes and, unless they choose cancel, perform the callback.
 		if (DialogBox(hInst, MAKEINTRESOURCE(IDD_SAVE_CHANGES), hWnd, SavePrompt)) {
 			callback();
 		}

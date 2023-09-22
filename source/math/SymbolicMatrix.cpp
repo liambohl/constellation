@@ -1,12 +1,14 @@
-﻿#include <cmath>
+﻿#include "SymbolicMatrix.h"
+
+#include <cmath>
 #include <iomanip>
 #include <numbers>
 #include <sstream>
 
 #include "expression_math.h"
 #include "ExpressionFactory.h"
-#include "SymbolicMatrix.h"
 #include "Value.h"
+
 
 SymbolicMatrix::SymbolicMatrix() {
 	// All zeroes
@@ -84,6 +86,20 @@ Gdiplus::Matrix SymbolicMatrix::evaluate(const std::unordered_map<std::string, f
 	return Gdiplus::Matrix(m11, m12, m21, m22, dx, dy);
 }
 
+SymbolicMatrix operator*(SymbolicMatrix left, SymbolicMatrix right) {
+	SymbolicMatrix result;
+
+	// For each element result[i][j] of the result,
+	// Sum three products.
+	for (int i = 0; i < 3; ++i) {
+		for (int j = 0; j < 3; ++j) {
+			result[i][j] = left[i][0] * right[0][j] + left[i][1] * right[1][j] + left[i][2] * right[2][j];
+		}
+	}
+
+	return result;
+}
+
 std::ostream& operator<<(std::ostream& os, const SymbolicMatrix& transform) {
 	// First, use << to write each element to a string.
 	std::string elements[3][3];
@@ -109,18 +125,4 @@ std::ostream& operator<<(std::ostream& os, const SymbolicMatrix& transform) {
 	}
 
 	return os;
-}
-
-SymbolicMatrix operator*(SymbolicMatrix left, SymbolicMatrix right) {
-	SymbolicMatrix result;
-	
-	// For each element result[i][j] of the result,
-	// Sum three products.
-	for (int i = 0; i < 3; ++i) {
-		for (int j = 0; j < 3; ++j) {
-			result[i][j] = left[i][0] * right[0][j] + left[i][1] * right[1][j] + left[i][2] * right[2][j];
-		}
-	}
-
-	return result;
 }

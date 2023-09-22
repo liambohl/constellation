@@ -1,10 +1,12 @@
 #pragma once
+
 #include <unordered_map>
 #include <vector>
 
 #include "core/Defaults.h"
 #include "core/framework.h"
 #include "math/SymbolicLine.h"
+
 
 // This class bundles the edges of all fundamental domains in a wallpaper group's central cell.
 // Edges that are congruent under one of the symmetry group's transformations should have the same type.

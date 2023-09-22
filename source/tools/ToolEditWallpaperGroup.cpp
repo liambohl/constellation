@@ -4,6 +4,9 @@
 
 #include "actions/ActionEditWallpaperGroup.h"
 
+
+const float ToolEditWallpaperGroup::ARROW_HEAD = 0.05f;
+
 Action* ToolEditWallpaperGroup::handle_mouse_event(UINT message, float x_pos, float y_pos, int key_state, float scale) {
 	if (state == INACTIVE) {
 		if (message == WM_LBUTTONDOWN) {

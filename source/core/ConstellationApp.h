@@ -1,8 +1,7 @@
 #pragma once
+
 #include <chrono>
 #include <stack>
-
-#include <shobjidl.h>	// For IShellItem
 
 #include "Canvas.h"
 #include "Defaults.h"
@@ -12,17 +11,62 @@
 #include "drawing/Drawing.h"
 #include "tools/Tool.h"
 
+
 class ConstellationApp
 {
+public:
+	ConstellationApp();
+
+	// File menu
+	void new_drawing();
+	void open();
+	void save();
+	void save_as();
+
+	// Edit menu
+	void undo();
+	void redo();
+
+	// Draw menu
+	void set_tool(enum tool tool_type);
+
+	// Symmetry menu
+	void set_symmetry_group(enum symmetry_group symmetry_group);
+
+	// View menu
+	void set_view_symmetry(bool visible) { view_symmetry = visible; }
+
+	void handle_escape();
+
+	void handle_mouse_event(UINT message, WPARAM wParam, LPARAM lParam);
+	void handle_mouse_wheel_event(UINT message, WPARAM wParam, LPARAM lParam);
+
+	// Resize client area
+	void resize(HWND hWnd, WPARAM wParam, LPARAM lParam);
+
+	// Redraw client area
+	void draw(HWND hWnd);
+
+	// Redraw if overdue for a frame
+	void refresh_if_necessary();
+
+	// Does the current drawing have any unsaved changes?
+	bool has_unsaved_changes() { return unsaved_changes != 0 || !unchanged_state_reachable; }
+
 private:
 	// Any action which changes the drawing must do so through this function.
 	// Undo, redo, file > open, and file > new are not actions and are exempt.
 	void do_action(Action* action);
 
+	// Save to the file at drawing_file_path
 	void save_file();
+	// Open the file at drawing_file_path
 	void open_file();
 
+	// We definitely have no unsaved changes
 	void reset_unsaved_changes();
+
+	// Clear undo and redo stacks and free the action pointers therein
 	void reset_history();
 
 	Canvas canvas;
@@ -48,40 +92,5 @@ private:
 	bool unchanged_state_reachable = true;
 
 	int refresh_interval_ns;
-	//void refresh_periodically(int refresh_rate);
 	std::chrono::time_point<std::chrono::steady_clock> previous_refresh_time;
-
-public:
-	ConstellationApp();
-
-	void resize(HWND hWnd, WPARAM wParam, LPARAM lParam);
-	void draw(HWND hWnd);
-
-	// File menu
-	void new_drawing();
-	void open();
-	void save();
-	void save_as();
-
-	// Edit menu
-	void undo();
-	void redo();
-
-	// Draw menu
-	void set_tool(enum tool tool_type);
-
-	// Symmetry menu
-	void set_symmetry_group(enum symmetry_group symmetry_group);
-
-	// View menu
-	void set_view_symmetry(bool visible) { view_symmetry = visible; }
-
-	void handle_escape();
-
-	void handle_mouse_event(UINT message, WPARAM wParam, LPARAM lParam);
-	void handle_mouse_wheel_event(UINT message, WPARAM wParam, LPARAM lParam);
-	void refresh_if_necessary();
-
-	// Does the current drawing have any unsaved changes?
-	bool has_unsaved_changes() { return unsaved_changes != 0 || !unchanged_state_reachable; }
 };

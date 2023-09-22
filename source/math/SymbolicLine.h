@@ -1,6 +1,8 @@
 #pragma once
+
 #include "expression_math.h"
 #include "SymbolicPoint.h"
+
 
 class SymbolicLine {
 public:

@@ -1,5 +1,6 @@
 #include "ActionChangeSymmetryGroup.h"
 
+
 void ActionChangeSymmetryGroup::apply(Drawing& drawing) {
 	drawing.set_symmetry_group(new_group);
 }

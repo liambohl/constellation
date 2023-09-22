@@ -1,5 +1,6 @@
 #include "Element.h"
 
+
 // For elements that are not groups, the draw method should draw
 // a transformed copy of the element for each transform.
 void Element::draw(Gdiplus::Graphics* graphics, std::vector<std::shared_ptr<Gdiplus::Matrix>>& transforms) {

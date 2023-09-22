@@ -7,15 +7,6 @@
 #include "core/Logger.h"
 
 
-std::ostream& operator<<(std::ostream& os, Gdiplus::Matrix& matrix) {
-	float elements[6];
-	matrix.GetElements(elements);
-	os << "[   [ " << std::setw(4) << elements[0] << " " << std::setw(4) << elements[1] << "    0 ]" << std::endl;
-	os << "    [ " << std::setw(4) << elements[2] << " " << std::setw(4) << elements[3] << "    0 ]" << std::endl;
-	os << "    [ " << std::setw(4) << elements[4] << " " << std::setw(4) << elements[5] << "    1 ]" << std::endl;
-	return os;
-}
-
 SymmetryGroupFactory* SymmetryGroupFactory::instance = nullptr;
 
 SymmetryGroupFactory& SymmetryGroupFactory::get_instance() {

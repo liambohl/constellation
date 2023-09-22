@@ -1,10 +1,14 @@
 #pragma once
+
 #include "core/framework.h"
 #include "math/SymbolicPoint.h"
+
 
 class Defaults
 {
 public:
+	Defaults();
+
 	// new elements
 	Gdiplus::Pen* pen = nullptr;						// default stroke for elements in the drawing
 	Gdiplus::Brush* brush = nullptr;					// default fill for elements in the drawing
@@ -26,6 +30,4 @@ public:
 	Gdiplus::Brush* drawing_area_brush = nullptr;		// area in which the user should draw for the best tiling
 	Gdiplus::Brush* rotation_center_brush = nullptr;	// dots at rotation centers
 	float rotation_center_radius = 3.0f;
-
-	Defaults();
 };

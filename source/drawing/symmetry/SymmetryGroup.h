@@ -1,6 +1,8 @@
 #pragma once
 #include <memory>
 #include <string>
+#pragma once
+
 #include <vector>
 
 #include "core/Defaults.h"
@@ -8,6 +10,7 @@
 #include "json.hpp"
 
 using json = nlohmann::json;
+
 
 class SymmetryGroup
 {

@@ -1,5 +1,6 @@
 #include "Initializer.h"
 
+
 Initializer::Initializer() {
     Gdiplus::GdiplusStartupInput startupInput;
     Gdiplus::GdiplusStartup(&m_token, &startupInput, NULL);

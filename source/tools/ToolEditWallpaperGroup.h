@@ -1,6 +1,9 @@
 #pragma once
+
 #include "Tool.h"
+
 #include "drawing/symmetry/WallpaperGroup.h"
+
 
 class ToolEditWallpaperGroup :
     public Tool
@@ -20,6 +23,9 @@ public:
 	) override;
 
 private:
+	// length of an arrow head as a proportion of the length of an arrow
+	static const float ARROW_HEAD;
+
 	enum EditState {
 		INACTIVE,
 		DRAGGING_V1,
@@ -31,8 +37,5 @@ private:
 	std::shared_ptr<WallpaperGroup> symmetry_group;
 
 	float old_x = 0.0f, old_y = 0.0f;
-
-	// length of an arrow head as a proportion of the length of an arrow
-	const float ARROW_HEAD = 0.05f;
 };
 

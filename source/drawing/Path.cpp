@@ -4,6 +4,7 @@
 #include "core/Logger.h"
 #include "Path.h"
 
+
 Path::Path(json path_json):
 	pen(pen_from_json(path_json["pen"]))
 {
@@ -22,13 +23,6 @@ Path::Path(json path_json):
 
 Path::~Path() {
 	delete pen;
-}
-
-void Path::draw_one(Gdiplus::Graphics* graphics) {
-	if (n_points < 4)
-		return;
-
-	graphics->DrawBeziers(pen, control_points.data(), n_points);
 }
 
 void Path::get_bounding_box(Gdiplus::RectF** bounding_box) {
@@ -85,4 +79,11 @@ void Path::pop_point(int count) {
 
 Gdiplus::PointF Path::top() {
 	return control_points.back();
+}
+
+void Path::draw_one(Gdiplus::Graphics* graphics) {
+	if (n_points < 4)
+		return;
+
+	graphics->DrawBeziers(pen, control_points.data(), n_points);
 }

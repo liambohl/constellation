@@ -1,6 +1,8 @@
-#pragma once
+﻿#pragma once
+
 #include "TrivialGroup.h"
 #include "WallpaperGroup.h"
+
 
 class SymmetryGroupFactory
 {
@@ -52,6 +54,18 @@ private:
 	SymbolicLine vertical_midline;
 
 	// vertices for hexagon cells
+	// As above, I drew this diagram thinking that the y coordinate increases moving *up* the screen, but that's backward. Oh well.
+	//                 v2
+	//                🡕
+	//         p2
+	//
+	// p3              p1
+	//     p7      p6
+	//         []            🡒 v1
+	//
+	// p4      p8      p0
+	//
+	//         p5
 	SymbolicPoint hex_p0;
 	SymbolicPoint hex_p1;
 	SymbolicPoint hex_p2;

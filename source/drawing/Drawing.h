@@ -1,4 +1,5 @@
 #pragma once
+
 #include <vector>
 
 #include "Element.h"
@@ -8,6 +9,7 @@
 #include "symmetry/SymmetryGroup.h"
 
 using json = nlohmann::json;
+
 
 // Represents an entire drawing with elements (shapes, curves, etc.) and a pattern
 class Drawing
@@ -23,12 +25,14 @@ public:
 
 	Gdiplus::RectF* get_bounding_box();
 
+	void add_element(std::shared_ptr<Element> element) { elements.add_element(element); }
+	bool remove_element(std::shared_ptr<Element> element) { return elements.remove_element(element); }
+
 	json to_json();
 
-	// Pattern pattern;
+private:
 	Group elements;
 
-private:
 	Gdiplus::Color background;				// "transparent" color shown where there are no elements
 
 	std::shared_ptr<SymmetryGroup> symmetry_group;

@@ -3,6 +3,7 @@
 #include "core/Logger.h"
 #include "symmetry/SymmetryGroupFactory.h"
 
+
 Drawing::Drawing() {
 	background = Gdiplus::Color(255, 80, 80, 80);
 	symmetry_group = SymmetryGroupFactory::get_instance().trivial();

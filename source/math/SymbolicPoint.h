@@ -1,6 +1,8 @@
 #pragma once
+
 #include "Expression.h"
 #include "Value.h"
+
 
 class SymbolicPoint
 {
