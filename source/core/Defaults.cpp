@@ -1,8 +1,14 @@
 #include "Defaults.h"
 
+#include "gdiplusenums.h"
+
+
 Defaults::Defaults() {
 	// new elements
 	pen = new Gdiplus::Pen(Gdiplus::Color(255, 0, 0, 0), 1.0f);
+	pen->SetStartCap(Gdiplus::LineCapRound);
+	pen->SetEndCap(Gdiplus::LineCapRound);
+	pen->SetLineJoin(Gdiplus::LineJoinRound);
 	brush = new Gdiplus::SolidBrush(Gdiplus::Color(255, 255, 255, 255));
 
 	// tool handles

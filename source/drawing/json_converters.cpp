@@ -29,7 +29,11 @@ json pen_to_json(Gdiplus::Pen* pen) {
 Gdiplus::Pen* pen_from_json(json pen_json) {
 	Gdiplus::Color color = color_from_json(pen_json["color"]);
 	Gdiplus::REAL width = pen_json["width"];
-	return new Gdiplus::Pen(color, width);
+	auto pen = new Gdiplus::Pen(color, width);
+	pen->SetStartCap(Gdiplus::LineCapRound);
+	pen->SetEndCap(Gdiplus::LineCapRound);
+	pen->SetLineJoin(Gdiplus::LineJoinRound);
+	return pen;
 }
 
 json brush_to_json(Gdiplus::Brush* brush) {
