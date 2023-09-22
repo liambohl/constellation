@@ -1,47 +1,9 @@
 #include "Logger.h"
+
 #include <iomanip>
 
 
-Logger* Logger::instance = new Logger();
-
-Logger* Logger::get_instance() {
-	return instance;
-}
-
-Logger::Logger() {
-	file = std::ofstream(filename);
-}
-
-Logger::~Logger() {
-	file.close();
-}
-
-void Logger::log_message(UINT message) {
-	PCSTR message_text;
-	try {
-		message_text = message_codes.at(message);
-	}
-	catch (std::out_of_range e) {
-		message_text = "unknown message";
-	}
-
-	file << std::setw(3) << message << ' ' << message_text << std::endl;
-}
-
-Logger& Logger::operator<< (wchar_t* val) {
-	std::wstring wide(val);
-#pragma warning(push)
-#pragma warning(disable: 4244)
-	std::string narrow(wide.begin(), wide.end());	// This is only safe for ASCII and that's okay with me
-#pragma warning(pop)
-	file << narrow;
-	return *this;
-}
-
-Logger& Logger::operator<<(std::ostream& (*manip)(std::ostream&)) {
-	file << manip;
-	return *this;
-}
+const char* Logger::filename = "../errors.log";
 
 const std::map<int, PCSTR> Logger::message_codes{
 	{ 0, "WM_NULL" },
@@ -287,3 +249,44 @@ const std::map<int, PCSTR> Logger::message_codes{
 	{ 32768, "WM_APP" },
 	{ 1024, "WM_USER" }
 };
+
+Logger* Logger::instance = new Logger();
+
+Logger* Logger::get_instance() {
+	return instance;
+}
+
+void Logger::log_message(UINT message) {
+	PCSTR message_text;
+	try {
+		message_text = message_codes.at(message);
+	}
+	catch (std::out_of_range e) {
+		message_text = "unknown message";
+	}
+
+	file << std::setw(3) << message << ' ' << message_text << std::endl;
+}
+
+Logger& Logger::operator<< (wchar_t* val) {
+	std::wstring wide(val);
+#pragma warning(push)
+#pragma warning(disable: 4244)
+	std::string narrow(wide.begin(), wide.end());	// This is only safe for ASCII and that's okay with me
+#pragma warning(pop)
+	file << narrow;
+	return *this;
+}
+
+Logger& Logger::operator<<(std::ostream& (*manip)(std::ostream&)) {
+	file << manip;
+	return *this;
+}
+
+Logger::Logger() {
+	file = std::ofstream(filename);
+}
+
+Logger::~Logger() {
+	file.close();
+}

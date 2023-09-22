@@ -1,6 +1,9 @@
 #pragma once
+
 #include "Action.h"
+
 #include "drawing/symmetry/SymmetryGroup.h"
+
 
 class ActionChangeSymmetryGroup :
     public Action

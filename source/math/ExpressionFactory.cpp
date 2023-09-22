@@ -1,8 +1,10 @@
 #include "ExpressionFactory.h"
+
 #include "CompoundExpression.h"
 #include "Function.h"
 #include "Value.h"
 #include "Variable.h"
+
 
 #define max(a,b) (((a) > (b)) ? (a) : (b))
 

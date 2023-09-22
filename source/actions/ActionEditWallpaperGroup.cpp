@@ -2,6 +2,7 @@
 
 #include "drawing/symmetry/WallpaperGroup.h"
 
+
 void ActionEditWallpaperGroup::apply(Drawing& drawing) {
 	auto group = std::static_pointer_cast<WallpaperGroup>(drawing.get_symmetry_group());
 	if (vector == EDIT_V1)

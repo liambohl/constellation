@@ -1,5 +1,6 @@
 #include "Defaults.h"
 
+
 Defaults::Defaults() {
 	// new elements
 	pen = new Gdiplus::Pen(Gdiplus::Color(255, 0, 0, 0), 1.0f);

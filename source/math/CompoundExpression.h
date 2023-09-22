@@ -1,7 +1,8 @@
 #pragma once
-#include <memory>
 
 #include "Expression.h"
+
+#include <memory>
 
 
 class CompoundExpression :
@@ -21,6 +22,7 @@ public:
 private:
 	std::shared_ptr<Expression> left;	// left of operator
 	std::shared_ptr<Expression> right;	// right of operator
+
 	char op;	// operator
 };
 

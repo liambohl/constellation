@@ -3,6 +3,7 @@
 #include <cmath>
 #include <numbers>
 
+
 #define root3over2 0.8660254038
 
 WallpaperGroup::WallpaperGroup(
@@ -47,53 +48,6 @@ WallpaperGroup::WallpaperGroup(
 	}
 
 	update_transforms();
-}
-
-void translate_matrix_in_world_space(Gdiplus::Matrix* matrix, float delta_x, float delta_y) {
-	Gdiplus::Matrix translationMatrix;
-	translationMatrix.Translate(delta_x, delta_y);
-
-	matrix->Multiply(&translationMatrix, Gdiplus::MatrixOrderAppend);
-}
-
-void WallpaperGroup::update_transforms() {
-	transforms.clear();
-
-	// Evaluate the cell with the current v1 and v2
-	std::unordered_map<std::string, float> vectors = { {"v1_x", v1_x}, {"v1_y", v1_y}, {"v2_x", v2_x}, {"v2_y", v2_y} };
-	std::vector<std::shared_ptr<Gdiplus::Matrix>> cell_evaluated;
-	for (auto& symbolic_matrix : cell)
-		cell_evaluated.push_back(std::shared_ptr<Gdiplus::Matrix>(symbolic_matrix.evaluate(vectors).Clone()));
-
-	// For each copy of the cell
-	for (int v1_factor = -extent; v1_factor <= extent; ++v1_factor) {
-		for (int v2_factor = -extent; v2_factor <= extent; ++v2_factor) {
-			// The full extent of a hexagonal tessalation should be a big hexagon, not a bit rhombus.
-			if (cell_shape == HEXAGON && abs(v1_factor + v2_factor) > extent)
-				continue;
-
-			// linear combination of v1 and v2
-			float offset_x = v1_factor * v1_x + v2_factor * v2_x;
-			float offset_y = v1_factor * v1_y + v2_factor * v2_y;
-
-			// For each copy of the fundamental domain in a cell
-			for (auto matrix : cell_evaluated) {
-				// Translate
-				auto translated = std::shared_ptr<Gdiplus::Matrix>(matrix->Clone());
-				translated->Translate(offset_x, offset_y);
-				transforms.push_back(translated);
-			}
-		}
-	}
-
-	// Update drawing area
-	drawing_area_evaluated.clear();
-	for (auto& symbolic_point : drawing_area) {
-		drawing_area_evaluated.push_back({ symbolic_point.x->evaluate(vectors), symbolic_point.y->evaluate(vectors) });
-	}
-
-	// Update domain boundaries
-	domain_boundaries.update(vectors);
 }
 
 void WallpaperGroup::set_v1(float x, float y) {
@@ -206,4 +160,44 @@ json WallpaperGroup::to_json() {
 		{"v2_y", v2_y},
 		{"extent", extent}
 	};
+}
+
+void WallpaperGroup::update_transforms() {
+	transforms.clear();
+
+	// Evaluate the cell with the current v1 and v2
+	std::unordered_map<std::string, float> vectors = { {"v1_x", v1_x}, {"v1_y", v1_y}, {"v2_x", v2_x}, {"v2_y", v2_y} };
+	std::vector<std::shared_ptr<Gdiplus::Matrix>> cell_evaluated;
+	for (auto& symbolic_matrix : cell)
+		cell_evaluated.push_back(std::shared_ptr<Gdiplus::Matrix>(symbolic_matrix.evaluate(vectors).Clone()));
+
+	// For each copy of the cell
+	for (int v1_factor = -extent; v1_factor <= extent; ++v1_factor) {
+		for (int v2_factor = -extent; v2_factor <= extent; ++v2_factor) {
+			// The full extent of a hexagonal tessalation should be a big hexagon, not a bit rhombus.
+			if (cell_shape == HEXAGON && abs(v1_factor + v2_factor) > extent)
+				continue;
+
+			// linear combination of v1 and v2
+			float offset_x = v1_factor * v1_x + v2_factor * v2_x;
+			float offset_y = v1_factor * v1_y + v2_factor * v2_y;
+
+			// For each copy of the fundamental domain in a cell
+			for (auto matrix : cell_evaluated) {
+				// Translate
+				auto translated = std::shared_ptr<Gdiplus::Matrix>(matrix->Clone());
+				translated->Translate(offset_x, offset_y);
+				transforms.push_back(translated);
+			}
+		}
+	}
+
+	// Update drawing area
+	drawing_area_evaluated.clear();
+	for (auto& symbolic_point : drawing_area) {
+		drawing_area_evaluated.push_back({ symbolic_point.x->evaluate(vectors), symbolic_point.y->evaluate(vectors) });
+	}
+
+	// Update domain boundaries
+	domain_boundaries.update(vectors);
 }

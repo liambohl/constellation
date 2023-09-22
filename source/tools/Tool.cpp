@@ -1,5 +1,6 @@
 #include "Tool.h"
 
+
 void Tool::draw_handle(Gdiplus::Graphics* graphics, float x, float y, float scale, bool selected) {
 	float radius = defaults.handle_radius / scale;
 

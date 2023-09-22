@@ -1,5 +1,7 @@
 #pragma once
+
 #include "Expression.h"
+
 
 class Value :
     public Expression
@@ -12,6 +14,7 @@ public:
     std::ostream& insert(std::ostream& os) const { return os << value; }
 
 private:
-    float value;
     friend std::shared_ptr<Value> operator-(std::shared_ptr<Value> e);
+
+    float value;
 };

@@ -1,11 +1,13 @@
 #pragma once
 
+#include "SymmetryGroup.h"
+
 #include <vector>
 
 #include "DomainBoundaries.h"
-#include "SymmetryGroup.h"
 #include "core/framework.h"
 #include "math/SymbolicMatrix.h"
+
 
 // Represents a symmetry group called a wallpaper group.
 // We can tile a region of the plane using a wallpaper group in two steps:
@@ -32,7 +34,6 @@ public:
 		DomainBoundaries domain_boundaries,
 		std::shared_ptr<SymmetryGroup> old
 	);
-	//WallpaperGroup();
 
 	// Get the set of affine transforms necessary to tessalate a region.
 	// The tiled region is a parallelogram of (2 * extent + 1) x (2 * extent + 1) cells.

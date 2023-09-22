@@ -4,10 +4,11 @@
 #include <string>
 #include <unordered_map>
 
-#include "core/framework.h"
 #include "Expression.h"
 #include "SymbolicPoint.h"
 #include "SymbolicLine.h"
+#include "core/framework.h"
+
 
 // This class represents an affine transformation in 2 dimensions, defined in terms of zero or more variables.
 // Note that Gdiplus::Matrix uses the convention of writing points as row vectors
@@ -33,9 +34,9 @@ private:
 	// Just like subscripting the matrix itself, subscripting this class gives a reference to a row of the matrix. 
 	std::shared_ptr<Expression> (&operator[](int index))[3] { return matrix[index]; }
 
-	std::shared_ptr<Expression> matrix[3][3];
-
 	friend SymbolicMatrix operator*(SymbolicMatrix left, SymbolicMatrix right);
 	
 	friend std::ostream& operator<<(std::ostream& os, const SymbolicMatrix& transform);
+
+	std::shared_ptr<Expression> matrix[3][3];
 };

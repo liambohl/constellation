@@ -5,26 +5,15 @@
 #include "Logger.h"
 
 
+const float Canvas::DEFAULT_SCALE = 5.0f;			// About 5 pixels per millimeter; should be somewhat close to actual size
+const float Canvas::ZOOM_FIT_FACTOR = 0.75f;				// After fitting canvas to a drawing, zoom out by this factor
+
 Canvas::Canvas() {
 	transform = new Gdiplus::Matrix;
 }
 
 Canvas::~Canvas() {
 	delete transform;
-}
-
-// Pan the canvas by the given delta, measured in pixels.
-void Canvas::pan(float delta_x, float delta_y) {
-	transform->Translate(delta_x, delta_y, Gdiplus::MatrixOrderAppend);
-}
-
-// Zoom in or out by a given factor, around the cursor.
-// Zoom in if scale_factor > 1; out if scale_factor < 1.
-// (x_pos, y_pos) is the cursor position in page coordinates.
-void Canvas::zoom(float scale_factor, float x_pos, float y_pos) {
-	transform->Translate(-x_pos, -y_pos, Gdiplus::MatrixOrderAppend);
-	transform->Scale(scale_factor, scale_factor, Gdiplus::MatrixOrderAppend);
-	transform->Translate(x_pos, y_pos, Gdiplus::MatrixOrderAppend);
 }
 
 bool Canvas::handle_mouse_event(UINT message, int x_pos, int y_pos, int key_state) {
@@ -85,7 +74,7 @@ bool Canvas::handle_mouse_wheel_event(UINT message, int x_pos_window, int y_pos_
 		zoom(scale_factor, x_pos, y_pos);
 		return true;
 	}
-	
+
 	return false;
 }
 
@@ -119,8 +108,8 @@ void Canvas::resize(HWND hWnd, WPARAM wParam, LPARAM lParam) {
 void Canvas::begin_draw(HWND hWnd) {
 	this->hWnd = hWnd;
 	hdc = BeginPaint(hWnd, &ps);
-	windowWidth = ps.rcPaint.right - ps.rcPaint.left;
-	windowHeight = ps.rcPaint.bottom - ps.rcPaint.top;
+	int windowWidth = (int)(ps.rcPaint.right - ps.rcPaint.left);
+	int windowHeight = (int)(ps.rcPaint.bottom - ps.rcPaint.top);
 	
 	delete screen_buffer;
 	screen_buffer = new Gdiplus::Bitmap(windowWidth, windowHeight, PixelFormat32bppARGB);
@@ -208,4 +197,18 @@ float Canvas::get_scale() {
 	float x_scale = elements[0];
 	float y_scale = elements[3];
 	return sqrtf(x_scale * y_scale);
+}
+
+// Pan the canvas by the given delta, measured in pixels.
+void Canvas::pan(float delta_x, float delta_y) {
+	transform->Translate(delta_x, delta_y, Gdiplus::MatrixOrderAppend);
+}
+
+// Zoom in or out by a given factor, around the cursor.
+// Zoom in if scale_factor > 1; out if scale_factor < 1.
+// (x_pos, y_pos) is the cursor position in page coordinates.
+void Canvas::zoom(float scale_factor, float x_pos, float y_pos) {
+	transform->Translate(-x_pos, -y_pos, Gdiplus::MatrixOrderAppend);
+	transform->Scale(scale_factor, scale_factor, Gdiplus::MatrixOrderAppend);
+	transform->Translate(x_pos, y_pos, Gdiplus::MatrixOrderAppend);
 }

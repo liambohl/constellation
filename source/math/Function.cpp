@@ -3,6 +3,7 @@
 
 #include "Function.h"
 
+
 float degrees_to_radians(float angle) {
 	return (float)(angle * std::numbers::pi / 180);
 }

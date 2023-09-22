@@ -1,14 +1,16 @@
 #include <fstream>
 #include <thread>
+
 #include <windowsx.h>
 
+#include "ConstellationApp.h"
+#include "Logger.h"
 #include "actions/ActionChangeSymmetryGroup.h"
 #include "drawing/symmetry/SymmetryGroupFactory.h"
 #include "tools/ToolEditWallpaperGroup.h"
 #include "tools/ToolNewPath.h"
 #include "tools/ToolSelect.h"
-#include "ConstellationApp.h"
-#include "Logger.h"
+
 
 ConstellationApp::ConstellationApp()
 {
@@ -23,36 +25,6 @@ ConstellationApp::ConstellationApp()
         refresh_rate = 60;
     refresh_interval_ns = 1000000000 / refresh_rate;
     *Logger::get_instance() << "refresh interval: " << refresh_interval_ns << std::endl;
-}
-
-void ConstellationApp::resize(HWND hWnd, WPARAM wParam, LPARAM lParam) {
-    canvas.resize(hWnd, wParam, lParam);
-}
-
-void ConstellationApp::draw(HWND hWnd) {
-    canvas.begin_draw(hWnd);
-
-    float scale = canvas.get_scale();
-    std::vector<std::shared_ptr<Gdiplus::Matrix>> transforms = drawing.get_symmetry_group()->get_transforms();
-
-    // get cursor position in world coordinates
-    POINT cursor_pos_client;
-    GetCursorPos(&cursor_pos_client);                       // screen coords
-    ScreenToClient(hWnd, &cursor_pos_client);               // client area coords
-    Gdiplus::PointF cursor_pos_world((float)cursor_pos_client.x, (float)cursor_pos_client.y);
-    canvas.page_to_world_coordinates(&cursor_pos_world);    // world coords
-
-    // drawing
-    drawing.draw(canvas.graphics);
-
-    // symmetry group
-    if (view_symmetry)
-        drawing.get_symmetry_group()->draw(canvas.graphics, defaults, scale);
-
-    // current tool
-    current_tool->draw(canvas.graphics, cursor_pos_world, transforms, scale);
-
-    canvas.finish_draw();
 }
 
 void ConstellationApp::new_drawing() {
@@ -207,6 +179,76 @@ void ConstellationApp::handle_escape() {
     }
 }
 
+void ConstellationApp::handle_mouse_event(UINT message, WPARAM wParam, LPARAM lParam) {
+    // Unpack parameters
+    int x_pos = GET_X_LPARAM(lParam);
+    int y_pos = GET_Y_LPARAM(lParam);
+    int key_state = GET_KEYSTATE_WPARAM(wParam);
+
+    // Give the canvas a chance to handle the event. If it can't, the current tool should handle it.
+    if (canvas.handle_mouse_event(message, x_pos, y_pos, key_state))
+        return;
+
+    // translate cursor position to world space before passing to tool
+    Gdiplus::PointF cursor_pos((float)x_pos, (float)y_pos);
+    canvas.page_to_world_coordinates(&cursor_pos);
+
+    Action* action = current_tool->handle_mouse_event(message, cursor_pos.X, cursor_pos.Y, key_state, canvas.get_scale());
+    if (action != nullptr)
+        do_action(action);
+}
+
+void ConstellationApp::handle_mouse_wheel_event(UINT message, WPARAM wParam, LPARAM lParam) {
+    // Unpack parameters
+    int x_pos_window = GET_X_LPARAM(lParam);
+    int y_pos_window = GET_Y_LPARAM(lParam);
+    int key_state = GET_KEYSTATE_WPARAM(wParam);
+    int wheel_delta = GET_WHEEL_DELTA_WPARAM(wParam);
+
+    canvas.handle_mouse_wheel_event(message, x_pos_window, y_pos_window, key_state, wheel_delta);
+}
+
+void ConstellationApp::resize(HWND hWnd, WPARAM wParam, LPARAM lParam) {
+    canvas.resize(hWnd, wParam, lParam);
+}
+
+void ConstellationApp::draw(HWND hWnd) {
+    canvas.begin_draw(hWnd);
+
+    float scale = canvas.get_scale();
+    std::vector<std::shared_ptr<Gdiplus::Matrix>> transforms = drawing.get_symmetry_group()->get_transforms();
+
+    // get cursor position in world coordinates
+    POINT cursor_pos_client;
+    GetCursorPos(&cursor_pos_client);                       // screen coords
+    ScreenToClient(hWnd, &cursor_pos_client);               // client area coords
+    Gdiplus::PointF cursor_pos_world((float)cursor_pos_client.x, (float)cursor_pos_client.y);
+    canvas.page_to_world_coordinates(&cursor_pos_world);    // world coords
+
+    // drawing
+    drawing.draw(canvas.graphics);
+
+    // symmetry group
+    if (view_symmetry)
+        drawing.get_symmetry_group()->draw(canvas.graphics, defaults, scale);
+
+    // current tool
+    current_tool->draw(canvas.graphics, cursor_pos_world, transforms, scale);
+
+    canvas.finish_draw();
+}
+
+void ConstellationApp::refresh_if_necessary() {
+    auto now = std::chrono::high_resolution_clock::now();
+    auto frame_time_ns = now - previous_refresh_time;
+    if (frame_time_ns.count() > refresh_interval_ns) {
+        *Logger::get_instance() << "frame time: " << frame_time_ns.count() << std::endl;
+        previous_refresh_time = now;
+        canvas.redraw();
+    }
+
+}
+
 void ConstellationApp::do_action(Action* action) {
     action->apply(drawing);
     canvas.redraw();
@@ -254,7 +296,6 @@ void ConstellationApp::reset_unsaved_changes() {
     unchanged_state_reachable = true;
 }
 
-// Clear undo and redo stacks and free the action pointers therein
 void ConstellationApp::reset_history() {
     while (!undo_stack.empty()) {
         delete undo_stack.top();
@@ -264,44 +305,4 @@ void ConstellationApp::reset_history() {
         delete redo_stack.top();
         redo_stack.pop();
     }
-}
-
-void ConstellationApp::handle_mouse_event(UINT message, WPARAM wParam, LPARAM lParam) {
-    // Unpack parameters
-    int x_pos = GET_X_LPARAM(lParam);
-    int y_pos = GET_Y_LPARAM(lParam);
-    int key_state = GET_KEYSTATE_WPARAM(wParam);
-
-    // Give the canvas a chance to handle the event. If it can't, the current tool should handle it.
-    if (canvas.handle_mouse_event(message, x_pos, y_pos, key_state))
-        return;
-
-    // translate cursor position to world space before passing to tool
-    Gdiplus::PointF cursor_pos((float)x_pos, (float)y_pos);
-    canvas.page_to_world_coordinates(&cursor_pos);
-
-    Action* action = current_tool->handle_mouse_event(message, cursor_pos.X, cursor_pos.Y, key_state, canvas.get_scale());
-    if (action != nullptr)
-        do_action(action);
-}
-
-void ConstellationApp::handle_mouse_wheel_event(UINT message, WPARAM wParam, LPARAM lParam) {
-    // Unpack parameters
-    int x_pos_window = GET_X_LPARAM(lParam);
-    int y_pos_window = GET_Y_LPARAM(lParam);
-    int key_state = GET_KEYSTATE_WPARAM(wParam);
-    int wheel_delta = GET_WHEEL_DELTA_WPARAM(wParam);
-
-    canvas.handle_mouse_wheel_event(message, x_pos_window, y_pos_window, key_state, wheel_delta);
-}
-
-void ConstellationApp::refresh_if_necessary() {
-    auto now = std::chrono::high_resolution_clock::now();
-    auto frame_time_ns = now - previous_refresh_time;
-    if (frame_time_ns.count() > refresh_interval_ns) {
-        *Logger::get_instance() << "frame time: " << frame_time_ns.count() << std::endl;
-        previous_refresh_time = now;
-        canvas.redraw();
-    }
-
 }

@@ -1,9 +1,11 @@
+#include "ToolNewPath.h"
+
 #include <windowsx.h>
 
 #include "actions/ActionAddElement.h"
-#include "ToolNewPath.h"
 #include "drawing/Element.h"
 #include "core/Logger.h"
+
 
 Action* ToolNewPath::handle_mouse_event(UINT message, float x_pos, float y_pos, int key_state, float scale) {
 	if (message != WM_MOUSEMOVE)
