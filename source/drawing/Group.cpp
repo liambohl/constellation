@@ -26,6 +26,12 @@ void Group::draw(Gdiplus::Graphics* graphics, std::vector<std::shared_ptr<Gdiplu
 	}
 }
 
+void Group::draw_original(Gdiplus::Graphics* graphics) {
+	for (std::shared_ptr<Element> element : elements) {
+		element->draw_original(graphics);
+	}
+}
+
 void Group::get_bounding_box(Gdiplus::RectF** bounding_box) {
 	for (std::shared_ptr<Element> el : elements) {
 		el->get_bounding_box(bounding_box);

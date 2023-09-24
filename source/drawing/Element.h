@@ -11,6 +11,8 @@ class Element
 public:
 	// Draw this element and transformed copies of it in accordance with the symmetry group.
 	virtual void draw(Gdiplus::Graphics* graphics, std::vector<std::shared_ptr<Gdiplus::Matrix>>& transforms);
+	// Draw only the original of this element
+	virtual void draw_original(Gdiplus::Graphics* graphics);
 
 	virtual void get_bounding_box(Gdiplus::RectF** bounding_box) = 0;
 

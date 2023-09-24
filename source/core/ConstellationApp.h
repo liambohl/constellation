@@ -35,6 +35,7 @@ public:
 
 	// View menu
 	void set_view_symmetry(bool visible) { view_symmetry = visible; }
+	void set_view_ghost(bool ghost) { this->ghost = ghost; }
 
 	void handle_escape();
 
@@ -74,7 +75,10 @@ private:
 	Drawing drawing;
 	Tool* current_tool = nullptr;
 
+	// View symmetry guides
 	bool view_symmetry = true;
+	// If true, original elements are shown at full opacity, while transformed copies are partially transparent "ghosts".
+	bool ghost = false;
 
 	// Name and location of currrently open file. If nullptr, we are editing a new, never-saved drawing.
 	PWSTR drawing_file_path = nullptr;		// full path

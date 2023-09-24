@@ -15,6 +15,8 @@ public:
 	Group(json group_json);
 
 	void draw(Gdiplus::Graphics* graphics, std::vector<std::shared_ptr<Gdiplus::Matrix>>& transforms) override;
+	void draw_original(Gdiplus::Graphics* graphics) override;
+
 	void get_bounding_box(Gdiplus::RectF** bounding_box);
 
 	json to_json() override;

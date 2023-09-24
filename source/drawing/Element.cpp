@@ -12,3 +12,7 @@ void Element::draw(Gdiplus::Graphics* graphics, std::vector<std::shared_ptr<Gdip
 		transform->Invert();
 	}
 }
+
+void Element::draw_original(Gdiplus::Graphics* graphics) {
+	draw_one(graphics);
+}

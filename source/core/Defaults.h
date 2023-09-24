@@ -9,6 +9,8 @@ class Defaults
 public:
 	Defaults();
 
+	Gdiplus::Color background_color;					// "transparent" color shown where there are no elements
+
 	// new elements
 	Gdiplus::Pen* pen = nullptr;						// default stroke for elements in the drawing
 	Gdiplus::Brush* brush = nullptr;					// default fill for elements in the drawing

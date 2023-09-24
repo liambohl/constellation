@@ -19,6 +19,7 @@ public:
 	Drawing(json drawing_json);
 
 	void draw(Gdiplus::Graphics* graphics);
+	void draw_original(Gdiplus::Graphics* graphics);
 
 	void set_symmetry_group(std::shared_ptr<SymmetryGroup> group) { symmetry_group = group; }
 	std::shared_ptr<SymmetryGroup> get_symmetry_group() { return symmetry_group; }

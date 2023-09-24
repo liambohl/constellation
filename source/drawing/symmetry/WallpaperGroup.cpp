@@ -165,26 +165,26 @@ json WallpaperGroup::to_json() {
 void WallpaperGroup::update_transforms() {
 	transforms.clear();
 
-	// Evaluate the cell with the current v1 and v2
+	// Evaluate all transforms in the cell with the current v1 and v2
 	std::unordered_map<std::string, float> vectors = { {"v1_x", v1_x}, {"v1_y", v1_y}, {"v2_x", v2_x}, {"v2_y", v2_y} };
 	std::vector<std::shared_ptr<Gdiplus::Matrix>> cell_evaluated;
 	for (auto& symbolic_matrix : cell)
 		cell_evaluated.push_back(std::shared_ptr<Gdiplus::Matrix>(symbolic_matrix.evaluate(vectors).Clone()));
-
-	// For each copy of the cell
+	
+	// Translate copies of the cell
 	for (int v1_factor = -extent; v1_factor <= extent; ++v1_factor) {
 		for (int v2_factor = -extent; v2_factor <= extent; ++v2_factor) {
 			// The full extent of a hexagonal tessalation should be a big hexagon, not a bit rhombus.
 			if (cell_shape == HEXAGON && abs(v1_factor + v2_factor) > extent)
 				continue;
 
-			// linear combination of v1 and v2
+			// total offset is a linear combination of v1 and v2
 			float offset_x = v1_factor * v1_x + v2_factor * v2_x;
 			float offset_y = v1_factor * v1_y + v2_factor * v2_y;
 
 			// For each copy of the fundamental domain in a cell
 			for (auto matrix : cell_evaluated) {
-				// Translate
+				// Translate the domain
 				auto translated = std::shared_ptr<Gdiplus::Matrix>(matrix->Clone());
 				translated->Translate(offset_x, offset_y);
 				transforms.push_back(translated);

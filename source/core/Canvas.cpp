@@ -6,10 +6,21 @@
 
 
 const float Canvas::DEFAULT_SCALE = 5.0f;			// About 5 pixels per millimeter; should be somewhat close to actual size
-const float Canvas::ZOOM_FIT_FACTOR = 0.75f;				// After fitting canvas to a drawing, zoom out by this factor
+const float Canvas::ZOOM_FIT_FACTOR = 0.75f;		// After fitting canvas to a drawing, zoom out by this factor
+const float Canvas::GHOST_OPACITY = 0.4f;			// If "show transformed copies as ghosts" is selected, this is the opacity of those ghosts.
 
 Canvas::Canvas() {
 	transform = new Gdiplus::Matrix;
+
+	// Color transform that multiplies the alpha channel of a color vector by GHOST_OPACITY
+	Gdiplus::ColorMatrix colorMatrix = {
+		1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, GHOST_OPACITY, 0.0f,
+		0.0f, 0.0f, 0.0f, 0.0f, 1.0f
+	};
+	ghost_attributes.SetColorMatrix(&colorMatrix, Gdiplus::ColorMatrixFlagsDefault, Gdiplus::ColorAdjustTypeBitmap);
 }
 
 Canvas::~Canvas() {
@@ -105,27 +116,53 @@ void Canvas::resize(HWND hWnd, WPARAM wParam, LPARAM lParam) {
 	}
 }
 
-void Canvas::begin_draw(HWND hWnd) {
+void Canvas::begin_draw(HWND hWnd, bool ghost, const Defaults& defaults) {
 	this->hWnd = hWnd;
 	hdc = BeginPaint(hWnd, &ps);
 	int windowWidth = (int)(ps.rcPaint.right - ps.rcPaint.left);
 	int windowHeight = (int)(ps.rcPaint.bottom - ps.rcPaint.top);
 	
-	delete screen_buffer;
+	// Create new screen buffer and graphics
+	delete screen_buffer, graphics;
 	screen_buffer = new Gdiplus::Bitmap(windowWidth, windowHeight, PixelFormat32bppARGB);
-	delete graphics;
 	graphics = new Gdiplus::Graphics(screen_buffer);
 	graphics->SetTransform(transform);
+	graphics->SetSmoothingMode(Gdiplus::SmoothingModeAntiAlias8x8);
 
-	try {
-		graphics->SetSmoothingMode(Gdiplus::SmoothingModeAntiAlias8x8);
+	if (ghost) {
+		// Create new ghost screen buffer and graphics
+		delete ghost_buffer, ghost_graphics;
+		ghost_buffer = new Gdiplus::Bitmap(windowWidth, windowHeight, PixelFormat32bppARGB);
+		ghost_graphics = new Gdiplus::Graphics(ghost_buffer);
+		ghost_graphics->SetTransform(transform);
+		ghost_graphics->SetSmoothingMode(Gdiplus::SmoothingModeAntiAlias8x8);
 	}
-	catch (std::exception e) {
-		*Logger::get_instance() << e.what();
-	}
+
+	graphics->Clear(defaults.background_color);
 }
 
-void Canvas::finish_draw() {
+void Canvas::finish_draw(bool ghost) {
+	if (ghost) {
+		float scale = get_scale();
+		Gdiplus::Matrix transform;
+		graphics->GetTransform(&transform);
+
+		// Region of the ghost_buffer to draw (all of it)
+		Gdiplus::RectF source_rect = { 0.0f, 0.0f, (float)ghost_buffer->GetWidth(), (float)ghost_buffer->GetHeight() };
+		// Region in world space that the drawn image should occupy (the visible region)
+		Gdiplus::RectF dest_rect = { -transform.OffsetX() / scale, -transform.OffsetY() / scale, (float)ghost_buffer->GetWidth() / scale, (float)ghost_buffer->GetHeight() / scale };
+		
+		// Draw ghost image at reduced opacity
+		// To pass ImageAttributes in a call to Graphics::DrawImage, we have to use this ugly overload.
+		graphics->DrawImage(
+			ghost_buffer,
+			dest_rect,
+			source_rect,
+			Gdiplus::UnitPixel,
+			&ghost_attributes
+		);
+	}
+	
 	Gdiplus::Graphics true_graphics(hdc);
 	true_graphics.DrawImage(screen_buffer, Gdiplus::Point(0, 0));
 	EndPaint(hWnd, &ps);

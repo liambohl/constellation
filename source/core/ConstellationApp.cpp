@@ -213,7 +213,7 @@ void ConstellationApp::resize(HWND hWnd, WPARAM wParam, LPARAM lParam) {
 }
 
 void ConstellationApp::draw(HWND hWnd) {
-    canvas.begin_draw(hWnd);
+    canvas.begin_draw(hWnd, ghost, defaults);
 
     float scale = canvas.get_scale();
     std::vector<std::shared_ptr<Gdiplus::Matrix>> transforms = drawing.get_symmetry_group()->get_transforms();
@@ -226,7 +226,13 @@ void ConstellationApp::draw(HWND hWnd) {
     canvas.page_to_world_coordinates(&cursor_pos_world);    // world coords
 
     // drawing
-    drawing.draw(canvas.graphics);
+    if (ghost) {
+        drawing.draw(canvas.ghost_graphics);                // Draw entire drawing at reduced opacity
+        drawing.draw_original(canvas.graphics);             // Draw only original elements, on top, at full opacity
+    }
+    else {
+        drawing.draw(canvas.graphics);
+    }
 
     // symmetry group
     if (view_symmetry)
@@ -235,7 +241,7 @@ void ConstellationApp::draw(HWND hWnd) {
     // current tool
     current_tool->draw(canvas.graphics, cursor_pos_world, transforms, scale);
 
-    canvas.finish_draw();
+    canvas.finish_draw(ghost);
 }
 
 void ConstellationApp::refresh_if_necessary() {

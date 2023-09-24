@@ -189,6 +189,24 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				}
 			}
 			break;
+			case ID_VIEW_GHOST:
+			{
+				// Check or uncheck menu item and show or hide symmetry guides
+				HMENU hMenu = GetMenu(hWnd);
+				UINT view_ghost_state = GetMenuState(hMenu, wmId, MF_BYCOMMAND);
+
+				if (view_ghost_state & MF_CHECKED)
+				{
+					CheckMenuItem(hMenu, wmId, MF_UNCHECKED | MF_BYCOMMAND);
+					application->set_view_ghost(false);
+				}
+				else
+				{
+					CheckMenuItem(hMenu, wmId, MF_CHECKED | MF_BYCOMMAND);
+					application->set_view_ghost(true);
+				}
+			}
+			break;
 			// Help menu
 			case IDM_ABOUT:
 				DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);

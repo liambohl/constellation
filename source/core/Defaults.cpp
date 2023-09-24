@@ -4,6 +4,8 @@
 
 
 Defaults::Defaults() {
+	background_color = Gdiplus::Color(255, 80, 80, 80);
+
 	// new elements
 	pen = new Gdiplus::Pen(Gdiplus::Color(255, 0, 0, 0), 1.0f);
 	pen->SetStartCap(Gdiplus::LineCapRound);
