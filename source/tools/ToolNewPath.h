@@ -34,8 +34,8 @@ private:
 		NTH_DOWN		// n_nodes >= 2. We can only finish a path if we are in this state.
 	};
 
-	Path* wip_path = nullptr;	// The "work in progress" path we will soon add to the drawing
-	Path* tool_path = nullptr;	// The last segment of path which we are editing and may or may not make it into the drawing
+	std::vector<Gdiplus::PointF> wip_path;	// The "work in progress" path we will soon add to the drawing
+	std::vector<Gdiplus::PointF> tool_path;	// The last segment of path which we are editing and may or may not make it into the drawing
 
 	BezierState state = FIRST_DOWN;
 

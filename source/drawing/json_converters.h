@@ -17,3 +17,6 @@ Gdiplus::Brush* brush_from_json(json brush_json);
 
 json point_to_json(Gdiplus::PointF point);
 Gdiplus::PointF point_from_json(json point_json);
+
+json path_to_json(Gdiplus::GraphicsPath* path);
+Gdiplus::GraphicsPath* path_from_json(json path_json);

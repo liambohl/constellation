@@ -1,89 +1,54 @@
+#include "Path.h"
+
 #include <string>
 
 #include "json_converters.h"
 #include "core/Logger.h"
-#include "Path.h"
 
 
 Path::Path(json path_json):
 	pen(pen_from_json(path_json["pen"]))
 {
-	for (json point_json : path_json["control_points"])
-		control_points.emplace_back(point_from_json(point_json));
-	n_points = (int)control_points.size();
+	std::vector<Gdiplus::PointF> control_points;
+	path = path_from_json(path_json["path"]);
 }
-
-//Path::Path(const Path& other) :
-//	Element(other.id),
-//	control_points(other.control_points),
-//	n_points(other.n_points)
-//{
-//	pen = other.pen->Clone();
-//}
 
 Path::~Path() {
 	delete pen;
 }
 
 void Path::get_bounding_box(Gdiplus::RectF** bounding_box) {
-	if (n_points == 0)
-		return;
+	Gdiplus::RectF path_bounds;
+	Gdiplus::GraphicsPath* flat_path = path->Clone();
+	flat_path->Flatten();
+	flat_path->GetBounds(&path_bounds, nullptr, pen);
 
 	if (*bounding_box == nullptr)
-		*bounding_box = new Gdiplus::RectF(control_points[0].X, control_points[0].Y, 0, 0);
+		*bounding_box = path_bounds.Clone();
 
-	for (Gdiplus::PointF point : control_points) {
-		(**bounding_box).X = min((**bounding_box).X, point.X);
-		(**bounding_box).Y = min((**bounding_box).Y, point.Y);
-		(**bounding_box).Width = max((**bounding_box).Width, point.X - (**bounding_box).X);
-		(**bounding_box).Height = max((**bounding_box).Height, point.Y - (**bounding_box).Y);
-	}
+	float left = min((**bounding_box).GetLeft(), path_bounds.GetLeft());
+	float top = min((**bounding_box).GetTop(), path_bounds.GetTop());
+	float right = max((**bounding_box).GetRight(), path_bounds.GetRight());
+	float bottom = max((**bounding_box).GetBottom(), path_bounds.GetBottom());
+
+	(**bounding_box).X = left;
+	(**bounding_box).Y = top;
+	(**bounding_box).Width =  right - left;
+	(**bounding_box).Height = bottom - top;
 }
 
 json Path::to_json() {
-	json output = {
+	return {
 		{"type", "Path"},
 		{"pen", pen_to_json(pen)},
-		{"control_points", {}}
+		{"path", path_to_json(path)}
 	};
-
-	// Populate control points
-	for (Gdiplus::PointF point : control_points) {
-		output["control_points"].push_back(point_to_json(point));
-	}
-
-	return output;
 }
 
-void Path::add_point(float xPos, float yPos, int count) {
-	for (int i = 0; i < count; ++i) {
-		control_points.push_back(Gdiplus::PointF(xPos, yPos));
-		++n_points;
-	}
-}
-	
-void Path::add_points(Path& other) {
-	// Add all but the first point
-	for (auto point = ++other.control_points.begin(); point != other.control_points.end(); ++point) {
-		control_points.push_back(*point);
-		++n_points;
-	}
-}
-
-void Path::pop_point(int count) {
-	for (int i = 0; i < count; ++i) {
-		control_points.pop_back();
-		--n_points;
-	}
-}
-
-Gdiplus::PointF Path::top() {
-	return control_points.back();
+void Path::add_beziers(std::vector<Gdiplus::PointF> control_points) {
+	path->AddBeziers(control_points.data(), (int)control_points.size());
 }
 
 void Path::draw_one(Gdiplus::Graphics* graphics) {
-	if (n_points < 4)
-		return;
-
-	graphics->DrawBeziers(pen, control_points.data(), n_points);
+	graphics->DrawPath(pen, path);
 }

@@ -69,3 +69,36 @@ Gdiplus::PointF point_from_json(json point_json) {
 	float Y = point_json["Y"];
 	return Gdiplus::PointF(X, Y);
 }
+
+json path_to_json(Gdiplus::GraphicsPath* path) {
+	Gdiplus::PathData path_data;
+	path->GetPathData(&path_data);
+	std::vector<json> points_json;
+	std::vector<json> types_json;
+	for (int i = 0; i < path_data.Count; ++i) {
+		points_json.push_back(point_to_json(path_data.Points[i]));
+		types_json.push_back(path_data.Types[i]);
+	}
+
+	return {
+		{"count", path_data.Count},
+		{"points", points_json},
+		{"point_types", types_json},
+		{"fill_mode", path->GetFillMode() == Gdiplus::FillModeAlternate ? "alternate" : "winding"}
+	};
+}
+
+Gdiplus::GraphicsPath* path_from_json(json path_json) {
+	int count = path_json["count"];
+	Gdiplus::PointF* points = new Gdiplus::PointF[count];
+	byte* types = new byte[count];
+	std::vector<json> points_json = path_json["points"];
+	std::vector<json> types_json = path_json["point_types"];
+	for (int i = 0; i < count; ++i) {
+		points[i] = point_from_json(points_json[i]);
+		types[i] = types_json[i];
+	}
+	Gdiplus::FillMode fill_mode = path_json["fill_mode"] == "alternate" ? Gdiplus::FillModeAlternate : Gdiplus::FillModeWinding;
+
+	return new Gdiplus::GraphicsPath(points, types, count, fill_mode);
+}
