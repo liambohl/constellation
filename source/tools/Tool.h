@@ -2,6 +2,7 @@
 
 #include "actions/Action.h"
 #include "core/Defaults.h"
+#include "drawing/Drawing.h"
 
 
 class Tool
@@ -28,9 +29,10 @@ public:
 	virtual boolean handle_escape() { return false; }
 
 protected:
-	Tool(Defaults& defaults) : defaults(defaults) {}
+	Tool(Drawing& drawing, Defaults& defaults) : drawing(drawing), defaults(defaults) {}
 
 	void draw_handle(Gdiplus::Graphics* graphics, float x, float y, float scale, bool selected = false);
 
+	Drawing& drawing;
 	Defaults& defaults;
 };

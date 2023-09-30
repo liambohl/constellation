@@ -24,6 +24,7 @@ ConstellationApp::ConstellationApp()
     if (refresh_rate < 59)
         refresh_rate = 60;
     refresh_interval_ns = 1000000000 / refresh_rate;
+    delete dm;
     *Logger::get_instance() << "refresh interval: " << refresh_interval_ns << std::endl;
 }
 
@@ -95,13 +96,13 @@ void ConstellationApp::set_tool(enum tool tool_type) {
     delete current_tool;
     switch (tool_type) {
     case NEW_PATH:
-        current_tool = new ToolNewPath(defaults);
+        current_tool = new ToolNewPath(drawing, defaults);
         break;
     case SELECT:
-        current_tool = new ToolSelect(defaults);
+        current_tool = new ToolSelect(drawing, defaults);
         break;
     case EDIT_SYMMETRY_PARAMETERS:
-        current_tool = new ToolEditWallpaperGroup(defaults, std::static_pointer_cast<WallpaperGroup>(drawing.get_symmetry_group()));
+        current_tool = new ToolEditWallpaperGroup(drawing, defaults);
         break;
     }
 }

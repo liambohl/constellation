@@ -14,27 +14,21 @@ Path::Path(json path_json):
 }
 
 Path::~Path() {
-	delete pen;
+	delete path, pen;
 }
 
-void Path::get_bounding_box(Gdiplus::RectF** bounding_box) {
-	Gdiplus::RectF path_bounds;
+std::optional<Gdiplus::RectF> Path::get_bounding_box() {
+	if (path->GetPointCount() == 0)
+		return {};
 	Gdiplus::GraphicsPath* flat_path = path->Clone();
 	flat_path->Flatten();
-	flat_path->GetBounds(&path_bounds, nullptr, pen);
+	Gdiplus::RectF bounding_box;
+	flat_path->GetBounds(&bounding_box, nullptr, pen);
+	return bounding_box;
+}
 
-	if (*bounding_box == nullptr)
-		*bounding_box = path_bounds.Clone();
-
-	float left = min((**bounding_box).GetLeft(), path_bounds.GetLeft());
-	float top = min((**bounding_box).GetTop(), path_bounds.GetTop());
-	float right = max((**bounding_box).GetRight(), path_bounds.GetRight());
-	float bottom = max((**bounding_box).GetBottom(), path_bounds.GetBottom());
-
-	(**bounding_box).X = left;
-	(**bounding_box).Y = top;
-	(**bounding_box).Width =  right - left;
-	(**bounding_box).Height = bottom - top;
+bool Path::try_select(const Gdiplus::PointF& cursor_pos) {
+	return path->IsOutlineVisible(cursor_pos, pen);
 }
 
 json Path::to_json() {

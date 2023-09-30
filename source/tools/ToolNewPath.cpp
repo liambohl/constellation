@@ -106,9 +106,9 @@ Action* ToolNewPath::handle_mouse_event(UINT message, float x_pos, float y_pos, 
 		else if (message == WM_RBUTTONDOWN) {
 			state = FIRST_DOWN;
 			// Hand over wip_path to the drawing
-			Path* new_path = new Path(defaults.pen);
+			auto new_path = std::make_shared<Path>(defaults.pen);
 			new_path->add_beziers(wip_path);
-			return new ActionAddElement(std::shared_ptr<Element>(new_path));
+			return new ActionAddElement(new_path);
 		}
 		break;
 

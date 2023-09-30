@@ -9,7 +9,7 @@ class ToolNewPath :
 	public Tool
 {
 public:
-	ToolNewPath(Defaults& defaults) : Tool(defaults) { }
+	ToolNewPath(Drawing& drawing, Defaults& defaults) : Tool(drawing, defaults) { }
 
 	Action* handle_mouse_event(UINT message, float x_pos, float y_pos, int key_state, float scale) override;
 
@@ -26,7 +26,7 @@ public:
 
 private:
 	// Which mouse action are we waiting for?
-	enum BezierState {
+	enum State {
 		FIRST_DOWN,		// n_nodes = 0
 		FIRST_RELEASE,	// n_nodes = 0
 		SECOND_DOWN,	// n_nodes = 1
@@ -37,7 +37,7 @@ private:
 	std::vector<Gdiplus::PointF> wip_path;	// The "work in progress" path we will soon add to the drawing
 	std::vector<Gdiplus::PointF> tool_path;	// The last segment of path which we are editing and may or may not make it into the drawing
 
-	BezierState state = FIRST_DOWN;
+	State state = FIRST_DOWN;
 
 	int n_nodes = 0;			// number of nodes in wip_path
 

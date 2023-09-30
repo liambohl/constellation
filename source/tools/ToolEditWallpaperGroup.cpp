@@ -8,7 +8,7 @@
 const float ToolEditWallpaperGroup::ARROW_HEAD = 0.05f;
 
 Action* ToolEditWallpaperGroup::handle_mouse_event(UINT message, float x_pos, float y_pos, int key_state, float scale) {
-	if (state == INACTIVE) {
+	if (state == IDLE) {
 		if (message == WM_LBUTTONDOWN) {
 			Gdiplus::PointF v1 = symmetry_group->get_v1();
 			Gdiplus::PointF v2 = symmetry_group->get_v2();
@@ -27,9 +27,9 @@ Action* ToolEditWallpaperGroup::handle_mouse_event(UINT message, float x_pos, fl
 		}
 	}
 	else {
-		// If shift pressed, snap cursor to 15°
-		bool shift_pressed = key_state & MK_CONTROL;
-		if (shift_pressed) {
+		// If control pressed, snap cursor to 15°
+		bool control_pressed = key_state & MK_CONTROL;
+		if (control_pressed) {
 			float r = sqrtf(x_pos * x_pos + y_pos * y_pos);
 			float theta = atan2f(y_pos, x_pos);
 			theta = roundf(theta * 12 / (float)std::numbers::pi) * (float)std::numbers::pi / 12;	// round theta to the nearest 15°
@@ -42,7 +42,7 @@ Action* ToolEditWallpaperGroup::handle_mouse_event(UINT message, float x_pos, fl
 				symmetry_group->set_v1(x_pos, y_pos);
 			}
 			if (message == WM_LBUTTONUP) {
-				state = INACTIVE;
+				state = IDLE;
 				return new ActionEditWallpaperGroup(ActionEditWallpaperGroup::EDIT_V1, old_x, old_y, x_pos, y_pos);
 			}
 		}
@@ -51,7 +51,7 @@ Action* ToolEditWallpaperGroup::handle_mouse_event(UINT message, float x_pos, fl
 				symmetry_group->set_v2(x_pos, y_pos);
 			}
 			if (message == WM_LBUTTONUP) {
-				state = INACTIVE;
+				state = IDLE;
 				return new ActionEditWallpaperGroup(ActionEditWallpaperGroup::EDIT_V2, old_x, old_y, x_pos, y_pos);
 			}
 		}

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <optional>
+
 #include "Defaults.h"
 #include "framework.h"
 
@@ -32,7 +34,7 @@ public:
 	void reset_transform(int client_width, int client_height);
 
 	// Pan and zoom to fit the given bounding box (in world space)
-	void fit_drawing(Gdiplus::RectF* bounding_box);
+	void fit_drawing(std::optional<Gdiplus::RectF> bounding_box);
 
 	// Convert a point from client coordinates to world space
 	void page_to_world_coordinates(Gdiplus::PointF* point_page);

@@ -14,7 +14,9 @@ public:
     Path(json path_json);
     ~Path();
 
-    void get_bounding_box(Gdiplus::RectF** bounding_box);
+    std::optional<Gdiplus::RectF> get_bounding_box() override;
+
+    bool try_select(const Gdiplus::PointF& cursor_pos) override;
 
     json to_json() override;
 

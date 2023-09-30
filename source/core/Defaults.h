@@ -26,6 +26,8 @@ public:
 	Gdiplus::Pen* wip_pen = nullptr;					// works in progress: elements currently being created by a tool
 	Gdiplus::Pen* tool_pen = nullptr;					// the cutting edge
 	Gdiplus::Pen* symmetry_vector_pen = nullptr;		// vectors that parameterize a symmetry group
+	Gdiplus::Pen* selection_pen_1 = nullptr;			// bounding rectangle of selection; bottom layer
+	Gdiplus::Pen* selection_pen_2 = nullptr;			// bounding rectangle of selection; top layer
 
 	// symmetry guides
 	Gdiplus::Pen* domain_boundary_pen = nullptr;		// edges of symmetry domains

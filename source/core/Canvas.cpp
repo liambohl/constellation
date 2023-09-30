@@ -190,8 +190,8 @@ void Canvas::reset_transform(int client_width, int client_height) {
 	zoom(DEFAULT_SCALE, client_width / 2.0f, client_height / 2.0f);
 }
 
-void Canvas::fit_drawing(Gdiplus::RectF* bounding_box) {
-	if (bounding_box == nullptr) {
+void Canvas::fit_drawing(std::optional<Gdiplus::RectF> bounding_box) {
+	if (!bounding_box) {
 		reset_transform();
 		return;
 	}

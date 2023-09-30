@@ -24,10 +24,12 @@ public:
 	void set_symmetry_group(std::shared_ptr<SymmetryGroup> group) { symmetry_group = group; }
 	std::shared_ptr<SymmetryGroup> get_symmetry_group() { return symmetry_group; }
 
-	Gdiplus::RectF* get_bounding_box();
+	std::optional<Gdiplus::RectF> get_bounding_box() { return elements.get_bounding_box(); }
 
 	void add_element(std::shared_ptr<Element> element) { elements.add_element(element); }
 	bool remove_element(std::shared_ptr<Element> element) { return elements.remove_element(element); }
+
+	std::shared_ptr<Element> select_element(const Gdiplus::PointF& cursor_pos) { return elements.select_in_group(cursor_pos); }
 
 	json to_json();
 

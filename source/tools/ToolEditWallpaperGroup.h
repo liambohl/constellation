@@ -9,9 +9,11 @@ class ToolEditWallpaperGroup :
     public Tool
 {
 public:
-	ToolEditWallpaperGroup(Defaults& defaults, std::shared_ptr<WallpaperGroup> symmetry_group) :
-		Tool(defaults), symmetry_group(symmetry_group)
-	{ }
+	ToolEditWallpaperGroup(Drawing& drawing, Defaults& defaults) :
+		Tool(drawing, defaults)
+	{
+		symmetry_group = std::static_pointer_cast<WallpaperGroup>(drawing.get_symmetry_group());
+	}
 
 	Action* handle_mouse_event(UINT message, float x_pos, float y_pos, int key_state, float scale) override;
 
@@ -26,13 +28,13 @@ private:
 	// length of an arrow head as a proportion of the length of an arrow
 	static const float ARROW_HEAD;
 
-	enum EditState {
-		INACTIVE,
+	enum State {
+		IDLE,
 		DRAGGING_V1,
 		DRAGGING_V2
 	};
 
-	EditState state = INACTIVE;
+	State state = IDLE;
 
 	std::shared_ptr<WallpaperGroup> symmetry_group;
 

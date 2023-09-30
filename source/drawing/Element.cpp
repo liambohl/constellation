@@ -1,5 +1,7 @@
 #include "Element.h"
 
+#include <limits>
+
 
 // For elements that are not groups, the draw method should draw
 // a transformed copy of the element for each transform.

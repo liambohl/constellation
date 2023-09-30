@@ -14,7 +14,10 @@ public:
 	// Draw only the original of this element
 	virtual void draw_original(Gdiplus::Graphics* graphics);
 
-	virtual void get_bounding_box(Gdiplus::RectF** bounding_box) = 0;
+	// Get a rectangle that neatly encloses this element. If the element is empty, return {}.
+	virtual std::optional<Gdiplus::RectF> get_bounding_box() = 0;
+
+	virtual bool try_select(const Gdiplus::PointF& cursor_pos) = 0;
 
 	virtual json to_json() = 0;
 
