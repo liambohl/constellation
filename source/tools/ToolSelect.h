@@ -48,4 +48,6 @@ private:
 	ActiveHandle selected_handle = NONE;
 
 	std::vector<std::shared_ptr<Element>> selection;
+
+	static const float SELECTION_MARGIN;
 };

@@ -9,7 +9,7 @@ Defaults::Defaults() {
 	background_color = Color(255, 80, 80, 80);
 
 	// new elements
-	pen = new Pen(Color(255, 0, 0, 0), 1.0f);
+	pen = new Pen(Color(255, 0, 0, 0), 5.0f);
 	pen->SetStartCap(LineCapRound);
 	pen->SetEndCap(LineCapRound);
 	pen->SetLineJoin(LineJoinRound);

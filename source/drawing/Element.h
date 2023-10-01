@@ -17,7 +17,8 @@ public:
 	// Get a rectangle that neatly encloses this element. If the element is empty, return {}.
 	virtual std::optional<Gdiplus::RectF> get_bounding_box() = 0;
 
-	virtual bool try_select(const Gdiplus::PointF& cursor_pos) = 0;
+	// Return true if the distance from the cursor to this element, in page space, is less than margin.
+	virtual bool try_select(const Gdiplus::PointF& cursor_pos, float margin, float scale) = 0;
 
 	virtual json to_json() = 0;
 

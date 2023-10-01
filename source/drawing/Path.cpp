@@ -25,11 +25,15 @@ std::optional<Gdiplus::RectF> Path::get_bounding_box() {
 	flat_path->Flatten();
 	Gdiplus::RectF bounding_box;
 	flat_path->GetBounds(&bounding_box, nullptr, pen);
+	delete flat_path;
 	return bounding_box;
 }
 
-bool Path::try_select(const Gdiplus::PointF& cursor_pos) {
-	return path->IsOutlineVisible(cursor_pos, pen);
+bool Path::try_select(const Gdiplus::PointF& cursor_pos, float margin, float scale) {
+	float test_pen_width = pen->GetWidth() + margin / scale;
+	Gdiplus::Pen test_pen(Gdiplus::Color(), test_pen_width);
+	bool can_select = path->IsOutlineVisible(cursor_pos, &test_pen);
+	return can_select;
 }
 
 json Path::to_json() {

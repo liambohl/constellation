@@ -58,17 +58,17 @@ std::optional<Gdiplus::RectF> Group::get_bounding_box() {
 	return bounds;
 }
 
-bool Group::try_select(const Gdiplus::PointF& cursor_pos) {
+bool Group::try_select(const Gdiplus::PointF& cursor_pos, float margin, float scale) {
 	for (auto element : elements) {
-		if (element->try_select(cursor_pos))
+		if (element->try_select(cursor_pos, margin, scale))
 			return true;
 	}
 	return false;
 }
 
-std::shared_ptr<Element> Group::select_in_group(const Gdiplus::PointF& cursor_pos) {
+std::shared_ptr<Element> Group::select_in_group(const Gdiplus::PointF& cursor_pos, float margin, float scale) {
 	for (auto element : elements) {
-		if (element->try_select(cursor_pos))
+		if (element->try_select(cursor_pos, margin, scale))
 			return element;
 	}
 	return nullptr;

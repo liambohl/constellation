@@ -19,8 +19,8 @@ public:
 
 	std::optional<Gdiplus::RectF> get_bounding_box() override;
 
-	bool try_select(const Gdiplus::PointF& cursor_pos) override;					// Try to select this group
-	std::shared_ptr<Element> select_in_group(const Gdiplus::PointF& cursor_pos);	// Try to select an element of this group
+	bool try_select(const Gdiplus::PointF& cursor_pos, float margin, float scale) override;					// Try to select this group
+	std::shared_ptr<Element> select_in_group(const Gdiplus::PointF& cursor_pos, float margin, float scale);	// Try to select an element of this group
 
 	json to_json() override;
 

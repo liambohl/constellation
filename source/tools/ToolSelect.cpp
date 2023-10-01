@@ -1,13 +1,15 @@
 #include "ToolSelect.h"
 
 
+const float ToolSelect::SELECTION_MARGIN = 5.0f;
+
 Action* ToolSelect::handle_mouse_event(UINT message, Gdiplus::PointF cursor_pos, int key_state, float scale) {
 	// If anything selected, give handles a chance to handle mouse event
 	// Otherwise,
 	if (message == WM_LBUTTONDOWN) {
 		bool shift_pressed = key_state & MK_SHIFT;
 
-		std::shared_ptr<Element> element = drawing.select_element(cursor_pos);
+		std::shared_ptr<Element> element = drawing.select_element(cursor_pos, SELECTION_MARGIN, scale);
 
 		// If we clicked an element
 		if (element != nullptr) {

@@ -29,7 +29,7 @@ public:
 	void add_element(std::shared_ptr<Element> element) { elements.add_element(element); }
 	bool remove_element(std::shared_ptr<Element> element) { return elements.remove_element(element); }
 
-	std::shared_ptr<Element> select_element(const Gdiplus::PointF& cursor_pos) { return elements.select_in_group(cursor_pos); }
+	std::shared_ptr<Element> select_element(const Gdiplus::PointF& cursor_pos, float margin, float scale) { return elements.select_in_group(cursor_pos, margin, scale); }
 
 	json to_json();
 

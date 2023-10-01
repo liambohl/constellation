@@ -16,7 +16,7 @@ public:
 
     std::optional<Gdiplus::RectF> get_bounding_box() override;
 
-    bool try_select(const Gdiplus::PointF& cursor_pos) override;
+    bool try_select(const Gdiplus::PointF& cursor_pos, float margin, float scale) override;
 
     json to_json() override;
 

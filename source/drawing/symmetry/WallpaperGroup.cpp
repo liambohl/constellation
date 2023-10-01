@@ -17,27 +17,27 @@ WallpaperGroup::WallpaperGroup(
 ):
 	SymmetryGroup(name), cell_shape(cell_shape), cell(cell), drawing_area(drawing_area), rotation_centers(rotation_centers), domain_boundaries(domain_boundaries)
 {
-	v1_x = 100.0f;
+	v1_x = 500.0f;
 	v1_y = 0.0f;
 	switch (cell_shape) {
 	case PARALLELOGRAM:
-		v2_x = 30.0f;		// Arbitrarily make the parallelogram half as tall as it is wide and skewed right like /
-		v2_y = -50.0f;
+		v2_x = 150.0f;		// Arbitrarily make the parallelogram half as tall as it is wide and skewed right like /
+		v2_y = -250.0f;
 		break;
 	case RECTANGLE:
 		v2_x = 0.0f;		// Arbitrarily make the rectangle half as tall as it is wide.
-		v2_y = -50.0f;
+		v2_y = -250.0f;
 		break;
 	case RHOMBUS:
-		v2_x = 70.7107f;	// Arbitrarily make the rhombus a lozenge: a rhombus with angles of 45 and 135 degrees
-		v2_y = -70.7107f;
+		v2_x = 353.5534f;	// Arbitrarily make the rhombus a lozenge: a rhombus with angles of 45 and 135 degrees
+		v2_y = -353.5534f;	// = -sqrt(2) / 2 * 500
 	case HEXAGON:
-		v2_x = 50.0f;
-		v2_y = -86.6025f;
+		v2_x = 250.0f;
+		v2_y = -433.0127f;	// = -sqrt(3) / 2 * 500
 		break;
 	case SQUARE:
 		v2_x = 0.0f;
-		v2_y = -100.0f;
+		v2_y = -500.0f;
 		break;
 	}
 

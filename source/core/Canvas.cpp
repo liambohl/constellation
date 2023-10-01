@@ -5,7 +5,7 @@
 #include "Logger.h"
 
 
-const float Canvas::DEFAULT_SCALE = 5.0f;			// About 5 pixels per millimeter; should be somewhat close to actual size
+const float Canvas::DEFAULT_SCALE = 1.0f;
 const float Canvas::ZOOM_FIT_FACTOR = 0.75f;		// After fitting canvas to a drawing, zoom out by this factor
 const float Canvas::GHOST_OPACITY = 0.4f;			// If "show transformed copies as ghosts" is selected, this is the opacity of those ghosts.
 
