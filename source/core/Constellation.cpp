@@ -262,6 +262,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			application->resize(hWnd, wParam, lParam);
 			break;
 
+		// Move window
+		case WM_MOVE:
+			application->draw(hWnd);
+			break;
+
 		// Redraw client area
 		case WM_PAINT:
 			application->draw(hWnd);
