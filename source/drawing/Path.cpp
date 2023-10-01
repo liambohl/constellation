@@ -14,7 +14,8 @@ Path::Path(json path_json):
 }
 
 Path::~Path() {
-	delete path, pen;
+	delete path;
+	delete pen;
 }
 
 std::optional<Gdiplus::RectF> Path::get_bounding_box() {

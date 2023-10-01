@@ -123,21 +123,24 @@ void Canvas::begin_draw(HWND hWnd, bool ghost, const Defaults& defaults) {
 	int windowHeight = (int)(ps.rcPaint.bottom - ps.rcPaint.top);
 
 	// Create new page buffer and graphics
-	delete page_buffer, page_graphics;
+	delete page_buffer;
 	page_buffer = new Gdiplus::Bitmap(windowWidth, windowHeight, PixelFormat32bppARGB);
+	delete page_graphics;
 	page_graphics = new Gdiplus::Graphics(page_buffer);
-	
+
 	// Create new primary buffer and graphics
-	delete buffer, graphics;
+	delete buffer;
 	buffer = new Gdiplus::Bitmap(windowWidth, windowHeight, PixelFormat32bppARGB);
+	delete graphics;
 	graphics = new Gdiplus::Graphics(buffer);
 	graphics->SetTransform(transform);
 	graphics->SetSmoothingMode(Gdiplus::SmoothingModeAntiAlias8x8);
 
 	if (ghost) {
 		// Create new ghost ghost buffer and graphics
-		delete ghost_buffer, ghost_graphics;
+		delete ghost_buffer;
 		ghost_buffer = new Gdiplus::Bitmap(windowWidth, windowHeight, PixelFormat32bppARGB);
+		delete ghost_graphics;
 		ghost_graphics = new Gdiplus::Graphics(ghost_buffer);
 		ghost_graphics->SetTransform(transform);
 		ghost_graphics->SetSmoothingMode(Gdiplus::SmoothingModeAntiAlias8x8);
