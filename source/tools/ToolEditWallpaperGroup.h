@@ -15,7 +15,7 @@ public:
 		symmetry_group = std::static_pointer_cast<WallpaperGroup>(drawing.get_symmetry_group());
 	}
 
-	Action* handle_mouse_event(UINT message, float x_pos, float y_pos, int key_state, float scale) override;
+	Action* handle_mouse_event(UINT message, Gdiplus::PointF cursor_pos, int key_state, float scale) override;
 
 	void draw(
 		Gdiplus::Graphics* graphics,

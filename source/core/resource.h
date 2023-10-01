@@ -49,6 +49,30 @@
 #define IDC_SYMMETRY_P31M               315
 #define IDC_SYMMETRY_P6                 316
 #define IDC_SYMMETRY_P6M                317
+#define IDB_RESIZE_TOP_LEFT             401
+#define IDB_RESIZE_TOP_LEFT_SELECTED    402
+#define IDB_RESIZE_TOP_RIGHT            403
+#define IDB_RESIZE_TOP_RIGHT_SELECTED   404
+#define IDB_RESIZE_HORIZONTAL           405
+#define IDB_RESIZE_HORIZONTAL_SELECTED  406
+#define IDB_RESIZE_VERTICAL             407
+#define IDB_RESIZE_VERTICAL_SELECTED    408
+#define IDB_ROTATE_TOP_LEFT             409
+#define IDB_ROTATE_TOP_LEFT_SELECTED    410
+#define IDB_ROTATE_TOP_RIGHT            411
+#define IDB_ROTATE_TOP_RIGHT_SELECTED   412
+#define IDB_ROTATE_BOTTOM_LEFT             413
+#define IDB_ROTATE_BOTTOM_LEFT_SELECTED    414
+#define IDB_ROTATE_BOTTOM_RIGHT            415
+#define IDB_ROTATE_BOTTOM_RIGHT_SELECTED   416
+#define IDB_HANDLE_CIRCLE               417
+#define IDB_HANDLE_CIRCLE_SELECTED      418
+#define IDB_HANDLE_SQUARE               419
+#define IDB_HANDLE_SQUARE_SELECTED      420
+#define IDB_HANDLE_DIAMOND              421
+#define IDB_HANDLE_DIAMOND_SELECTED     422
+#define IDB_HANDLE_MOVE                 423
+#define IDB_HANDLE_MOVE_SELECTED        424
 #define IDC_SAVE                        1004
 #define IDC_DONT_SAVE                   1006
 #define IDC_SAVE_PROMPT                 1007
@@ -77,7 +101,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
-#define _APS_NEXT_RESOURCE_VALUE        400
+#define _APS_NEXT_RESOURCE_VALUE        425
 #define _APS_NEXT_COMMAND_VALUE         32788
 #define _APS_NEXT_CONTROL_VALUE         1011
 #define _APS_NEXT_SYMED_VALUE           110

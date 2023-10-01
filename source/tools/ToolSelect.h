@@ -13,7 +13,7 @@ class ToolSelect :
 public:
     ToolSelect(Drawing& drawing, Defaults& defaults) : Tool(drawing, defaults) { }
 
-    Action* handle_mouse_event(UINT message, float x_pos, float y_pos, int key_state, float scale) override;
+    Action* handle_mouse_event(UINT message, Gdiplus::PointF cursor_pos, int key_state, float scale) override;
 
     void draw(
 		Gdiplus::Graphics* graphics,
@@ -23,12 +23,12 @@ public:
 	) override;
 
 private:
-	enum State {
+	enum Mode {
 		RESIZE,	// dragging handles resizes selected elements
 		ROTATE	// dragging handles rotates selected elements around center point
 	};
 
-	enum Handle {
+	enum ActiveHandle {
 		NONE,			// no handle is selected
 		TOP_LEFT,		// top left handle
 		TOP,
@@ -44,8 +44,8 @@ private:
 
 	void add_or_remove_element(std::shared_ptr<Element> element);	// If the selection contains the element, remove it. Otherwise, add it.
 
-	State state = RESIZE;
-	Handle selected_handle = NONE;
+	Mode mode = RESIZE;
+	ActiveHandle selected_handle = NONE;
 
 	std::vector<std::shared_ptr<Element>> selection;
 };

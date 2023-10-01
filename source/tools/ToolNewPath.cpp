@@ -7,23 +7,23 @@
 #include "core/Logger.h"
 
 
-Action* ToolNewPath::handle_mouse_event(UINT message, float x_pos, float y_pos, int key_state, float scale) {
+Action* ToolNewPath::handle_mouse_event(UINT message, Gdiplus::PointF cursor_pos, int key_state, float scale) {
 	if (message != WM_MOUSEMOVE)
-		*Logger::get_instance() << '(' << x_pos << ", " << y_pos << "), state = " << state << std::endl;
+		*Logger::get_instance() << '(' << cursor_pos.X << ", " << cursor_pos.Y << "), state = " << state << std::endl;
 
 	switch (state) {
 	case FIRST_DOWN:	// tool_path and wip_path are both empty
 		if (message == WM_LBUTTONDOWN) {
 			wip_path.clear();
-			wip_path.push_back({ x_pos, y_pos });
+			wip_path.push_back(cursor_pos);
 
 			// For now, the temp path is a line segment. As we move the cursor, the 3rd and 4th points will move with it.
 			// Only the first point is set in stone.
 			tool_path.clear();
-			tool_path.push_back({ x_pos, y_pos });
-			tool_path.push_back({ x_pos, y_pos });
-			tool_path.push_back({ x_pos, y_pos });
-			tool_path.push_back({ x_pos, y_pos });
+			tool_path.push_back(cursor_pos);
+			tool_path.push_back(cursor_pos);
+			tool_path.push_back(cursor_pos);
+			tool_path.push_back(cursor_pos);
 			state = FIRST_RELEASE;
 		}
 		break;
@@ -32,17 +32,17 @@ Action* ToolNewPath::handle_mouse_event(UINT message, float x_pos, float y_pos, 
 		if (message == WM_MOUSEMOVE) {
 			tool_path.pop_back();
 			tool_path.pop_back();
-			tool_path.push_back({ x_pos, y_pos });
-			tool_path.push_back({ x_pos, y_pos });
+			tool_path.push_back(cursor_pos);
+			tool_path.push_back(cursor_pos);
 		}
 		else if (message == WM_LBUTTONUP) {
 			// The second point (the first handle) is now set in stone.
 			tool_path.pop_back();
 			tool_path.pop_back();
 			tool_path.pop_back();
-			tool_path.push_back({ x_pos, y_pos });
-			tool_path.push_back({ x_pos, y_pos });
-			tool_path.push_back({ x_pos, y_pos });
+			tool_path.push_back(cursor_pos);
+			tool_path.push_back(cursor_pos);
+			tool_path.push_back(cursor_pos);
 			state = SECOND_DOWN;
 			n_nodes = 1;
 		}
@@ -52,20 +52,20 @@ Action* ToolNewPath::handle_mouse_event(UINT message, float x_pos, float y_pos, 
 		if (message == WM_MOUSEMOVE) {
 			tool_path.pop_back();
 			tool_path.pop_back();
-			tool_path.push_back({ x_pos, y_pos });
-			tool_path.push_back({ x_pos, y_pos });
+			tool_path.push_back(cursor_pos);
+			tool_path.push_back(cursor_pos);
 		}
 		else if (message == WM_LBUTTONDOWN) {
-			next_node_x = x_pos;
-			next_node_y = y_pos;
+			next_node_x = cursor_pos.X;
+			next_node_y = cursor_pos.Y;
 			state = NTH_RELEASE;
 		}
 		break;
 
 	case NTH_RELEASE:	// tool_path is a curve. wip_path is a sequence of zero or more Bezier curves.
 	{
-		float trailing_handle_x = 2 * next_node_x - x_pos;
-		float trailing_handle_y = 2 * next_node_y - y_pos;
+		float trailing_handle_x = 2 * next_node_x - cursor_pos.X;
+		float trailing_handle_y = 2 * next_node_y - cursor_pos.Y;
 		tool_path.pop_back();
 		tool_path.pop_back();
 		tool_path.push_back({ trailing_handle_x, trailing_handle_y });	// trailing handle
@@ -77,9 +77,9 @@ Action* ToolNewPath::handle_mouse_event(UINT message, float x_pos, float y_pos, 
 			// The first two points are set in stone.
 			tool_path.clear();
 			tool_path.push_back({ next_node_x, next_node_y });
-			tool_path.push_back({ x_pos, y_pos });
-			tool_path.push_back({ x_pos, y_pos });
-			tool_path.push_back({ x_pos, y_pos });
+			tool_path.push_back(cursor_pos);
+			tool_path.push_back(cursor_pos);
+			tool_path.push_back(cursor_pos);
 			state = NTH_DOWN;
 			++n_nodes;
 			auto& logger = *Logger::get_instance();
@@ -95,12 +95,12 @@ Action* ToolNewPath::handle_mouse_event(UINT message, float x_pos, float y_pos, 
 		if (message == WM_MOUSEMOVE) {
 			tool_path.pop_back();
 			tool_path.pop_back();
-			tool_path.push_back({ x_pos, y_pos });
-			tool_path.push_back({ x_pos, y_pos });
+			tool_path.push_back(cursor_pos);
+			tool_path.push_back(cursor_pos);
 		}
 		else if (message == WM_LBUTTONDOWN) {
-			next_node_x = x_pos;
-			next_node_y = y_pos;
+			next_node_x = cursor_pos.X;
+			next_node_y = cursor_pos.Y;
 			state = NTH_RELEASE;
 		}
 		else if (message == WM_RBUTTONDOWN) {

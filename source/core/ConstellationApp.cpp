@@ -194,7 +194,7 @@ void ConstellationApp::handle_mouse_event(UINT message, WPARAM wParam, LPARAM lP
     Gdiplus::PointF cursor_pos((float)x_pos, (float)y_pos);
     canvas.page_to_world_coordinates(&cursor_pos);
 
-    Action* action = current_tool->handle_mouse_event(message, cursor_pos.X, cursor_pos.Y, key_state, canvas.get_scale());
+    Action* action = current_tool->handle_mouse_event(message, cursor_pos, key_state, canvas.get_scale());
     if (action != nullptr)
         do_action(action);
 }

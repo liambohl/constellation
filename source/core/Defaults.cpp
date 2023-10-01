@@ -15,12 +15,7 @@ Defaults::Defaults() {
 	pen->SetLineJoin(LineJoinRound);
 	brush = new SolidBrush(Color(255, 255, 255, 255));
 
-	// tool handles
-	handle_pen = new Pen(Color(255, 0, 0, 0), 0.0f);
-	handle_brush = new SolidBrush(Color(180, 255, 255, 255));
-	selected_handle_brush = new SolidBrush(Color(255, 255, 0, 0));
-
-	// other tool stuff
+	// tools
 	wip_pen = new Pen(Color(255, 0, 255, 255), 0.0f);
 	tool_pen = new Pen(Color(255, 255, 0, 0), 0.0f);
 	symmetry_vector_pen = new Pen(Color(255, 255, 255, 0), 0.0f);
