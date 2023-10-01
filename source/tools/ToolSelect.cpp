@@ -99,6 +99,14 @@ void ToolSelect::draw(
 	}
 }
 
+// Escape to clear selection, if any
+boolean ToolSelect::handle_escape() {
+	if (selection.empty())
+		return false;
+	selection.clear();
+	return true;
+}
+
 void ToolSelect::add_or_remove_element(std::shared_ptr<Element> element) {
 	auto iter = std::find(selection.begin(), selection.end(), element);
 	if (iter != selection.end())

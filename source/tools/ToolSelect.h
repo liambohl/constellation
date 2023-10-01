@@ -22,6 +22,8 @@ public:
 		float scale
 	) override;
 
+	boolean handle_escape() override;
+
 private:
 	enum Mode {
 		RESIZE,	// dragging handles resizes selected elements
