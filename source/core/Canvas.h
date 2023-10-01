@@ -66,8 +66,12 @@ private:
 	HDC hdc = nullptr;							// Handle to device context; this is the window we paint to
 	PAINTSTRUCT ps = {};
 	HWND hWnd = nullptr;						// handle to the window
-	Gdiplus::Image* screen_buffer = nullptr;	// Image that we draw drawing and tools to before drawing this image to the screen
-	Gdiplus::Image* ghost_buffer = nullptr;		// Image that we draw ghosts to before drawing this image to screen_buffer at reduced opacity
+
+	Gdiplus::Image* buffer = nullptr;			// The drawing and tools are drawn to this image, which in turn is drawn to page_buffer
+	Gdiplus::Image* ghost_buffer = nullptr;		// Ghosts are drawn to this image, which in turn is drawn to page_buffer at reduced opacity
+	Gdiplus::Image* page_buffer = nullptr;		// Double buffer that is drawn to the screen
+
+	Gdiplus::Graphics* page_graphics = nullptr;	// This is how we draw to page_buffer
 
 	Gdiplus::Matrix* transform;					// transformation from world space to page space
 

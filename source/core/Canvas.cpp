@@ -121,16 +121,21 @@ void Canvas::begin_draw(HWND hWnd, bool ghost, const Defaults& defaults) {
 	hdc = BeginPaint(hWnd, &ps);
 	int windowWidth = (int)(ps.rcPaint.right - ps.rcPaint.left);
 	int windowHeight = (int)(ps.rcPaint.bottom - ps.rcPaint.top);
+
+	// Create new page buffer and graphics
+	delete page_buffer, page_graphics;
+	page_buffer = new Gdiplus::Bitmap(windowWidth, windowHeight, PixelFormat32bppARGB);
+	page_graphics = new Gdiplus::Graphics(page_buffer);
 	
-	// Create new screen buffer and graphics
-	delete screen_buffer, graphics;
-	screen_buffer = new Gdiplus::Bitmap(windowWidth, windowHeight, PixelFormat32bppARGB);
-	graphics = new Gdiplus::Graphics(screen_buffer);
+	// Create new primary buffer and graphics
+	delete buffer, graphics;
+	buffer = new Gdiplus::Bitmap(windowWidth, windowHeight, PixelFormat32bppARGB);
+	graphics = new Gdiplus::Graphics(buffer);
 	graphics->SetTransform(transform);
 	graphics->SetSmoothingMode(Gdiplus::SmoothingModeAntiAlias8x8);
 
 	if (ghost) {
-		// Create new ghost screen buffer and graphics
+		// Create new ghost ghost buffer and graphics
 		delete ghost_buffer, ghost_graphics;
 		ghost_buffer = new Gdiplus::Bitmap(windowWidth, windowHeight, PixelFormat32bppARGB);
 		ghost_graphics = new Gdiplus::Graphics(ghost_buffer);
@@ -138,33 +143,32 @@ void Canvas::begin_draw(HWND hWnd, bool ghost, const Defaults& defaults) {
 		ghost_graphics->SetSmoothingMode(Gdiplus::SmoothingModeAntiAlias8x8);
 	}
 
-	graphics->Clear(defaults.background_color);
+	page_graphics->Clear(defaults.background_color);
 }
 
 void Canvas::finish_draw(bool ghost) {
-	if (ghost) {
-		float scale = get_scale();
-		Gdiplus::Matrix transform;
-		graphics->GetTransform(&transform);
+	Gdiplus::Graphics true_graphics(hdc);	// This enables us to draw to the screen
 
-		// Region of the ghost_buffer to draw (all of it)
-		Gdiplus::RectF source_rect = { 0.0f, 0.0f, (float)ghost_buffer->GetWidth(), (float)ghost_buffer->GetHeight() };
-		// Region in world space that the drawn image should occupy (the visible region)
-		Gdiplus::RectF dest_rect = { -transform.OffsetX() / scale, -transform.OffsetY() / scale, (float)ghost_buffer->GetWidth() / scale, (float)ghost_buffer->GetHeight() / scale };
+	if (ghost) {
+		Gdiplus::RectF buffer_dimensions = { 0.0f, 0.0f, (float)ghost_buffer->GetWidth(), (float)ghost_buffer->GetHeight() };
 		
 		// Draw ghost image at reduced opacity
 		// To pass ImageAttributes in a call to Graphics::DrawImage, we have to use this ugly overload.
-		graphics->DrawImage(
+		page_graphics->DrawImage(
 			ghost_buffer,
-			dest_rect,
-			source_rect,
+			buffer_dimensions,
+			buffer_dimensions,
 			Gdiplus::UnitPixel,
 			&ghost_attributes
 		);
 	}
 	
-	Gdiplus::Graphics true_graphics(hdc);
-	true_graphics.DrawImage(screen_buffer, Gdiplus::Point(0, 0));
+	// Draw main stuff
+	page_graphics->DrawImage(buffer, Gdiplus::Point(0, 0));
+
+	// Draw buffer to screen
+	// This step may seem unnecessary, but by drawing everything to the screen at once, this step prevents flickering.
+	true_graphics.DrawImage(page_buffer, Gdiplus::Point(0, 0));
 	EndPaint(hWnd, &ps);
 }
 
