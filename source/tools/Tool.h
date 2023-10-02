@@ -25,6 +25,8 @@ public:
 	virtual boolean undo() { return false; }
 	virtual boolean redo() { return false; }
 
+	virtual void select_all() {}
+
 	// Attempt to handle an escape event.
 	// If this tool is in the middle of an operation, such as drawing a new element, cancel and return true.
 	// Otherwise, return false.

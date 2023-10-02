@@ -26,6 +26,7 @@ public:
 	// Edit menu
 	void undo();
 	void redo();
+	void select_all();
 
 	// Draw menu
 	void set_tool(enum tool tool_type);

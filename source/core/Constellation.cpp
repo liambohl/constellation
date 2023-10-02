@@ -156,6 +156,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			case ID_EDIT_REDO:
 				application->redo();
 				break;
+			case ID_EDIT_SELECTALL:
+				application->select_all();
+				break;
+			case ID_EDIT_DESELECT:
+				application->handle_escape();
+				break;
 			// Draw menu
 			case ID_DRAW_SELECT:
 				application->set_tool(SELECT);

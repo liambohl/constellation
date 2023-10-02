@@ -61,10 +61,10 @@
 #define IDB_ROTATE_TOP_LEFT_SELECTED    410
 #define IDB_ROTATE_TOP_RIGHT            411
 #define IDB_ROTATE_TOP_RIGHT_SELECTED   412
-#define IDB_ROTATE_BOTTOM_LEFT             413
-#define IDB_ROTATE_BOTTOM_LEFT_SELECTED    414
-#define IDB_ROTATE_BOTTOM_RIGHT            415
-#define IDB_ROTATE_BOTTOM_RIGHT_SELECTED   416
+#define IDB_ROTATE_BOTTOM_LEFT          413
+#define IDB_ROTATE_BOTTOM_LEFT_SELECTED 414
+#define IDB_ROTATE_BOTTOM_RIGHT         415
+#define IDB_ROTATE_BOTTOM_RIGHT_SELECTED 416
 #define IDB_HANDLE_CIRCLE               417
 #define IDB_HANDLE_CIRCLE_SELECTED      418
 #define IDB_HANDLE_SQUARE               419
@@ -94,6 +94,10 @@
 #define ID_VIEW_SYMMETRY                32785
 #define ID_SYMMETRY_EDITSYMMETRYPARAMETERS 32786
 #define ID_VIEW_GHOST                   32787
+#define ID_EDIT_SELECTALL               32788
+#define ID_EDIT_DESELECT                32789
+#define ID_EDIT_DUPLICATE               32792
+#define ID_EDIT_DELETE                  32793
 #define IDC_STATIC                      -1
 
 // Next default values for new objects
@@ -102,7 +106,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        425
-#define _APS_NEXT_COMMAND_VALUE         32788
+#define _APS_NEXT_COMMAND_VALUE         32794
 #define _APS_NEXT_CONTROL_VALUE         1011
 #define _APS_NEXT_SYMED_VALUE           110
 #endif

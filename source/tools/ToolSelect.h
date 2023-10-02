@@ -22,6 +22,8 @@ public:
 		float scale
 	) override;
 
+	void select_all() override;
+
 	boolean handle_escape() override;
 
 private:

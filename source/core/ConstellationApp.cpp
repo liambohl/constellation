@@ -92,6 +92,10 @@ void ConstellationApp::redo() {
     }
 }
 
+void ConstellationApp::select_all() {
+    current_tool->select_all();
+}
+
 void ConstellationApp::set_tool(enum tool tool_type) {
     delete current_tool;
     switch (tool_type) {

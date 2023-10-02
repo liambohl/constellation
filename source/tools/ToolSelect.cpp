@@ -99,6 +99,10 @@ void ToolSelect::draw(
 	}
 }
 
+void ToolSelect::select_all() {
+	selection = drawing.select_all();
+}
+
 // Escape to clear selection, if any
 boolean ToolSelect::handle_escape() {
 	if (selection.empty())

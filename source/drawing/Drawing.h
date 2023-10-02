@@ -30,6 +30,7 @@ public:
 	bool remove_element(std::shared_ptr<Element> element) { return elements.remove_element(element); }
 
 	std::shared_ptr<Element> select_element(const Gdiplus::PointF& cursor_pos, float margin, float scale) { return elements.select_in_group(cursor_pos, margin, scale); }
+	std::vector<std::shared_ptr<Element>> select_all() { return elements.select_all(); }
 
 	json to_json();
 

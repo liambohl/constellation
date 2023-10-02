@@ -21,6 +21,7 @@ public:
 
 	bool try_select(const Gdiplus::PointF& cursor_pos, float margin, float scale) override;					// Try to select this group
 	std::shared_ptr<Element> select_in_group(const Gdiplus::PointF& cursor_pos, float margin, float scale);	// Try to select an element of this group
+	std::vector<std::shared_ptr<Element>> select_all() { return elements; }
 
 	json to_json() override;
 
