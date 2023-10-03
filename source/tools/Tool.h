@@ -1,5 +1,8 @@
 #pragma once
 
+#include <string>
+#include <unordered_map>
+
 #include "actions/Action.h"
 #include "core/Defaults.h"
 #include "drawing/Drawing.h"
@@ -8,8 +11,6 @@
 class Tool
 {
 public:
-	~Tool();
-
 	// If an action is completed, return a pointer to that action. Else, return nullptr.
 	virtual Action* handle_mouse_event(UINT message, Gdiplus::PointF cursor_pos, int key_state, float scale) = 0;
 
@@ -33,21 +34,28 @@ public:
 	virtual boolean handle_escape() { return false; }
 
 protected:
-	//typedef std::pair<Gdiplus::Bitmap*, Gdiplus::Bitmap*> Handle;
 	struct Handle {
-		Gdiplus::Bitmap* image;				// image to represent this handle
+		Gdiplus::Bitmap* default_image;		// image to represent this handle
 		Gdiplus::Bitmap* selected_image;	// image if this handle is selected; that is, it is active or the cursor is hovering over it
-		Gdiplus::PointF position;			// location of top-left corner
 	};
 
+	// Each handle gets a name, a Handle object (images), and a position.
+	typedef std::unordered_map<std::string, std::pair<Handle, Gdiplus::PointF>> HandleMap;
+
 	Tool(Drawing& drawing, Defaults& defaults);
+
+	// Get all handles that should be drawn and selectable.
+	virtual HandleMap get_handles(float scale) { return {}; }
+
+	// The name of the closest handle within range of the cursor, if any.
+	std::optional<std::string> try_select_handle(Gdiplus::PointF cursor_pos, float scale);
+
+	// Draw all handles. If one is active (being dragged) or close enough to the cursor, draw that handle using its "selected" image.
+	void draw_handles(Gdiplus::Graphics* graphics, std::optional<std::string> active_handle, Gdiplus::PointF cursor_pos, float scale);
 
 	// Get the square of the distance between two given points.
 	// The points are in world space, but the distance is in page space.
 	float distance_squared(Gdiplus::PointF& point_a, Gdiplus::PointF& point_b, float scale);
-
-	// Draw all handles. If one is active (being dragged) or close enough to the cursor, draw that handle using its "selected" image.
-	void draw_handles(Gdiplus::Graphics* graphics, std::vector<Handle> handles, std::optional<Handle> active_handle, Gdiplus::PointF cursor_pos, float scale);
 
 	Drawing& drawing;
 	Defaults& defaults;
@@ -56,31 +64,20 @@ protected:
 	static const float SELECTION_RANGE_SQUARED;	// max distance from center of handle to cursor to allow selection, in page pixels (squared for efficiently comparing distances)
 
 	// images to represent handles
-	Gdiplus::Bitmap* resize_top_left;
-	Gdiplus::Bitmap* resize_top_left_selected;
-	Gdiplus::Bitmap* resize_top_right;
-	Gdiplus::Bitmap* resize_top_right_selected;
-	Gdiplus::Bitmap* resize_horizontal;
-	Gdiplus::Bitmap* resize_horizontal_selected;
-	Gdiplus::Bitmap* resize_vertical;
-	Gdiplus::Bitmap* resize_vertical_selected;
+	static Handle RESIZE_TOP_LEFT;
+	static Handle RESIZE_TOP_RIGHT;
+	static Handle RESIZE_HORIZONTAL;
+	static Handle RESIZE_VERTICAL;
 
-	Gdiplus::Bitmap* rotate_top_left;
-	Gdiplus::Bitmap* rotate_top_left_selected;
-	Gdiplus::Bitmap* rotate_top_right;
-	Gdiplus::Bitmap* rotate_top_right_selected;
-	Gdiplus::Bitmap* rotate_bottom_left;
-	Gdiplus::Bitmap* rotate_bottom_left_selected;
-	Gdiplus::Bitmap* rotate_bottom_right;
-	Gdiplus::Bitmap* rotate_bottom_right_selected;
+	static Handle ROTATE_TOP_LEFT;
+	static Handle ROTATE_TOP_RIGHT;
+	static Handle ROTATE_BOTTOM_LEFT;
+	static Handle ROTATE_BOTTOM_RIGHT;
 
-	Gdiplus::Bitmap* handle_circle;
-	Gdiplus::Bitmap* handle_circle_selected;
-	Gdiplus::Bitmap* handle_square;
-	Gdiplus::Bitmap* handle_square_selected;
-	Gdiplus::Bitmap* handle_diamond;
-	Gdiplus::Bitmap* handle_diamond_selected;
-	Gdiplus::Bitmap* handle_move;
-	Gdiplus::Bitmap* handle_move_selected;
+	static Handle HANDLE_CIRCLE;
+	static Handle HANDLE_SQUARE;
+	static Handle HANDLE_DIAMOND;
+	static Handle HANDLE_MOVE;
 
+	static bool handles_loaded;
 };

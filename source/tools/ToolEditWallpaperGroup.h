@@ -9,11 +9,7 @@ class ToolEditWallpaperGroup :
     public Tool
 {
 public:
-	ToolEditWallpaperGroup(Drawing& drawing, Defaults& defaults) :
-		Tool(drawing, defaults)
-	{
-		symmetry_group = std::static_pointer_cast<WallpaperGroup>(drawing.get_symmetry_group());
-	}
+	ToolEditWallpaperGroup(Drawing& drawing, Defaults& defaults);
 
 	Action* handle_mouse_event(UINT message, Gdiplus::PointF cursor_pos, int key_state, float scale) override;
 
@@ -25,6 +21,8 @@ public:
 	) override;
 
 private:
+	HandleMap get_handles(float scale) override;
+
 	// length of an arrow head as a proportion of the length of an arrow
 	static const float ARROW_HEAD;
 

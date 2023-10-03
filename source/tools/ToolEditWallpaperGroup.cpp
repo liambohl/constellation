@@ -7,19 +7,27 @@
 
 const float ToolEditWallpaperGroup::ARROW_HEAD = 0.05f;
 
+ToolEditWallpaperGroup::ToolEditWallpaperGroup(Drawing& drawing, Defaults& defaults) :
+	Tool(drawing, defaults)
+{
+	symmetry_group = std::static_pointer_cast<WallpaperGroup>(drawing.get_symmetry_group());
+}
+
 Action* ToolEditWallpaperGroup::handle_mouse_event(UINT message, Gdiplus::PointF cursor_pos, int key_state, float scale) {
+	Gdiplus::PointF v1 = symmetry_group->get_v1();
+	Gdiplus::PointF v2 = symmetry_group->get_v2();
+
 	if (state == IDLE) {
 		if (message == WM_LBUTTONDOWN) {
-			Gdiplus::PointF v1 = symmetry_group->get_v1();
-			Gdiplus::PointF v2 = symmetry_group->get_v2();
-			// Try to grab v1
-			if (distance_squared(cursor_pos, v1, scale) < SELECTION_RANGE_SQUARED) {
+			auto handle = try_select_handle(cursor_pos, scale);
+			// Grabbed v1?
+			if (handle == "v1") {
 				state = DRAGGING_V1;
 				old_x = v1.X;
 				old_y = v1.Y;
 			}
-			// Try to grab v2
-			else if (distance_squared(cursor_pos, v2, scale) < SELECTION_RANGE_SQUARED) {
+			// Grabbed v2?
+			else if (handle == "v2") {
 				state = DRAGGING_V2;
 				old_x = v2.X;
 				old_y = v2.Y;
@@ -82,14 +90,21 @@ void ToolEditWallpaperGroup::draw(
 	graphics->DrawLine(defaults.symmetry_vector_pen, v2, { (1 - ARROW_HEAD) * v2.X + ARROW_HEAD * v2.Y, (1 - ARROW_HEAD) * v2.Y - ARROW_HEAD * v2.X });
 
 	// vector handles
-	Handle v1_handle = { handle_circle, handle_circle_selected, v1 };
-	Handle v2_handle = { handle_circle, handle_circle_selected, v2 };
-
-	std::optional<Handle> selected_handle;
+	std::optional<std::string> selected_handle;
 	if (state == DRAGGING_V1)
-		selected_handle = v1_handle;
+		selected_handle = "v1";
 	if (state == DRAGGING_V2)
-		selected_handle = v2_handle;
+		selected_handle = "v2";
 
-	draw_handles(graphics, { v1_handle, v2_handle }, selected_handle, cursor_pos, scale);
+	draw_handles(graphics, selected_handle, cursor_pos, scale);
+}
+
+Tool::HandleMap ToolEditWallpaperGroup::get_handles(float scale) {
+	Gdiplus::PointF v1 = symmetry_group->get_v1();
+	Gdiplus::PointF v2 = symmetry_group->get_v2();
+
+	return {
+		{ "v1", { HANDLE_CIRCLE, v1 } },
+		{ "v2", { HANDLE_CIRCLE, v2 } },
+	};
 }

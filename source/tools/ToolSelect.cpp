@@ -7,6 +7,13 @@ Action* ToolSelect::handle_mouse_event(UINT message, Gdiplus::PointF cursor_pos,
 	// If anything selected, give handles a chance to handle mouse event
 	// Otherwise,
 	if (message == WM_LBUTTONDOWN) {
+		// Try to select a handle
+		active_handle = try_select_handle(cursor_pos, scale);
+
+		if (active_handle.has_value()) {
+			return nullptr;
+		}
+
 		bool shift_pressed = key_state & MK_SHIFT;
 
 		std::shared_ptr<Element> element = drawing.select_element(cursor_pos, SELECTION_MARGIN, scale);
@@ -20,14 +27,20 @@ Action* ToolSelect::handle_mouse_event(UINT message, Gdiplus::PointF cursor_pos,
 				if (std::find(selection.begin(), selection.end(), element) != selection.end())
 					mode = (mode == RESIZE) ? ROTATE : RESIZE;
 				// If we clicked a different element, select only it
-				else
+				else {
 					selection = { element };
+					update_bounds();
+				}
 			}
 		}
 		else if (!shift_pressed) {	// Click off to deselect all and return to resize mode
 			selection.clear();
+			update_bounds();
 			mode = RESIZE;
 		}
+	}
+	else if (message == WM_LBUTTONUP) {
+		active_handle = {};
 	}
 	return nullptr;
 }
@@ -38,9 +51,7 @@ void ToolSelect::draw(
 	std::vector<std::shared_ptr<Gdiplus::Matrix>>& transforms,
 	float scale
 ) {
-	std::optional<Gdiplus::RectF> bounds;
-
-	for (auto el : selection) {
+	for (auto& el : selection) {
 		auto element_bounds = el->get_bounding_box();
 		if (!element_bounds)	// Element is empty
 			continue;
@@ -48,7 +59,44 @@ void ToolSelect::draw(
 		// Draw bounding box around selected element
 		graphics->DrawRectangle(defaults.selection_pen_1, *element_bounds);
 		graphics->DrawRectangle(defaults.selection_pen_2, *element_bounds);
+	}
 
+	// If selection contains any stuff, draw handles
+	if (bounds) {
+		draw_handles(graphics, active_handle, cursor_pos, scale);
+	}
+}
+
+void ToolSelect::select_all() {
+	selection = drawing.select_all();
+	update_bounds();
+}
+
+// Escape to clear selection, if any
+boolean ToolSelect::handle_escape() {
+	if (selection.empty())
+		return false;
+	selection.clear();
+	update_bounds();
+	return true;
+}
+
+void ToolSelect::add_or_remove_element(std::shared_ptr<Element> element) {
+	auto iter = std::find(selection.begin(), selection.end(), element);
+	if (iter != selection.end())
+		selection.erase(iter);
+	else
+		selection.push_back(element);
+	update_bounds();
+}
+
+void ToolSelect::update_bounds() {
+	bounds = {};
+
+	for (auto el : selection) {
+		auto element_bounds = el->get_bounding_box();
+		if (!element_bounds)	// Element is empty
+			continue;
 		if (!bounds)			// Element is first nonempty element
 			bounds = element_bounds;
 		else {					// Grow bounds to fit element
@@ -63,8 +111,9 @@ void ToolSelect::draw(
 			bounds->Height = bottom - top;
 		}
 	}
+}
 
-	// If selection contains any stuff, draw handles
+Tool::HandleMap ToolSelect::get_handles(float scale) {
 	if (bounds) {
 		const float SIZE = HANDLE_SIZE / scale;
 		const float TOP = bounds->GetTop();
@@ -72,49 +121,27 @@ void ToolSelect::draw(
 		const float LEFT = bounds->GetLeft();
 		const float RIGHT = bounds->GetRight();
 
-		std::vector<Handle> handles;
-		
 		if (mode == RESIZE) {
-			handles = {
-				{ resize_top_left, resize_top_left_selected, { LEFT - SIZE / 2, TOP - SIZE / 2 } },
-				{ resize_vertical, resize_vertical_selected, { (LEFT + RIGHT) / 2, TOP - SIZE / 2 } },
-				{ resize_top_right, resize_top_right_selected, { RIGHT + SIZE / 2, TOP - SIZE / 2 } },
-				{ resize_horizontal, resize_horizontal_selected, { RIGHT + SIZE / 2, (TOP + BOTTOM) / 2 } },
-				{ resize_top_left, resize_top_left_selected, { RIGHT + SIZE / 2, BOTTOM + SIZE / 2 } },
-				{ resize_vertical, resize_vertical_selected, { (LEFT + RIGHT) / 2, BOTTOM + SIZE / 2 } },
-				{ resize_top_right, resize_top_right_selected, { LEFT - SIZE / 2, BOTTOM + SIZE / 2 } },
-				{ resize_horizontal, resize_horizontal_selected, { LEFT - SIZE / 2, (TOP + BOTTOM) / 2 } }
+			return {
+				{ "resize_top_left",     { RESIZE_TOP_LEFT,     { LEFT - SIZE / 2,    TOP - SIZE / 2     } } },
+				{ "resize_top",          { RESIZE_VERTICAL,     { (LEFT + RIGHT) / 2, TOP - SIZE / 2     } } },
+				{ "resize_top_right",    { RESIZE_TOP_RIGHT,    { RIGHT + SIZE / 2,   TOP - SIZE / 2     } } },
+				{ "resize_right",        { RESIZE_HORIZONTAL,   { RIGHT + SIZE / 2,   (TOP + BOTTOM) / 2 } } },
+				{ "resize_bottom_right", { RESIZE_TOP_LEFT,     { RIGHT + SIZE / 2,   BOTTOM + SIZE / 2  } } },
+				{ "resize_bottom",       { RESIZE_VERTICAL,     { (LEFT + RIGHT) / 2, BOTTOM + SIZE / 2  } } },
+				{ "resize_bottom_left",  { RESIZE_TOP_RIGHT,    { LEFT - SIZE / 2,    BOTTOM + SIZE / 2  } } },
+				{ "resize_left",         { RESIZE_HORIZONTAL,   { LEFT - SIZE / 2,    (TOP + BOTTOM) / 2 } } }
 			};
 		}
 		else {
-			handles = {
-				{ rotate_top_left, rotate_top_left_selected, { LEFT - SIZE / 2, TOP - SIZE / 2 } },
-				{ rotate_top_right, rotate_top_right_selected, { RIGHT + SIZE / 2, TOP - SIZE / 2 } },
-				{ rotate_bottom_right, rotate_bottom_right_selected, { RIGHT + SIZE / 2, BOTTOM + SIZE / 2 } },
-				{ rotate_bottom_left, rotate_bottom_left_selected, { LEFT - SIZE / 2, BOTTOM + SIZE / 2 } }
+			return {
+				{ "rotate_top_left",     { ROTATE_TOP_LEFT,     { LEFT - SIZE / 2,    TOP - SIZE / 2     } } },
+				{ "rotate_top_right",    { ROTATE_TOP_RIGHT,    { RIGHT + SIZE / 2,   TOP - SIZE / 2     } } },
+				{ "rotate_bottom_right", { ROTATE_BOTTOM_RIGHT, { RIGHT + SIZE / 2,   BOTTOM + SIZE / 2  } } },
+				{ "rotate_bottom_left",  { ROTATE_BOTTOM_LEFT,  { LEFT - SIZE / 2,    BOTTOM + SIZE / 2  } } }
 			};
 		}
-
-		draw_handles(graphics, handles, {}, cursor_pos, scale);
 	}
-}
-
-void ToolSelect::select_all() {
-	selection = drawing.select_all();
-}
-
-// Escape to clear selection, if any
-boolean ToolSelect::handle_escape() {
-	if (selection.empty())
-		return false;
-	selection.clear();
-	return true;
-}
-
-void ToolSelect::add_or_remove_element(std::shared_ptr<Element> element) {
-	auto iter = std::find(selection.begin(), selection.end(), element);
-	if (iter != selection.end())
-		selection.erase(iter);
 	else
-		selection.push_back(element);
+		return {};	// No selection; no handles
 }
