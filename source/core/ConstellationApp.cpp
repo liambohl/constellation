@@ -6,6 +6,8 @@
 #include "ConstellationApp.h"
 #include "Logger.h"
 #include "actions/ActionChangeSymmetryGroup.h"
+#include "actions/ActionAddElements.h"
+#include "actions/ActionRemoveElements.h"
 #include "drawing/symmetry/SymmetryGroupFactory.h"
 #include "tools/ToolEditWallpaperGroup.h"
 #include "tools/ToolNewPath.h"
@@ -77,6 +79,7 @@ void ConstellationApp::undo() {
         undo_stack.pop();
         redo_stack.push(last);
 
+        current_tool->update();
         --unsaved_changes;
     }
 }
@@ -88,8 +91,46 @@ void ConstellationApp::redo() {
         redo_stack.pop();
         undo_stack.push(next);
 
+        current_tool->update();
         ++unsaved_changes;
     }
+}
+
+void ConstellationApp::cut_to_clipboard() {
+    std::vector<std::shared_ptr<Element>> cut_elements = current_tool->get_selection();
+    if (!cut_elements.empty()) {
+        clipboard = cut_elements;
+        do_action(new ActionRemoveElements(cut_elements));
+    }
+}
+
+void ConstellationApp::copy_to_clipboard() {
+    std::vector<std::shared_ptr<Element>> copied_elements = current_tool->get_selection();
+    if (!copied_elements.empty())
+        clipboard = copied_elements;
+}
+
+void ConstellationApp::paste_from_clipboard() {
+    if (!clipboard.empty()) {
+        auto pasted_elements = clone_elements(clipboard);
+        do_action(new ActionAddElements(pasted_elements));
+        current_tool->select_elements(pasted_elements);
+    }
+}
+
+void ConstellationApp::duplicate() {
+    std::vector<std::shared_ptr<Element>> selected_elements = current_tool->get_selection();
+    if (!selected_elements.empty()) {
+        auto duplicate_elements = clone_elements(selected_elements);
+        do_action(new ActionAddElements(duplicate_elements));
+        current_tool->select_elements(duplicate_elements);
+    }
+}
+
+void ConstellationApp::handle_delete() {
+    Action* action = current_tool->handle_delete();
+    if (action != nullptr)
+        do_action(action);
 }
 
 void ConstellationApp::select_all() {
@@ -262,6 +303,7 @@ void ConstellationApp::refresh_if_necessary() {
 
 void ConstellationApp::do_action(Action* action) {
     action->apply(drawing);
+    current_tool->update();
     canvas.redraw();
 
     undo_stack.push(action);
@@ -316,4 +358,12 @@ void ConstellationApp::reset_history() {
         delete redo_stack.top();
         redo_stack.pop();
     }
+}
+
+std::vector<std::shared_ptr<Element>> ConstellationApp::clone_elements(std::vector<std::shared_ptr<Element>> elements) {
+    std::vector<std::shared_ptr<Element>> clones;
+    for (const auto& element : elements) {
+        clones.push_back(element->clone());
+    }
+    return clones;
 }

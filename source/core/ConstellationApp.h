@@ -26,6 +26,11 @@ public:
 	// Edit menu
 	void undo();
 	void redo();
+	void cut_to_clipboard();		// Cut elements from the drawing to the clipboard
+	void copy_to_clipboard();		// Copy elements from the drawing to the clipboard
+	void paste_from_clipboard();	// Paste elements from the clipboard to the drawing. Select the pasted elements.
+	void duplicate();				// Duplicate Elements and select them
+	void handle_delete();			// Delete elements, nodes, or whatever is selected by the current tool
 	void select_all();
 
 	// Draw menu
@@ -71,6 +76,8 @@ private:
 	// Clear undo and redo stacks and free the action pointers therein
 	void reset_history();
 
+	std::vector<std::shared_ptr<Element>> clone_elements(std::vector<std::shared_ptr<Element>> elements);
+
 	Canvas canvas;
 	Defaults defaults;
 	Drawing drawing;
@@ -87,6 +94,8 @@ private:
 
 	std::stack<Action*> undo_stack; // bottom is oldest action performed and not undone. top is youngest action performed and not undone.
 	std::stack<Action*> redo_stack; // bottom is youngest action undone. top is oldest action ondone. The undo and redo stacks are kissing at the present moment. :)
+
+	std::vector<std::shared_ptr<Element>> clipboard;	// Cut or copied elements from the drawing. Not clones, but pointers to the originals
 
 	// If this number is positive, then that many undo's would take us back to an unchanged state.
 	// If this number is negative, then that many redo's, without any new changes, would take us back to an unchanged state.

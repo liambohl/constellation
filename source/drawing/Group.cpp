@@ -74,6 +74,14 @@ std::shared_ptr<Element> Group::select_in_group(const Gdiplus::PointF& cursor_po
 	return nullptr;
 }
 
+std::shared_ptr<Element> Group::clone() {
+	auto clone = std::make_shared<Group>();
+	// Copy all elements from this group to clone
+	for (const auto& element : elements)
+		clone->add_elements({ element->clone() });
+	return clone;
+}
+
 json Group::to_json() {
 	json output = {
 		{"type", "Group"},
@@ -88,16 +96,22 @@ json Group::to_json() {
 	return output;
 }
 
-void Group::add_element(std::shared_ptr<Element> element) {
-	elements.push_back(element);
+void Group::add_elements(std::vector<std::shared_ptr<Element>> new_elements) {
+	elements.insert(elements.end(), new_elements.begin(), new_elements.end());
 }
 
-bool Group::remove_element(std::shared_ptr<Element> element) {
-	for (auto i = elements.begin(); i != elements.end(); ++i) {
-		if (*i == element) {
-			elements.erase(i);
-			return true;
-		}
-	}
-	return false;
+void Group::remove_elements(std::vector<std::shared_ptr<Element>> elements_to_remove) {
+	// Two-step process:
+	// std::remove_if reorders elements so the elements to be removed are at the end and returns an iterator to the start of that range to be removed.
+	// elements.erase removes that range.
+	elements.erase(
+		std::remove_if(
+			elements.begin(),
+			elements.end(),
+			// Is this element in elements_to_remove?
+			[&elements_to_remove](const std::shared_ptr<Element>& elem) {
+				return std::find(elements_to_remove.begin(), elements_to_remove.end(), elem) != elements_to_remove.end();
+			}),
+		elements.end()
+	);
 }

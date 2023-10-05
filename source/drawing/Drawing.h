@@ -26,11 +26,11 @@ public:
 
 	std::optional<Gdiplus::RectF> get_bounding_box() { return elements.get_bounding_box(); }
 
-	void add_element(std::shared_ptr<Element> element) { elements.add_element(element); }
-	bool remove_element(std::shared_ptr<Element> element) { return elements.remove_element(element); }
+	void add_elements(std::vector<std::shared_ptr<Element>> new_elements) { elements.add_elements(new_elements); }
+	void remove_elements(std::vector<std::shared_ptr<Element>> elements_to_remove) { elements.remove_elements(elements_to_remove); }
 
 	std::shared_ptr<Element> select_element(const Gdiplus::PointF& cursor_pos, float margin, float scale) { return elements.select_in_group(cursor_pos, margin, scale); }
-	std::vector<std::shared_ptr<Element>> select_all() { return elements.select_all(); }
+	std::vector<std::shared_ptr<Element>> get_elements() { return elements.get_elements(); }
 
 	json to_json();
 

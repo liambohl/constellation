@@ -5,15 +5,15 @@
 #include "drawing/Element.h"
 
 
-class ActionAddElement :
+class ActionAddElements :
     public Action
 {
 public:
-    ActionAddElement(std::shared_ptr<Element> element) : element(element) {}
+    ActionAddElements(std::vector<std::shared_ptr<Element>> elements) : elements(elements) {}
 
     void apply(Drawing& drawing);
     void undo(Drawing& drawing);
 
 private:
-    std::shared_ptr<Element> element;
+    std::vector<std::shared_ptr<Element>> elements;
 };

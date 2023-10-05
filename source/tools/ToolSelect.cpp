@@ -1,5 +1,7 @@
 #include "ToolSelect.h"
 
+#include "actions/ActionRemoveElements.h"
+
 
 const float ToolSelect::SELECTION_MARGIN = 5.0f;
 
@@ -67,9 +69,39 @@ void ToolSelect::draw(
 	}
 }
 
-void ToolSelect::select_all() {
-	selection = drawing.select_all();
+void ToolSelect::update() {
+	// Remove any elements from the selection which are no longer in the drawing.
+	const auto& extant_elements = drawing.get_elements();
+	// std::remove_if moves these elements to the end of selection, then selection.erase deletes them.
+	selection.erase(
+		std::remove_if(
+			selection.begin(),
+			selection.end(),
+			[&extant_elements](const std::shared_ptr<Element>& selected_element) {
+				return std::find(extant_elements.begin(), extant_elements.end(), selected_element) == extant_elements.end();
+			}
+		),
+		selection.end()
+	);
+
 	update_bounds();
+}
+
+void ToolSelect::select_all() {
+	selection = drawing.get_elements();
+	update_bounds();
+}
+
+void ToolSelect::select_elements(std::vector<std::shared_ptr<Element>> elements) {
+	selection = elements;
+	update_bounds();
+}
+
+Action* ToolSelect::handle_delete() {
+	if (!selection.empty()) {
+		return new ActionRemoveElements(selection);
+	}
+	return nullptr;
 }
 
 // Escape to clear selection, if any

@@ -2,7 +2,7 @@
 
 #include <windowsx.h>
 
-#include "actions/ActionAddElement.h"
+#include "actions/ActionAddElements.h"
 #include "drawing/Element.h"
 #include "core/Logger.h"
 
@@ -108,7 +108,7 @@ Action* ToolNewPath::handle_mouse_event(UINT message, Gdiplus::PointF cursor_pos
 			// Hand over wip_path to the drawing
 			auto new_path = std::make_shared<Path>(defaults.pen);
 			new_path->add_beziers(wip_path);
-			return new ActionAddElement(new_path);
+			return new ActionAddElements({ new_path });
 		}
 		break;
 

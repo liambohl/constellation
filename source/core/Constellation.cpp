@@ -156,6 +156,21 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			case ID_EDIT_REDO:
 				application->redo();
 				break;
+			case ID_EDIT_CUT:
+				application->cut_to_clipboard();
+				break;
+			case ID_EDIT_COPY:
+				application->copy_to_clipboard();
+				break;
+			case ID_EDIT_PASTE:
+				application->paste_from_clipboard();
+				break;
+			case ID_EDIT_DUPLICATE:
+				application->duplicate();
+				break;
+			case ID_EDIT_DELETE:
+				application->handle_delete();
+				break;
 			case ID_EDIT_SELECTALL:
 				application->select_all();
 				break;

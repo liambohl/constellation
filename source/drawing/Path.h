@@ -10,13 +10,16 @@ class Path :
     public Element
 {
 public:
-    Path(Gdiplus::Pen* pen) : pen(pen) { }
+    Path(Gdiplus::Pen* pen) : pen(pen) {}
     Path(json path_json);
+    Path(const Path& other) : path(other.path->Clone()), pen(other.pen->Clone()) {}
     ~Path();
 
     std::optional<Gdiplus::RectF> get_bounding_box() override;
 
     bool try_select(const Gdiplus::PointF& cursor_pos, float margin, float scale) override;
+
+    std::shared_ptr<Element> clone() override   ;
 
     json to_json() override;
 

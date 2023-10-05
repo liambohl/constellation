@@ -20,6 +20,8 @@ public:
 	// Return true if the distance from the cursor to this element, in page space, is less than margin.
 	virtual bool try_select(const Gdiplus::PointF& cursor_pos, float margin, float scale) = 0;
 
+	virtual std::shared_ptr<Element> clone() = 0;
+
 	virtual json to_json() = 0;
 
 protected:

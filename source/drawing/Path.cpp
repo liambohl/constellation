@@ -36,6 +36,10 @@ bool Path::try_select(const Gdiplus::PointF& cursor_pos, float margin, float sca
 	return can_select;
 }
 
+std::shared_ptr<Element> Path::clone() {
+	return std::make_shared<Path>(*this);
+}
+
 json Path::to_json() {
 	return {
 		{"type", "Path"},

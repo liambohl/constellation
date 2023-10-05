@@ -26,7 +26,14 @@ public:
 	virtual boolean undo() { return false; }
 	virtual boolean redo() { return false; }
 
+	virtual void update() {}	// Check and update this tool's state after doing or undoing an action
+
 	virtual void select_all() {}
+	virtual void select_elements(std::vector<std::shared_ptr<Element>> elements) {}	// Select only the given elements
+
+	virtual std::vector<std::shared_ptr<Element>> get_selection() { return {}; }
+
+	virtual Action* handle_delete() { return nullptr; }
 
 	// Attempt to handle an escape event.
 	// If this tool is in the middle of an operation, such as drawing a new element, cancel and return true.
