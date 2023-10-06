@@ -123,26 +123,7 @@ void ToolSelect::add_or_remove_element(std::shared_ptr<Element> element) {
 }
 
 void ToolSelect::update_bounds() {
-	bounds = {};
-
-	for (auto el : selection) {
-		auto element_bounds = el->get_bounding_box();
-		if (!element_bounds)	// Element is empty
-			continue;
-		if (!bounds)			// Element is first nonempty element
-			bounds = element_bounds;
-		else {					// Grow bounds to fit element
-			float left = min(bounds->GetLeft(), element_bounds->GetLeft());
-			float top = min(bounds->GetTop(), element_bounds->GetTop());
-			float right = max(bounds->GetRight(), element_bounds->GetRight());
-			float bottom = max(bounds->GetBottom(), element_bounds->GetBottom());
-
-			bounds->X = left;
-			bounds->Y = top;
-			bounds->Width = right - left;
-			bounds->Height = bottom - top;
-		}
-	}
+	bounds = Element::get_bounding_box(selection);
 }
 
 Tool::HandleMap ToolSelect::get_handles(float scale) {
