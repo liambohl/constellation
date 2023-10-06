@@ -110,9 +110,17 @@ void ConstellationApp::copy_to_clipboard() {
         clipboard = copied_elements;
 }
 
-void ConstellationApp::paste_from_clipboard() {
+void ConstellationApp::paste_from_clipboard(HWND hWnd) {
     if (!clipboard.empty()) {
         auto pasted_elements = clone_elements(clipboard);
+        auto bounds = Element::get_bounding_box(pasted_elements);
+        if (bounds) {
+            Gdiplus::PointF bounds_center((bounds->GetLeft() + bounds->GetRight()) / 2, (bounds->GetTop() + bounds->GetBottom()) / 2);
+            Gdiplus::PointF cursor_pos = get_cursor_pos(hWnd);
+            Gdiplus::PointF delta = cursor_pos - bounds_center; // how far, and in what direction, we should move the elements to center them at the cursor position
+            for (auto& element : pasted_elements)
+                element->translate(delta);
+        }
         do_action(new ActionAddElements(pasted_elements));
         current_tool->select_elements(pasted_elements);
     }
@@ -264,12 +272,7 @@ void ConstellationApp::draw(HWND hWnd) {
     float scale = canvas.get_scale();
     std::vector<std::shared_ptr<Gdiplus::Matrix>> transforms = drawing.get_symmetry_group()->get_transforms();
 
-    // get cursor position in world coordinates
-    POINT cursor_pos_client;
-    GetCursorPos(&cursor_pos_client);                       // screen coords
-    ScreenToClient(hWnd, &cursor_pos_client);               // client area coords
-    Gdiplus::PointF cursor_pos_world((float)cursor_pos_client.x, (float)cursor_pos_client.y);
-    canvas.page_to_world_coordinates(&cursor_pos_world);    // world coords
+    Gdiplus::PointF cursor_pos = get_cursor_pos(hWnd);
 
     // drawing
     if (ghost) {
@@ -285,7 +288,7 @@ void ConstellationApp::draw(HWND hWnd) {
         drawing.get_symmetry_group()->draw(canvas.graphics, defaults, scale);
 
     // current tool
-    current_tool->draw(canvas.graphics, cursor_pos_world, transforms, scale);
+    current_tool->draw(canvas.graphics, cursor_pos, transforms, scale);
 
     canvas.finish_draw(ghost);
 }
@@ -366,4 +369,13 @@ std::vector<std::shared_ptr<Element>> ConstellationApp::clone_elements(std::vect
         clones.push_back(element->clone());
     }
     return clones;
+}
+
+Gdiplus::PointF ConstellationApp::get_cursor_pos(HWND hWnd) {
+    POINT cursor_pos_client;
+    GetCursorPos(&cursor_pos_client);                       // screen coords
+    ScreenToClient(hWnd, &cursor_pos_client);               // client area coords
+    Gdiplus::PointF cursor_pos_world((float)cursor_pos_client.x, (float)cursor_pos_client.y);
+    canvas.page_to_world_coordinates(&cursor_pos_world);    // world coords
+    return cursor_pos_world;
 }

@@ -26,11 +26,11 @@ public:
 	// Edit menu
 	void undo();
 	void redo();
-	void cut_to_clipboard();		// Cut elements from the drawing to the clipboard
-	void copy_to_clipboard();		// Copy elements from the drawing to the clipboard
-	void paste_from_clipboard();	// Paste elements from the clipboard to the drawing. Select the pasted elements.
-	void duplicate();				// Duplicate Elements and select them
-	void handle_delete();			// Delete elements, nodes, or whatever is selected by the current tool
+	void cut_to_clipboard();				// Cut elements from the drawing to the clipboard
+	void copy_to_clipboard();				// Copy elements from the drawing to the clipboard
+	void paste_from_clipboard(HWND hWnd);	// Paste elements from the clipboard to the drawing. Select the pasted elements.
+	void duplicate();						// Duplicate Elements and select them
+	void handle_delete();					// Delete elements, nodes, or whatever is selected by the current tool
 	void select_all();
 
 	// Draw menu
@@ -77,6 +77,8 @@ private:
 	void reset_history();
 
 	std::vector<std::shared_ptr<Element>> clone_elements(std::vector<std::shared_ptr<Element>> elements);
+
+	Gdiplus::PointF get_cursor_pos(HWND hWnd);
 
 	Canvas canvas;
 	Defaults defaults;

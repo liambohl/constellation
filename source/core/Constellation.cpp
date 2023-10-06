@@ -163,7 +163,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				application->copy_to_clipboard();
 				break;
 			case ID_EDIT_PASTE:
-				application->paste_from_clipboard();
+				application->paste_from_clipboard(hWnd);
 				break;
 			case ID_EDIT_DUPLICATE:
 				application->duplicate();

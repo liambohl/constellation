@@ -74,6 +74,11 @@ std::shared_ptr<Element> Group::select_in_group(const Gdiplus::PointF& cursor_po
 	return nullptr;
 }
 
+void Group::translate(const Gdiplus::PointF& delta) {
+	for (const auto& element : elements)
+		element->translate(delta);
+}
+
 std::shared_ptr<Element> Group::clone() {
 	auto clone = std::make_shared<Group>();
 	// Copy all elements from this group to clone

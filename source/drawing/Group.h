@@ -23,7 +23,9 @@ public:
 	std::shared_ptr<Element> select_in_group(const Gdiplus::PointF& cursor_pos, float margin, float scale);	// Try to select an element of this group
 
 	std::vector<std::shared_ptr<Element>> get_elements() { return elements; }
-	
+
+	void translate(const Gdiplus::PointF& delta) override;
+
 	std::shared_ptr<Element> clone() override;
 
 	json to_json() override;

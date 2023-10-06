@@ -18,6 +18,8 @@ public:
     std::optional<Gdiplus::RectF> get_bounding_box() override;
 
     bool try_select(const Gdiplus::PointF& cursor_pos, float margin, float scale) override;
+    
+    void translate(const Gdiplus::PointF& delta) override;
 
     std::shared_ptr<Element> clone() override   ;
 
