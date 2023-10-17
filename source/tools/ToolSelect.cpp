@@ -1,48 +1,85 @@
 #include "ToolSelect.h"
 
 #include "actions/ActionRemoveElements.h"
+#include "actions/ActionTransformElements.h"
 
 
 const float ToolSelect::SELECTION_MARGIN = 5.0f;
 
 Action* ToolSelect::handle_mouse_event(UINT message, Gdiplus::PointF cursor_pos, int key_state, float scale) {
-	// If anything selected, give handles a chance to handle mouse event
-	// Otherwise,
-	if (message == WM_LBUTTONDOWN) {
-		// Try to select a handle
-		active_handle = try_select_handle(cursor_pos, scale);
+	bool shift_pressed = key_state & MK_SHIFT;
+	bool control_pressed = key_state & MK_CONTROL;
 
-		if (active_handle.has_value()) {
-			return nullptr;
-		}
+	switch (state) {
+	case IDLE:
+		if (message == WM_LBUTTONDOWN) {
+			// Try to select a handle
+			active_handle = try_select_handle(cursor_pos, scale);
+			if (active_handle) {
+				state = DRAGGING_HANDLE;
+				click_position = cursor_pos;
+				last_drag_position = cursor_pos; 
+				return nullptr;
+			}
 
-		bool shift_pressed = key_state & MK_SHIFT;
-
-		std::shared_ptr<Element> element = drawing.select_element(cursor_pos, SELECTION_MARGIN, scale);
-
-		// If we clicked an element
-		if (element != nullptr) {
-			if (shift_pressed)
-				add_or_remove_element(element);
-			else {
-				// If we click on an element in the selection, switch modes
-				if (std::find(selection.begin(), selection.end(), element) != selection.end())
-					mode = (mode == RESIZE) ? ROTATE : RESIZE;
-				// If we clicked a different element, select only it
+			// Try to select an element
+			std::shared_ptr<Element> element = drawing.select_element(cursor_pos, SELECTION_MARGIN, scale);
+			if (element != nullptr) {
+				if (shift_pressed)
+					add_or_remove_element(element);
 				else {
-					selection = { element };
-					update_bounds();
+					// If we click on an element in the selection, enable dragging the selection
+					if (std::find(selection.begin(), selection.end(), element) != selection.end()) {
+						state = DRAGGING_SELECTION;
+						click_position = cursor_pos;
+						last_drag_position = cursor_pos;
+					}
+					// If we clicked a different element, select only it
+					else {
+						selection = { element };
+						update_bounds();
+					}
 				}
 			}
+			else if (!shift_pressed) {	// Click off to deselect all
+				deselect_all();
+			}
 		}
-		else if (!shift_pressed) {	// Click off to deselect all and return to resize mode
-			selection.clear();
+		break;
+	case DRAGGING_HANDLE:
+		if (message == WM_LBUTTONUP) {
+			active_handle = {};
+			state = IDLE;
+		}
+		break;
+	case DRAGGING_SELECTION:
+		if (message == WM_LBUTTONUP) {
+			state = IDLE;
+			if (cursor_pos.Equals(click_position)) {
+				// When we click on an element in the selection (without dragging), switch modes
+				mode = (mode == RESIZE) ? ROTATE : RESIZE;
+			}
+			else {
+				// After dragging the selection, undo temporary translation and commit an Action
+				auto temp_delta = click_position - last_drag_position;
+				for (const auto& element : selection) {
+					Gdiplus::Matrix* temp_matrix = new Gdiplus::Matrix(1.0f, 0, 0, 1.0f, temp_delta.X, temp_delta.Y);
+					element->transform(temp_matrix);
+				}
+				auto overall_delta = cursor_pos - click_position;
+				Gdiplus::Matrix* overall_matrix = new Gdiplus::Matrix(1.0f, 0, 0, 1.0f, overall_delta.X, overall_delta.Y);
+				return new ActionTransformElements(selection, overall_matrix);
+			}
+		}
+		else if (message == WM_MOUSEMOVE) {
+			auto delta = cursor_pos - last_drag_position;	// Translation since we handled the last message
+			Gdiplus::Matrix translation_matrix(1.0f, 0, 0, 1.0f, delta.X, delta.Y);
+			for (const auto& element : selection)
+				element->transform(&translation_matrix);
+			last_drag_position = cursor_pos;
 			update_bounds();
-			mode = RESIZE;
 		}
-	}
-	else if (message == WM_LBUTTONUP) {
-		active_handle = {};
+		break;
 	}
 	return nullptr;
 }
@@ -108,8 +145,7 @@ Action* ToolSelect::handle_delete() {
 boolean ToolSelect::handle_escape() {
 	if (selection.empty())
 		return false;
-	selection.clear();
-	update_bounds();
+	deselect_all();
 	return true;
 }
 
@@ -120,6 +156,12 @@ void ToolSelect::add_or_remove_element(std::shared_ptr<Element> element) {
 	else
 		selection.push_back(element);
 	update_bounds();
+}
+
+void ToolSelect::deselect_all() {
+	selection.clear();
+	update_bounds();
+	mode = RESIZE;
 }
 
 void ToolSelect::update_bounds() {

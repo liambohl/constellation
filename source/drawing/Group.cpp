@@ -74,9 +74,9 @@ std::shared_ptr<Element> Group::select_in_group(const Gdiplus::PointF& cursor_po
 	return nullptr;
 }
 
-void Group::translate(const Gdiplus::PointF& delta) {
+void Group::transform(const Gdiplus::Matrix* transform) {
 	for (const auto& element : elements)
-		element->translate(delta);
+		element->transform(transform);
 }
 
 std::shared_ptr<Element> Group::clone() {

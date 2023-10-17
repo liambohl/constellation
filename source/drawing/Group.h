@@ -24,7 +24,7 @@ public:
 
 	std::vector<std::shared_ptr<Element>> get_elements() { return elements; }
 
-	void translate(const Gdiplus::PointF& delta) override;
+	void transform(const Gdiplus::Matrix* transform) override;
 
 	std::shared_ptr<Element> clone() override;
 

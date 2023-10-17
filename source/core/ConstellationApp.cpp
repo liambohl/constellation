@@ -118,8 +118,9 @@ void ConstellationApp::paste_from_clipboard(HWND hWnd) {
             Gdiplus::PointF bounds_center((bounds->GetLeft() + bounds->GetRight()) / 2, (bounds->GetTop() + bounds->GetBottom()) / 2);
             Gdiplus::PointF cursor_pos = get_cursor_pos(hWnd);
             Gdiplus::PointF delta = cursor_pos - bounds_center; // how far, and in what direction, we should move the elements to center them at the cursor position
+            Gdiplus::Matrix translation_matrix(1.0f, 0, 0, 1.0f, delta.X, delta.Y);
             for (auto& element : pasted_elements)
-                element->translate(delta);
+                element->transform(&translation_matrix);
         }
         do_action(new ActionAddElements(pasted_elements));
         current_tool->select_elements(pasted_elements);

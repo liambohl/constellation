@@ -19,7 +19,7 @@ public:
 
     bool try_select(const Gdiplus::PointF& cursor_pos, float margin, float scale) override;
     
-    void translate(const Gdiplus::PointF& delta) override;
+    void transform(const Gdiplus::Matrix* transform) override;
 
     std::shared_ptr<Element> clone() override   ;
 

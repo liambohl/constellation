@@ -36,9 +36,8 @@ bool Path::try_select(const Gdiplus::PointF& cursor_pos, float margin, float sca
 	return can_select;
 }
 
-void Path::translate(const Gdiplus::PointF& delta) {
-	Gdiplus::Matrix* translation_matrix = new Gdiplus::Matrix(1.0f, 0, 0, 1.0f, delta.X, delta.Y);
-	path->Transform(translation_matrix);
+void Path::transform(const Gdiplus::Matrix* transform) {
+	path->Transform(transform);
 }
 
 std::shared_ptr<Element> Path::clone() {

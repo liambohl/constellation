@@ -39,18 +39,29 @@ private:
 		ROTATE	// dragging handles rotates selected elements around center point
 	};
 
+	enum State {
+		IDLE,
+		DRAGGING_HANDLE,
+		DRAGGING_SELECTION
+	};
 
 	void add_or_remove_element(std::shared_ptr<Element> element);	// If the selection contains the element, remove it. Otherwise, add it.
+
+	void deselect_all();	// Remove everything from selection and return to resize mode
 
 	void update_bounds();
 
 	HandleMap get_handles(float scale) override;
 
 	Mode mode = RESIZE;
+	State state = IDLE;
 
 	std::optional<std::string> active_handle;
 
 	std::vector<std::shared_ptr<Element>> selection;
+
+	Gdiplus::PointF click_position;		// Cursor position when we click on a handle or an element in the selection
+	Gdiplus::PointF last_drag_position;	// Cursor position last time we handled a WM_MOUSEMOVE event
 	
 	std::optional<Gdiplus::RectF> bounds;
 
