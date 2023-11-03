@@ -56,6 +56,11 @@ private:
 	Mode mode = RESIZE;
 	State state = IDLE;
 
+	// This is true only while the left mouse button is pressed upon creating a new selection.
+	// When true, releasing the LMB does not switch between resize mode and rotate mode.
+	// This way, we don't switch modes every time we select something new.
+	bool new_selection = false;
+
 	std::optional<std::string> active_handle;
 
 	std::vector<std::shared_ptr<Element>> selection;

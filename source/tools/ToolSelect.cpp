@@ -28,17 +28,17 @@ Action* ToolSelect::handle_mouse_event(UINT message, Gdiplus::PointF cursor_pos,
 				if (shift_pressed)
 					add_or_remove_element(element);
 				else {
-					// If we click on an element in the selection, enable dragging the selection
-					if (std::find(selection.begin(), selection.end(), element) != selection.end()) {
-						state = DRAGGING_SELECTION;
-						click_position = cursor_pos;
-						last_drag_position = cursor_pos;
-					}
-					// If we clicked a different element, select only it
-					else {
+					// If we click on an element outside the selection, select only it
+					if (std::find(selection.begin(), selection.end(), element) == selection.end()) {
 						selection = { element };
+						new_selection = true;
 						update_bounds();
 					}
+
+					// Enable dragging the selection
+					state = DRAGGING_SELECTION;
+					click_position = cursor_pos;
+					last_drag_position = cursor_pos;
 				}
 			}
 			else if (!shift_pressed) {	// Click off to deselect all
@@ -57,7 +57,8 @@ Action* ToolSelect::handle_mouse_event(UINT message, Gdiplus::PointF cursor_pos,
 			state = IDLE;
 			if (cursor_pos.Equals(click_position)) {
 				// When we click on an element in the selection (without dragging), switch modes
-				mode = (mode == RESIZE) ? ROTATE : RESIZE;
+				if (!new_selection)
+					mode = (mode == RESIZE) ? ROTATE : RESIZE;
 			}
 			else {
 				// After dragging the selection, undo temporary translation and commit an Action
@@ -70,6 +71,7 @@ Action* ToolSelect::handle_mouse_event(UINT message, Gdiplus::PointF cursor_pos,
 				Gdiplus::Matrix* overall_matrix = new Gdiplus::Matrix(1.0f, 0, 0, 1.0f, overall_delta.X, overall_delta.Y);
 				return new ActionTransformElements(selection, overall_matrix);
 			}
+			new_selection = false;
 		}
 		else if (message == WM_MOUSEMOVE) {
 			auto delta = cursor_pos - last_drag_position;	// Translation since we handled the last message
