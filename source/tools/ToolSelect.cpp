@@ -32,6 +32,7 @@ Action* ToolSelect::handle_mouse_event(UINT message, Gdiplus::PointF cursor_pos,
 					if (std::find(selection.begin(), selection.end(), element) == selection.end()) {
 						selection = { element };
 						new_selection = true;
+						mode = RESIZE;
 						update_bounds();
 					}
 
