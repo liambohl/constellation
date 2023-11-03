@@ -58,6 +58,14 @@ std::optional<Gdiplus::RectF> Group::get_bounding_box() {
 	return bounds;
 }
 
+bool Group::intersects_rectangle(Gdiplus::RectF& rectangle) {
+	for (auto& element : elements) {
+		if (element->intersects_rectangle(rectangle))
+			return true;
+	}
+	return false;
+}
+
 bool Group::try_select(const Gdiplus::PointF& cursor_pos, float margin, float scale) {
 	for (auto element : elements) {
 		if (element->try_select(cursor_pos, margin, scale))

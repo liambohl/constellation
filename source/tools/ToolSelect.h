@@ -41,8 +41,9 @@ private:
 
 	enum State {
 		IDLE,
-		DRAGGING_HANDLE,
-		DRAGGING_SELECTION
+		DRAGGING_HANDLE,	// Using handles to rotate or resize selection
+		DRAGGING_SELECTION,	// Moving selection
+		SELECTING_AREA		// Creating selection rectangle
 	};
 
 	void add_or_remove_element(std::shared_ptr<Element> element);	// If the selection contains the element, remove it. Otherwise, add it.
@@ -65,7 +66,7 @@ private:
 
 	std::vector<std::shared_ptr<Element>> selection;
 
-	Gdiplus::PointF click_position;		// Cursor position when we click on a handle or an element in the selection
+	Gdiplus::PointF click_position;		// Cursor position when we click (start dragging a handle or the selection or start selecting an area)
 	Gdiplus::PointF last_drag_position;	// Cursor position last time we handled a WM_MOUSEMOVE event
 	
 	std::optional<Gdiplus::RectF> bounds;

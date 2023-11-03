@@ -13,12 +13,13 @@ Action* ToolSelect::handle_mouse_event(UINT message, Gdiplus::PointF cursor_pos,
 	switch (state) {
 	case IDLE:
 		if (message == WM_LBUTTONDOWN) {
+			click_position = cursor_pos;
+			last_drag_position = cursor_pos;
+
 			// Try to select a handle
 			active_handle = try_select_handle(cursor_pos, scale);
 			if (active_handle) {
 				state = DRAGGING_HANDLE;
-				click_position = cursor_pos;
-				last_drag_position = cursor_pos; 
 				return nullptr;
 			}
 
@@ -38,12 +39,12 @@ Action* ToolSelect::handle_mouse_event(UINT message, Gdiplus::PointF cursor_pos,
 
 					// Enable dragging the selection
 					state = DRAGGING_SELECTION;
-					click_position = cursor_pos;
-					last_drag_position = cursor_pos;
 				}
 			}
-			else if (!shift_pressed) {	// Click off to deselect all
-				deselect_all();
+
+			// Start a rectangular selection area
+			else {
+				state = SELECTING_AREA;
 			}
 		}
 		break;
@@ -83,6 +84,50 @@ Action* ToolSelect::handle_mouse_event(UINT message, Gdiplus::PointF cursor_pos,
 			update_bounds();
 		}
 		break;
+	case SELECTING_AREA:
+		// Select everything in the selection area
+		if (message == WM_LBUTTONUP) {
+			if (!shift_pressed) {
+				selection = {};
+				new_selection = true;
+				mode = RESIZE;
+			}
+
+			float left = min(click_position.X, cursor_pos.X);
+			float right = max(click_position.X, cursor_pos.X);
+			float top = min(click_position.Y, cursor_pos.Y);
+			float bottom = max(click_position.Y, cursor_pos.Y);
+
+			Gdiplus::RectF selection_area(left, top, right - left, bottom - top);
+
+			// If rectangle is drawn left-to-right, select everything completely contained by the rectangle.
+			if (cursor_pos.X > click_position.X) {
+				for (auto& element : drawing.get_elements()) {
+					auto bounding_box = element->get_bounding_box();
+					if (
+						bounding_box->GetLeft() > left &&
+						bounding_box->GetRight() < right &&
+						bounding_box->GetTop() > top &&
+						bounding_box->GetBottom() < bottom
+					) {
+						selection.push_back(element);
+					}
+				}
+			}
+
+			// If rectangle is drawn right-to-left, select everything that overlaps the rectangle.
+			else {
+				for (auto& element : drawing.get_elements()) {
+					auto bounding_box = element->get_bounding_box();
+					if (element->intersects_rectangle(selection_area)) {
+						selection.push_back(element);
+					}
+				}
+			}
+
+			state = IDLE;
+			update_bounds();
+		}
 	}
 	return nullptr;
 }
@@ -106,6 +151,25 @@ void ToolSelect::draw(
 	// If selection contains any stuff, draw handles
 	if (bounds) {
 		draw_handles(graphics, active_handle, cursor_pos, scale);
+	}
+
+	// Draw selection rectangle
+	if (state == SELECTING_AREA) {
+		float left = min(click_position.X, cursor_pos.X);
+		float right = max(click_position.X, cursor_pos.X);
+		float top = min(click_position.Y, cursor_pos.Y);
+		float bottom = max(click_position.Y, cursor_pos.Y);
+
+		Gdiplus::RectF selection_area(left, top, right - left, bottom - top);
+
+		if (click_position.X < cursor_pos.X) {
+			graphics->FillRectangle(defaults.ltr_selection_rectangle_brush, selection_area);
+			graphics->DrawRectangle(defaults.ltr_selection_rectangle_pen, selection_area);
+		}
+		else {
+			graphics->FillRectangle(defaults.rtl_selection_rectangle_brush, selection_area);
+			graphics->DrawRectangle(defaults.rtl_selection_rectangle_pen, selection_area);
+		}
 	}
 }
 

@@ -23,6 +23,10 @@ Defaults::Defaults() {
 	selection_pen_2 = new Pen(Color(255, 255, 255, 255), 0.0f);
 	const float dash_array[2] = { 3.0f, 3.0f };
 	selection_pen_2->SetDashPattern(dash_array, 2);
+	ltr_selection_rectangle_pen = new Pen(Color(255, 150, 150, 150), 0.0f);
+	rtl_selection_rectangle_pen = new Pen(Color(255, 255, 125, 50), 0.0f);
+	ltr_selection_rectangle_brush = new SolidBrush(Color(50, 150, 150, 150));
+	rtl_selection_rectangle_brush = new SolidBrush(Color(50, 255, 125, 50));
 
 	// symmetry guides
 	domain_boundary_pen = new Pen(Color(255, 255, 100, 0), 0.0f);

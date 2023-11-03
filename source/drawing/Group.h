@@ -19,6 +19,8 @@ public:
 
 	std::optional<Gdiplus::RectF> get_bounding_box() override;
 
+	bool intersects_rectangle(Gdiplus::RectF& rectangle) override;
+
 	bool try_select(const Gdiplus::PointF& cursor_pos, float margin, float scale) override;					// Try to select this group
 	std::shared_ptr<Element> select_in_group(const Gdiplus::PointF& cursor_pos, float margin, float scale);	// Try to select an element of this group
 

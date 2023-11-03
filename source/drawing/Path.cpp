@@ -29,6 +29,17 @@ std::optional<Gdiplus::RectF> Path::get_bounding_box() {
 	return bounding_box;
 }
 
+bool Path::intersects_rectangle(Gdiplus::RectF& rectangle) {
+	Gdiplus::GraphicsPath* footprint = path->Clone();	// This path, including its outline
+	footprint->Widen(pen);
+	Gdiplus::Region intersection(footprint);			// Overlap between this path and the rectangle
+	intersection.Intersect(rectangle);
+
+	Gdiplus::Bitmap blank_image(10, 10);
+	Gdiplus::Graphics throwaway_graphics(&blank_image);
+	return !intersection.IsEmpty(&throwaway_graphics);
+}
+
 bool Path::try_select(const Gdiplus::PointF& cursor_pos, float margin, float scale) {
 	float test_pen_width = pen->GetWidth() + margin / scale;
 	Gdiplus::Pen test_pen(Gdiplus::Color(), test_pen_width);

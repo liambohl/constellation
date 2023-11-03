@@ -17,6 +17,8 @@ public:
 
     std::optional<Gdiplus::RectF> get_bounding_box() override;
 
+    bool intersects_rectangle(Gdiplus::RectF& rectangle) override;
+
     bool try_select(const Gdiplus::PointF& cursor_pos, float margin, float scale) override;
     
     void transform(const Gdiplus::Matrix* transform) override;

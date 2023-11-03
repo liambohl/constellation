@@ -18,6 +18,9 @@ public:
 	virtual std::optional<Gdiplus::RectF> get_bounding_box() = 0;
 	// Get a rectangle that neatly encloses these elements. If no elements, or all elements are empty, return {}.
 	static std::optional<Gdiplus::RectF> get_bounding_box(std::vector<std::shared_ptr<Element>> elements);
+	
+	// Does this element have any overlap with the given rectangle?
+	virtual bool intersects_rectangle(Gdiplus::RectF& rectangle) = 0;
 
 	// Return true if the distance from the cursor to this element, in page space, is less than margin.
 	virtual bool try_select(const Gdiplus::PointF& cursor_pos, float margin, float scale) = 0;
