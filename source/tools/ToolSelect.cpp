@@ -1,5 +1,7 @@
 #include "ToolSelect.h"
 
+#include <numbers>
+
 #include "actions/ActionRemoveElements.h"
 #include "actions/ActionTransformElements.h"
 
@@ -14,7 +16,6 @@ Action* ToolSelect::handle_mouse_event(UINT message, Gdiplus::PointF cursor_pos,
 	case IDLE:
 		if (message == WM_LBUTTONDOWN) {
 			click_position = cursor_pos;
-			last_drag_position = cursor_pos;
 
 			// Try to select a handle
 			active_handle = try_select_handle(cursor_pos, scale);
@@ -35,6 +36,7 @@ Action* ToolSelect::handle_mouse_event(UINT message, Gdiplus::PointF cursor_pos,
 						new_selection = true;
 						mode = RESIZE;
 						update_bounds();
+						update_rotation_center();
 					}
 
 					// Enable dragging the selection
@@ -50,8 +52,42 @@ Action* ToolSelect::handle_mouse_event(UINT message, Gdiplus::PointF cursor_pos,
 		break;
 	case DRAGGING_HANDLE:
 		if (message == WM_LBUTTONUP) {
+			Gdiplus::Matrix* transform = new Gdiplus::Matrix;
+			if (mode == ROTATE) {
+				float theta_initial = atan2f(click_position.Y - rotation_center.Y, click_position.X - rotation_center.X);
+				float theta = atan2f(cursor_pos.Y - rotation_center.Y, cursor_pos.X - rotation_center.X);
+				float delta_theta = theta - theta_initial;
+				transform->RotateAt(delta_theta * 180.0f / (float)std::numbers::pi, rotation_center);
+				update_bounds();
+			}
+			else {
+
+				update_bounds();
+				update_rotation_center();
+			}
+
 			active_handle = {};
 			state = IDLE;
+			return new ActionTransformElements(selection, transform);
+		}
+		else if (message == WM_MOUSEMOVE) {
+			Gdiplus::Matrix* transform = new Gdiplus::Matrix;
+			if (mode == ROTATE) {
+				float theta_initial = atan2f(click_position.Y - rotation_center.Y, click_position.X - rotation_center.X);
+				float theta = atan2f(cursor_pos.Y - rotation_center.Y, cursor_pos.X - rotation_center.X);
+				float delta_theta = theta - theta_initial;
+				transform->RotateAt(delta_theta * 180.0f / (float)std::numbers::pi, rotation_center);
+				update_bounds();
+			}
+			else {
+
+				update_bounds();
+				update_rotation_center();
+			}
+
+			for (const auto& element : selection)
+				element->transform_temp(transform);
+			delete transform;
 		}
 		break;
 	case DRAGGING_SELECTION:
@@ -63,25 +99,22 @@ Action* ToolSelect::handle_mouse_event(UINT message, Gdiplus::PointF cursor_pos,
 					mode = (mode == RESIZE) ? ROTATE : RESIZE;
 			}
 			else {
-				// After dragging the selection, undo temporary translation and commit an Action
-				auto temp_delta = click_position - last_drag_position;
-				for (const auto& element : selection) {
-					Gdiplus::Matrix* temp_matrix = new Gdiplus::Matrix(1.0f, 0, 0, 1.0f, temp_delta.X, temp_delta.Y);
-					element->transform(temp_matrix);
-				}
-				auto overall_delta = cursor_pos - click_position;
-				Gdiplus::Matrix* overall_matrix = new Gdiplus::Matrix(1.0f, 0, 0, 1.0f, overall_delta.X, overall_delta.Y);
-				return new ActionTransformElements(selection, overall_matrix);
+				// After dragging the selection, commit the translation as an Action
+				auto delta = cursor_pos - click_position;
+				Gdiplus::Matrix* transform = new Gdiplus::Matrix;
+				transform->Translate(delta.X, delta.Y);
+				return new ActionTransformElements(selection, transform);
 			}
 			new_selection = false;
 		}
 		else if (message == WM_MOUSEMOVE) {
-			auto delta = cursor_pos - last_drag_position;	// Translation since we handled the last message
-			Gdiplus::Matrix translation_matrix(1.0f, 0, 0, 1.0f, delta.X, delta.Y);
+			auto delta = cursor_pos - click_position;
+			Gdiplus::Matrix* transform = new Gdiplus::Matrix;
+			transform->Translate(delta.X, delta.Y);
 			for (const auto& element : selection)
-				element->transform(&translation_matrix);
-			last_drag_position = cursor_pos;
+				element->transform_temp(transform);
 			update_bounds();
+			update_rotation_center();
 		}
 		break;
 	case SELECTING_AREA:
@@ -127,6 +160,7 @@ Action* ToolSelect::handle_mouse_event(UINT message, Gdiplus::PointF cursor_pos,
 
 			state = IDLE;
 			update_bounds();
+			update_rotation_center();
 		}
 	}
 	return nullptr;
@@ -189,16 +223,19 @@ void ToolSelect::update() {
 	);
 
 	update_bounds();
+	update_rotation_center();
 }
 
 void ToolSelect::select_all() {
 	selection = drawing.get_elements();
 	update_bounds();
+	update_rotation_center();
 }
 
 void ToolSelect::select_elements(std::vector<std::shared_ptr<Element>> elements) {
 	selection = elements;
 	update_bounds();
+	update_rotation_center();
 }
 
 Action* ToolSelect::handle_delete() {
@@ -223,16 +260,23 @@ void ToolSelect::add_or_remove_element(std::shared_ptr<Element> element) {
 	else
 		selection.push_back(element);
 	update_bounds();
+	update_rotation_center();
 }
 
 void ToolSelect::deselect_all() {
 	selection.clear();
 	update_bounds();
+	update_rotation_center();
 	mode = RESIZE;
 }
 
 void ToolSelect::update_bounds() {
 	bounds = Element::get_bounding_box(selection);
+}
+
+void ToolSelect::update_rotation_center() {
+	if (bounds)
+		rotation_center = { (bounds->GetLeft() + bounds->GetRight()) / 2, (bounds->GetTop() + bounds->GetBottom()) / 2 };
 }
 
 Tool::HandleMap ToolSelect::get_handles(float scale) {
@@ -242,6 +286,8 @@ Tool::HandleMap ToolSelect::get_handles(float scale) {
 		const float BOTTOM = bounds->GetBottom();
 		const float LEFT = bounds->GetLeft();
 		const float RIGHT = bounds->GetRight();
+		const float CENTER_X = rotation_center.X;
+		const float CENTER_Y = rotation_center.Y;
 
 		if (mode == RESIZE) {
 			return {
@@ -260,7 +306,8 @@ Tool::HandleMap ToolSelect::get_handles(float scale) {
 				{ "rotate_top_left",     { ROTATE_TOP_LEFT,     { LEFT - SIZE / 2,    TOP - SIZE / 2     } } },
 				{ "rotate_top_right",    { ROTATE_TOP_RIGHT,    { RIGHT + SIZE / 2,   TOP - SIZE / 2     } } },
 				{ "rotate_bottom_right", { ROTATE_BOTTOM_RIGHT, { RIGHT + SIZE / 2,   BOTTOM + SIZE / 2  } } },
-				{ "rotate_bottom_left",  { ROTATE_BOTTOM_LEFT,  { LEFT - SIZE / 2,    BOTTOM + SIZE / 2  } } }
+				{ "rotate_bottom_left",  { ROTATE_BOTTOM_LEFT,  { LEFT - SIZE / 2,    BOTTOM + SIZE / 2  } } },
+				{ "rotation_center",     { HANDLE_CIRCLE,       { CENTER_X,           CENTER_Y           } } }
 			};
 		}
 	}

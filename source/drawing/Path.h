@@ -22,6 +22,7 @@ public:
     bool try_select(const Gdiplus::PointF& cursor_pos, float margin, float scale) override;
     
     void transform(const Gdiplus::Matrix* transform) override;
+    void transform_temp(const Gdiplus::Matrix* transform) override;
 
     std::shared_ptr<Element> clone() override   ;
 
@@ -35,5 +36,11 @@ private:
     void draw_one(Gdiplus::Graphics* graphics) override;
 
     Gdiplus::GraphicsPath* path = new Gdiplus::GraphicsPath;
+    Gdiplus::GraphicsPath* temp_path = new Gdiplus::GraphicsPath;
     Gdiplus::Pen* pen;
+
+    // This is true while the user is moving, rotating, or resizing the path.
+    // While true, temp_path is drawn instead of path.
+    // This limits the accumulation of floating-point errors while transforming
+    bool mid_transform = false;
 };

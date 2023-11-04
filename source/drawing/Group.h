@@ -27,6 +27,7 @@ public:
 	std::vector<std::shared_ptr<Element>> get_elements() { return elements; }
 
 	void transform(const Gdiplus::Matrix* transform) override;
+	void transform_temp(const Gdiplus::Matrix* transform) override;
 
 	std::shared_ptr<Element> clone() override;
 

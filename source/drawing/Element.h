@@ -25,8 +25,11 @@ public:
 	// Return true if the distance from the cursor to this element, in page space, is less than margin.
 	virtual bool try_select(const Gdiplus::PointF& cursor_pos, float margin, float scale) = 0;
 
-	// Transform (move, rotate, or scale) this element
+	// Transform (move, rotate, or scale) this element permanently
 	virtual void transform(const Gdiplus::Matrix* transform) = 0;
+	// Transform this element temporarily. The transformed copy will be overwritten later.
+	// This is only for providing visual feedback while the user is in the middle of a transformation.
+	virtual void transform_temp(const Gdiplus::Matrix* transform) = 0;
 
 	virtual std::shared_ptr<Element> clone() = 0;
 

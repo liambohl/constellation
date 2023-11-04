@@ -51,6 +51,7 @@ private:
 	void deselect_all();	// Remove everything from selection and return to resize mode
 
 	void update_bounds();
+	void update_rotation_center();
 
 	HandleMap get_handles(float scale) override;
 
@@ -67,7 +68,8 @@ private:
 	std::vector<std::shared_ptr<Element>> selection;
 
 	Gdiplus::PointF click_position;		// Cursor position when we click (start dragging a handle or the selection or start selecting an area)
-	Gdiplus::PointF last_drag_position;	// Cursor position last time we handled a WM_MOUSEMOVE event
+
+	Gdiplus::PointF rotation_center;
 	
 	std::optional<Gdiplus::RectF> bounds;
 

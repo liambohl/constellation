@@ -15,13 +15,18 @@ Path::Path(json path_json):
 
 Path::~Path() {
 	delete path;
+	delete temp_path;
 	delete pen;
 }
 
 std::optional<Gdiplus::RectF> Path::get_bounding_box() {
 	if (path->GetPointCount() == 0)
 		return {};
-	Gdiplus::GraphicsPath* flat_path = path->Clone();
+	Gdiplus::GraphicsPath* flat_path;
+	if (mid_transform)
+		flat_path = temp_path->Clone();
+	else
+		flat_path = path->Clone();
 	flat_path->Flatten();
 	Gdiplus::RectF bounding_box;
 	flat_path->GetBounds(&bounding_box, nullptr, pen);
@@ -49,6 +54,13 @@ bool Path::try_select(const Gdiplus::PointF& cursor_pos, float margin, float sca
 
 void Path::transform(const Gdiplus::Matrix* transform) {
 	path->Transform(transform);
+	mid_transform = false;
+}
+
+void Path::transform_temp(const Gdiplus::Matrix* transform) {
+	temp_path = path->Clone();
+	temp_path->Transform(transform);
+	mid_transform = true;
 }
 
 std::shared_ptr<Element> Path::clone() {
@@ -68,5 +80,8 @@ void Path::add_beziers(std::vector<Gdiplus::PointF> control_points) {
 }
 
 void Path::draw_one(Gdiplus::Graphics* graphics) {
-	graphics->DrawPath(pen, path);
+	if (mid_transform)
+		graphics->DrawPath(pen, temp_path);
+	else
+		graphics->DrawPath(pen, path);
 }

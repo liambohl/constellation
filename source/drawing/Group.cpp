@@ -87,6 +87,11 @@ void Group::transform(const Gdiplus::Matrix* transform) {
 		element->transform(transform);
 }
 
+void Group::transform_temp(const Gdiplus::Matrix* transform) {
+	for (const auto& element : elements)
+		element->transform_temp(transform);
+}
+
 std::shared_ptr<Element> Group::clone() {
 	auto clone = std::make_shared<Group>();
 	// Copy all elements from this group to clone
