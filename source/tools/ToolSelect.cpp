@@ -54,11 +54,16 @@ Action* ToolSelect::handle_mouse_event(UINT message, Gdiplus::PointF cursor_pos,
 		if (message == WM_LBUTTONUP) {
 			Gdiplus::Matrix* transform = new Gdiplus::Matrix;
 			if (mode == ROTATE) {
-				float theta_initial = atan2f(click_position.Y - rotation_center.Y, click_position.X - rotation_center.X);
-				float theta = atan2f(cursor_pos.Y - rotation_center.Y, cursor_pos.X - rotation_center.X);
-				float delta_theta = theta - theta_initial;
-				transform->RotateAt(delta_theta * 180.0f / (float)std::numbers::pi, rotation_center);
-				update_bounds();
+				if (active_handle == "rotation_center") {
+					rotation_center = cursor_pos;
+				}
+				else {
+					float theta_initial = atan2f(click_position.Y - rotation_center.Y, click_position.X - rotation_center.X);
+					float theta = atan2f(cursor_pos.Y - rotation_center.Y, cursor_pos.X - rotation_center.X);
+					float delta_theta = theta - theta_initial;
+					transform->RotateAt(delta_theta * 180.0f / (float)std::numbers::pi, rotation_center);
+					update_bounds();
+				}
 			}
 			else {
 
@@ -73,11 +78,16 @@ Action* ToolSelect::handle_mouse_event(UINT message, Gdiplus::PointF cursor_pos,
 		else if (message == WM_MOUSEMOVE) {
 			Gdiplus::Matrix* transform = new Gdiplus::Matrix;
 			if (mode == ROTATE) {
-				float theta_initial = atan2f(click_position.Y - rotation_center.Y, click_position.X - rotation_center.X);
-				float theta = atan2f(cursor_pos.Y - rotation_center.Y, cursor_pos.X - rotation_center.X);
-				float delta_theta = theta - theta_initial;
-				transform->RotateAt(delta_theta * 180.0f / (float)std::numbers::pi, rotation_center);
-				update_bounds();
+				if (active_handle == "rotation_center") {
+					rotation_center = cursor_pos;
+				}
+				else {
+					float theta_initial = atan2f(click_position.Y - rotation_center.Y, click_position.X - rotation_center.X);
+					float theta = atan2f(cursor_pos.Y - rotation_center.Y, cursor_pos.X - rotation_center.X);
+					float delta_theta = theta - theta_initial;
+					transform->RotateAt(delta_theta * 180.0f / (float)std::numbers::pi, rotation_center);
+					update_bounds();
+				}
 			}
 			else {
 
@@ -221,9 +231,6 @@ void ToolSelect::update() {
 		),
 		selection.end()
 	);
-
-	update_bounds();
-	update_rotation_center();
 }
 
 void ToolSelect::select_all() {
