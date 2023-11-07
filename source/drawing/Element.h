@@ -15,9 +15,9 @@ public:
 	virtual void draw_original(Gdiplus::Graphics* graphics);
 
 	// Get a rectangle that neatly encloses this element. If the element is empty, return {}.
-	virtual std::optional<Gdiplus::RectF> get_bounding_box() = 0;
+	virtual std::optional<Gdiplus::RectF> get_bounding_box(bool include_stroke=true) = 0;
 	// Get a rectangle that neatly encloses these elements. If no elements, or all elements are empty, return {}.
-	static std::optional<Gdiplus::RectF> get_bounding_box(std::vector<std::shared_ptr<Element>> elements);
+	static std::optional<Gdiplus::RectF> get_bounding_box(std::vector<std::shared_ptr<Element>> elements, bool include_stroke = true);
 	
 	// Does this element have any overlap with the given rectangle?
 	virtual bool intersects_rectangle(Gdiplus::RectF& rectangle) = 0;

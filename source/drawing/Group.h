@@ -17,7 +17,7 @@ public:
 	void draw(Gdiplus::Graphics* graphics, std::vector<std::shared_ptr<Gdiplus::Matrix>>& transforms) override;
 	void draw_original(Gdiplus::Graphics* graphics) override;
 
-	std::optional<Gdiplus::RectF> get_bounding_box() override;
+	std::optional<Gdiplus::RectF> get_bounding_box(bool include_stroke = true) override;
 
 	bool intersects_rectangle(Gdiplus::RectF& rectangle) override;
 

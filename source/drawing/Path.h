@@ -15,7 +15,7 @@ public:
     Path(const Path& other) : path(other.path->Clone()), pen(other.pen->Clone()) {}
     ~Path();
 
-    std::optional<Gdiplus::RectF> get_bounding_box() override;
+    std::optional<Gdiplus::RectF> get_bounding_box(bool include_stroke = true) override;
 
     bool intersects_rectangle(Gdiplus::RectF& rectangle) override;
 

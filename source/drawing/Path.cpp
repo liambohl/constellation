@@ -19,7 +19,7 @@ Path::~Path() {
 	delete pen;
 }
 
-std::optional<Gdiplus::RectF> Path::get_bounding_box() {
+std::optional<Gdiplus::RectF> Path::get_bounding_box(bool include_stroke) {
 	if (path->GetPointCount() == 0)
 		return {};
 	Gdiplus::GraphicsPath* flat_path;
@@ -29,7 +29,10 @@ std::optional<Gdiplus::RectF> Path::get_bounding_box() {
 		flat_path = path->Clone();
 	flat_path->Flatten();
 	Gdiplus::RectF bounding_box;
-	flat_path->GetBounds(&bounding_box, nullptr, pen);
+	if (include_stroke)
+		flat_path->GetBounds(&bounding_box, nullptr, pen);
+	else
+		flat_path->GetBounds(&bounding_box, nullptr, nullptr);
 	delete flat_path;
 	return bounding_box;
 }
@@ -39,6 +42,7 @@ bool Path::intersects_rectangle(Gdiplus::RectF& rectangle) {
 	footprint->Widen(pen);
 	Gdiplus::Region intersection(footprint);			// Overlap between this path and the rectangle
 	intersection.Intersect(rectangle);
+	delete footprint;
 
 	Gdiplus::Bitmap blank_image(10, 10);
 	Gdiplus::Graphics throwaway_graphics(&blank_image);

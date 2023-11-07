@@ -21,6 +21,8 @@ Action* ToolSelect::handle_mouse_event(UINT message, Gdiplus::PointF cursor_pos,
 			active_handle = try_select_handle(cursor_pos, scale);
 			if (active_handle) {
 				state = DRAGGING_HANDLE;
+				initial_bounds = Element::get_bounding_box(selection, false);
+				set_click_offset();
 				return nullptr;
 			}
 
@@ -53,20 +55,19 @@ Action* ToolSelect::handle_mouse_event(UINT message, Gdiplus::PointF cursor_pos,
 	case DRAGGING_HANDLE:
 		if (message == WM_LBUTTONUP) {
 			Gdiplus::Matrix* transform = new Gdiplus::Matrix;
+			// Rotate selection
 			if (mode == ROTATE) {
 				if (active_handle == "rotation_center") {
 					rotation_center = cursor_pos;
 				}
 				else {
-					float theta_initial = atan2f(click_position.Y - rotation_center.Y, click_position.X - rotation_center.X);
-					float theta = atan2f(cursor_pos.Y - rotation_center.Y, cursor_pos.X - rotation_center.X);
-					float delta_theta = theta - theta_initial;
-					transform->RotateAt(delta_theta * 180.0f / (float)std::numbers::pi, rotation_center);
+					rotate_transform(cursor_pos, transform, shift_pressed, control_pressed);
 					update_bounds();
 				}
 			}
+			// Resize selection
 			else {
-
+				resize_transform(cursor_pos, transform, shift_pressed, control_pressed);
 				update_bounds();
 				update_rotation_center();
 			}
@@ -77,26 +78,22 @@ Action* ToolSelect::handle_mouse_event(UINT message, Gdiplus::PointF cursor_pos,
 		}
 		else if (message == WM_MOUSEMOVE) {
 			Gdiplus::Matrix* transform = new Gdiplus::Matrix;
+			// Temporarily rotate selection
 			if (mode == ROTATE) {
 				if (active_handle == "rotation_center") {
 					rotation_center = cursor_pos;
 				}
 				else {
-					float theta_initial = atan2f(click_position.Y - rotation_center.Y, click_position.X - rotation_center.X);
-					float theta = atan2f(cursor_pos.Y - rotation_center.Y, cursor_pos.X - rotation_center.X);
-					float delta_theta = theta - theta_initial;
-					transform->RotateAt(delta_theta * 180.0f / (float)std::numbers::pi, rotation_center);
+					rotate_transform(cursor_pos, transform, shift_pressed, control_pressed);
 					update_bounds();
 				}
 			}
+			// Temporarily resize selection
 			else {
-
+				resize_transform(cursor_pos, transform, shift_pressed, control_pressed);
 				update_bounds();
 				update_rotation_center();
 			}
-
-			for (const auto& element : selection)
-				element->transform_temp(transform);
 			delete transform;
 		}
 		break;
@@ -231,6 +228,8 @@ void ToolSelect::update() {
 		),
 		selection.end()
 	);
+
+	update_bounds();
 }
 
 void ToolSelect::select_all() {
@@ -284,6 +283,78 @@ void ToolSelect::update_bounds() {
 void ToolSelect::update_rotation_center() {
 	if (bounds)
 		rotation_center = { (bounds->GetLeft() + bounds->GetRight()) / 2, (bounds->GetTop() + bounds->GetBottom()) / 2 };
+}
+
+void ToolSelect::set_click_offset() {
+	if (mode == RESIZE) {
+		if (active_handle == "resize_top_left") {
+			click_offset = click_position - Gdiplus::PointF(initial_bounds->GetLeft(), initial_bounds->GetTop());
+		}
+		else if (active_handle == "resize_top") {
+			click_offset = click_position - Gdiplus::PointF((initial_bounds->GetLeft() + initial_bounds->GetRight()) / 2.0f, initial_bounds->GetTop());
+		}
+		else if (active_handle == "resize_top_right") {
+			click_offset = click_position - Gdiplus::PointF(initial_bounds->GetRight(), initial_bounds->GetTop());
+		}
+		else if (active_handle == "resize_right") {
+			click_offset = click_position - Gdiplus::PointF(initial_bounds->GetRight(), (initial_bounds->GetTop() + initial_bounds->GetBottom()) / 2.0f);
+		}
+		else if (active_handle == "resize_bottom_right") {
+			click_offset = click_position - Gdiplus::PointF(initial_bounds->GetRight(), initial_bounds->GetBottom());
+		}
+		else if (active_handle == "resize_bottom") {
+			click_offset = click_position - Gdiplus::PointF((initial_bounds->GetLeft() + initial_bounds->GetRight()) / 2.0f, initial_bounds->GetBottom());
+		}
+		else if (active_handle == "resize_bottom_left") {
+			click_offset = click_position - Gdiplus::PointF(initial_bounds->GetLeft(), initial_bounds->GetBottom());
+		}
+		else if (active_handle == "resize_left") {
+			click_offset = click_position - Gdiplus::PointF(initial_bounds->GetLeft(), (initial_bounds->GetTop() + initial_bounds->GetBottom()) / 2.0f);
+		}
+	}
+}
+
+void ToolSelect::rotate_transform(Gdiplus::PointF& cursor_pos, Gdiplus::Matrix* transform, bool shift_pressed, bool control_pressed) {
+	float theta_initial = atan2f(click_position.Y - rotation_center.Y, click_position.X - rotation_center.X);
+	float theta = atan2f(cursor_pos.Y - rotation_center.Y, cursor_pos.X - rotation_center.X);
+	float delta_theta = theta - theta_initial;
+	transform->RotateAt(delta_theta * 180.0f / (float)std::numbers::pi, rotation_center);
+
+	// Apply transform
+	for (const auto& element : selection)
+		element->transform_temp(transform);
+}
+
+void ToolSelect::resize_transform(Gdiplus::PointF& cursor_pos, Gdiplus::Matrix* transform, bool shift_pressed, bool control_pressed) {
+	float scale_x = 1.0f;
+	float scale_y = 1.0f;
+	float translate_x = 0.0f;
+	float translate_y = 0.0f;
+
+	if (active_handle == "resize_top_left" || active_handle == "resize_top" || active_handle == "resize_top_right") {
+		scale_y = -(cursor_pos.Y - click_offset.Y - initial_bounds->GetBottom()) / initial_bounds->Height;
+		translate_y = initial_bounds->GetBottom() * (1 - scale_y);
+	}
+	else if (active_handle == "resize_bottom_left" || active_handle == "resize_bottom" || active_handle == "resize_bottom_right") {
+		scale_y = (cursor_pos.Y - click_offset.Y - initial_bounds->GetTop()) / initial_bounds->Height;
+		translate_y = initial_bounds->GetTop() * (1 - scale_y);
+	}
+
+	if (active_handle == "resize_top_left" || active_handle == "resize_left" || active_handle == "resize_bottom_left") {
+		scale_x = -(cursor_pos.X - click_offset.X - initial_bounds->GetRight()) / initial_bounds->Width;
+		translate_x = initial_bounds->GetRight() * (1 - scale_x);
+	}
+	else if (active_handle == "resize_top_right" || active_handle == "resize_right" || active_handle == "resize_bottom_right") {
+		scale_x = (cursor_pos.X - click_offset.X - initial_bounds->GetLeft()) / initial_bounds->Width;
+		translate_x = initial_bounds->GetLeft() * (1 - scale_x);
+	}
+
+	transform->Translate(translate_x, translate_y);
+	transform->Scale(scale_x, scale_y);
+
+	// Apply transform
+	for (const auto& element : selection)
+		element->transform_temp(transform);
 }
 
 Tool::HandleMap ToolSelect::get_handles(float scale) {

@@ -53,6 +53,12 @@ private:
 	void update_bounds();
 	void update_rotation_center();
 
+	void set_click_offset();
+
+	// Calculate the transform during a rotate or resize operation. Temporarily apply it to the selection.
+	void rotate_transform(Gdiplus::PointF& cursor_pos, Gdiplus::Matrix* transform, bool shift_pressed, bool control_pressed);
+	void resize_transform(Gdiplus::PointF& cursor_pos, Gdiplus::Matrix* transform, bool shift_pressed, bool control_pressed);
+
 	HandleMap get_handles(float scale) override;
 
 	Mode mode = RESIZE;
@@ -68,10 +74,14 @@ private:
 	std::vector<std::shared_ptr<Element>> selection;
 
 	Gdiplus::PointF click_position;		// Cursor position when we click (start dragging a handle or the selection or start selecting an area)
+	// When we select a resize handle, click_offset is equal to click_position
+	// minus the position of the bounding box corner or edge midpoint corresponding to the resize handle.
+	Gdiplus::PointF click_offset;
 
 	Gdiplus::PointF rotation_center;
 	
-	std::optional<Gdiplus::RectF> bounds;
+	std::optional<Gdiplus::RectF> bounds;			// Bounding box of selection, if selection is nonempty
+	std::optional<Gdiplus::RectF> initial_bounds;	// Bounding box of selection before current resize operation
 
 	static const float SELECTION_MARGIN;
 };

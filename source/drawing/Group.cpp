@@ -32,30 +32,8 @@ void Group::draw_original(Gdiplus::Graphics* graphics) {
 	}
 }
 
-std::optional<Gdiplus::RectF> Group::get_bounding_box() {
-	std::optional<Gdiplus::RectF> bounds;
-	std::optional<Gdiplus::RectF> element_bounds;
-
-	for (std::shared_ptr<Element> el : elements) {
-		element_bounds = el->get_bounding_box();
-		if (!element_bounds)	// Element is empty
-			continue;
-		if (!bounds)			// Element is first nonempty element
-			bounds = element_bounds;
-		else {					// Grow bounds to fit element
-			float left = min(bounds->GetLeft(), element_bounds->GetLeft());
-			float top = min(bounds->GetTop(), element_bounds->GetTop());
-			float right = max(bounds->GetRight(), element_bounds->GetRight());
-			float bottom = max(bounds->GetBottom(), element_bounds->GetBottom());
-
-			bounds->X = left;
-			bounds->Y = top;
-			bounds->Width = right - left;
-			bounds->Height = bottom - top;
-		}
-	}
-
-	return bounds;
+std::optional<Gdiplus::RectF> Group::get_bounding_box(bool include_stroke) {
+	return Element::get_bounding_box(elements, include_stroke);
 }
 
 bool Group::intersects_rectangle(Gdiplus::RectF& rectangle) {

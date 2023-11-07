@@ -19,11 +19,12 @@ void Element::draw_original(Gdiplus::Graphics* graphics) {
 	draw_one(graphics);
 }
 
-std::optional<Gdiplus::RectF> Element::get_bounding_box(std::vector<std::shared_ptr<Element>> elements) {
+std::optional<Gdiplus::RectF> Element::get_bounding_box(std::vector<std::shared_ptr<Element>> elements, bool include_stroke) {
 	std::optional<Gdiplus::RectF> bounds = {};
+	std::optional<Gdiplus::RectF> element_bounds;
 
 	for (auto el : elements) {
-		auto element_bounds = el->get_bounding_box();
+		element_bounds = el->get_bounding_box(include_stroke);
 		if (!element_bounds)	// Element is empty
 			continue;
 		if (!bounds)			// Element is first nonempty element
