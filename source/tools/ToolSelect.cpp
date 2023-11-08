@@ -334,28 +334,59 @@ void ToolSelect::rotate_transform(Gdiplus::PointF& cursor_pos, Gdiplus::Matrix* 
 void ToolSelect::resize_transform(Gdiplus::PointF& cursor_pos, Gdiplus::Matrix* transform, bool shift_pressed, bool control_pressed) {
 	float scale_x = 1.0f;
 	float scale_y = 1.0f;
-	float translate_x = 0.0f;
-	float translate_y = 0.0f;
+	// The anchor point stays put during the transform. If shift is pressed, anchor is the center of the selection.
+	// Otherwise, anchor is the point on initial_bounds opposite the active handle.
+	Gdiplus::PointF anchor = {
+		(initial_bounds->GetLeft() + initial_bounds->GetRight()) / 2.0f,
+		(initial_bounds->GetTop() + initial_bounds->GetBottom()) / 2.0f
+	};
 
 	if (active_handle == "resize_top_left" || active_handle == "resize_top" || active_handle == "resize_top_right") {
 		scale_y = -(cursor_pos.Y - click_offset.Y - initial_bounds->GetBottom()) / initial_bounds->Height;
-		translate_y = initial_bounds->GetBottom() * (1 - scale_y);
+		anchor.Y = initial_bounds->GetBottom();
 	}
 	else if (active_handle == "resize_bottom_left" || active_handle == "resize_bottom" || active_handle == "resize_bottom_right") {
 		scale_y = (cursor_pos.Y - click_offset.Y - initial_bounds->GetTop()) / initial_bounds->Height;
-		translate_y = initial_bounds->GetTop() * (1 - scale_y);
+		anchor.Y = initial_bounds->GetTop();
 	}
 
 	if (active_handle == "resize_top_left" || active_handle == "resize_left" || active_handle == "resize_bottom_left") {
 		scale_x = -(cursor_pos.X - click_offset.X - initial_bounds->GetRight()) / initial_bounds->Width;
-		translate_x = initial_bounds->GetRight() * (1 - scale_x);
+		anchor.X = initial_bounds->GetRight();
 	}
 	else if (active_handle == "resize_top_right" || active_handle == "resize_right" || active_handle == "resize_bottom_right") {
 		scale_x = (cursor_pos.X - click_offset.X - initial_bounds->GetLeft()) / initial_bounds->Width;
-		translate_x = initial_bounds->GetLeft() * (1 - scale_x);
+		anchor.X = initial_bounds->GetLeft();
 	}
 
-	transform->Translate(translate_x, translate_y);
+	// Press control to scale both x and y equally
+	if (control_pressed) {
+		float scale = 1.0f;
+		if (active_handle == "resize_top_left" || active_handle == "resize_top_right" ||
+			active_handle == "resize_bottom_right" || active_handle == "resize_bottom_left")
+			scale = (scale_x + scale_y) / 2.0f;
+		else if (active_handle == "resize_top" || active_handle == "resize_bottom")
+			scale = scale_y;
+		else if (active_handle == "resize_left" || active_handle == "resize_right")
+			scale = scale_x;
+
+		scale_x = scale;
+		scale_y = scale;
+	}
+
+	// Press shift to resize about the center of the selection.
+	if (shift_pressed) {
+		// Double the change in width and height
+		scale_x = 2 * scale_x - 1;
+		scale_y = 2 * scale_y - 1;
+
+		anchor = {
+			(initial_bounds->GetLeft() + initial_bounds->GetRight()) / 2.0f,
+			(initial_bounds->GetTop() + initial_bounds->GetBottom()) / 2.0f
+		};
+	}
+
+	transform->Translate(anchor.X * (1 - scale_x), anchor.Y * (1 - scale_y));
 	transform->Scale(scale_x, scale_y);
 
 	// Apply transform
