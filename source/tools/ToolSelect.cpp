@@ -315,10 +315,16 @@ void ToolSelect::set_click_offset() {
 }
 
 void ToolSelect::rotate_transform(Gdiplus::PointF& cursor_pos, Gdiplus::Matrix* transform, bool shift_pressed, bool control_pressed) {
+	// In radians
 	float theta_initial = atan2f(click_position.Y - rotation_center.Y, click_position.X - rotation_center.X);
 	float theta = atan2f(cursor_pos.Y - rotation_center.Y, cursor_pos.X - rotation_center.X);
-	float delta_theta = theta - theta_initial;
-	transform->RotateAt(delta_theta * 180.0f / (float)std::numbers::pi, rotation_center);
+	// In degrees
+	float delta_theta = (theta - theta_initial) * 180.0f / (float)std::numbers::pi;
+	// Press control to snap to 15-degree increments
+	if (control_pressed)
+		delta_theta = 15.0f * roundf(delta_theta / 15.0f);
+
+	transform->RotateAt(delta_theta, rotation_center);
 
 	// Apply transform
 	for (const auto& element : selection)
