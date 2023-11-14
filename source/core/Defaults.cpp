@@ -18,6 +18,7 @@ Defaults::Defaults() {
 	// tools
 	wip_pen = new Pen(Color(255, 0, 255, 255), 0.0f);
 	tool_pen = new Pen(Color(255, 255, 0, 0), 0.0f);
+	tangent_pen = new Pen(Color(255, 255, 120, 255), 0.0f);
 	symmetry_vector_pen = new Pen(Color(255, 255, 255, 0), 0.0f);
 	selection_pen_1 = new Pen(Color(255, 0, 0, 0), 0.0f);
 	selection_pen_2 = new Pen(Color(255, 255, 255, 255), 0.0f);

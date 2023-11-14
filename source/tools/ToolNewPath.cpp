@@ -126,8 +126,19 @@ void ToolNewPath::draw(
 	if (state != FIRST_DOWN) {
 		for (auto& transform : transforms) {
 			graphics->MultiplyTransform(transform.get());
+			
+			// Draw path in progress
 			graphics->DrawBeziers(defaults.wip_pen, wip_path.data(), (int)wip_path.size());
+
+			// Draw tangent line segment at the last node
+			if (state == NTH_RELEASE)
+				graphics->DrawLine(defaults.tangent_pen, cursor_pos, tool_path[2]);
+			else if (state == NTH_DOWN)
+				graphics->DrawLine(defaults.tangent_pen, tool_path[1], wip_path[wip_path.size() - 2]);
+
+			// Draw new path segment
 			graphics->DrawBeziers(defaults.tool_pen, tool_path.data(), (int)tool_path.size());
+
 			transform->Invert();
 			graphics->MultiplyTransform(transform.get());
 			transform->Invert();
