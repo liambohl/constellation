@@ -278,6 +278,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			application->handle_mouse_wheel_event(message, wParam, lParam);
 			break;
 
+		// Set cursor
+		case WM_SETCURSOR:
+			application->set_cursor();
+			break;
+
 		// Resize window
 		case WM_SIZE:
 			application->resize(hWnd, wParam, lParam);

@@ -9,7 +9,7 @@ class ToolNewPath :
 	public Tool
 {
 public:
-	ToolNewPath(Drawing& drawing, Defaults& defaults) : Tool(drawing, defaults) { }
+	ToolNewPath(Drawing& drawing, Defaults& defaults) : Tool(drawing, defaults, CURSOR_PEN) { }
 
 	Action* handle_mouse_event(UINT message, Gdiplus::PointF cursor_pos, int key_state, float scale) override;
 

@@ -40,6 +40,14 @@ public:
 	// Otherwise, return false.
 	virtual boolean handle_escape() { return false; }
 
+	void set_application_cursor();
+
+	// cursors
+	static HCURSOR cursor;					// Current cursor
+	static HCURSOR CURSOR_SELECT;			// Default cursor
+	static HCURSOR CURSOR_SELECT_HIGHLIGHT;	// Shown when using select tool and hovering over an element
+	static HCURSOR CURSOR_PEN;				// Shown when drawing paths
+
 protected:
 	struct Handle {
 		Gdiplus::Bitmap* default_image;		// image to represent this handle
@@ -49,7 +57,9 @@ protected:
 	// Each handle gets a name, a Handle object (images), and a position.
 	typedef std::unordered_map<std::string, std::pair<Handle, Gdiplus::PointF>> HandleMap;
 
-	Tool(Drawing& drawing, Defaults& defaults);
+	Tool(Drawing& drawing, Defaults& defaults, HCURSOR cursor = CURSOR_SELECT);
+
+	void set_cursor(HCURSOR cursor) { Tool::cursor = cursor; }
 
 	// Get all handles that should be drawn and selectable.
 	virtual HandleMap get_handles(float scale) { return {}; }
@@ -86,5 +96,5 @@ protected:
 	static Handle HANDLE_DIAMOND;
 	static Handle HANDLE_MOVE;
 
-	static bool handles_loaded;
+	static bool resources_loaded;
 };

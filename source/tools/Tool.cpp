@@ -7,43 +7,64 @@
 const float Tool::HANDLE_SIZE = 15.0f;
 const float Tool::SELECTION_RANGE_SQUARED = 100.0f;
 
-Tool::Handle Tool::RESIZE_TOP_LEFT =     { nullptr, nullptr };
-Tool::Handle Tool::RESIZE_TOP_RIGHT =    { nullptr, nullptr };
-Tool::Handle Tool::RESIZE_HORIZONTAL =   { nullptr, nullptr };
-Tool::Handle Tool::RESIZE_VERTICAL =     { nullptr, nullptr };
+Tool::Handle Tool::RESIZE_TOP_LEFT     = { nullptr, nullptr };
+Tool::Handle Tool::RESIZE_TOP_RIGHT    = { nullptr, nullptr };
+Tool::Handle Tool::RESIZE_HORIZONTAL   = { nullptr, nullptr };
+Tool::Handle Tool::RESIZE_VERTICAL     = { nullptr, nullptr };
 
-Tool::Handle Tool::ROTATE_TOP_LEFT =     { nullptr, nullptr };
-Tool::Handle Tool::ROTATE_TOP_RIGHT =    { nullptr, nullptr };
-Tool::Handle Tool::ROTATE_BOTTOM_LEFT =  { nullptr, nullptr };
+Tool::Handle Tool::ROTATE_TOP_LEFT     = { nullptr, nullptr };
+Tool::Handle Tool::ROTATE_TOP_RIGHT    = { nullptr, nullptr };
+Tool::Handle Tool::ROTATE_BOTTOM_LEFT  = { nullptr, nullptr };
 Tool::Handle Tool::ROTATE_BOTTOM_RIGHT = { nullptr, nullptr };
 
-Tool::Handle Tool::HANDLE_CIRCLE =       { nullptr, nullptr };
-Tool::Handle Tool::HANDLE_SQUARE =       { nullptr, nullptr };
-Tool::Handle Tool::HANDLE_DIAMOND =      { nullptr, nullptr };
-Tool::Handle Tool::HANDLE_MOVE =         { nullptr, nullptr };
+Tool::Handle Tool::HANDLE_CIRCLE       = { nullptr, nullptr };
+Tool::Handle Tool::HANDLE_SQUARE       = { nullptr, nullptr };
+Tool::Handle Tool::HANDLE_DIAMOND      = { nullptr, nullptr };
+Tool::Handle Tool::HANDLE_MOVE         = { nullptr, nullptr };
 
-bool Tool::handles_loaded = false;
+HCURSOR Tool::CURSOR_SELECT            = nullptr;
+HCURSOR Tool::CURSOR_SELECT_HIGHLIGHT  = nullptr;
+HCURSOR Tool::CURSOR_PEN               = nullptr;
+HCURSOR Tool::cursor = CURSOR_SELECT;
 
-Tool::Tool(Drawing& drawing, Defaults& defaults) : drawing(drawing), defaults(defaults) {
+bool Tool::resources_loaded = false;
+
+void Tool::set_application_cursor() {
+	SetCursor(cursor);
+}
+
+Tool::Tool(Drawing& drawing, Defaults& defaults, HCURSOR cursor) : drawing(drawing), defaults(defaults) {
 	// Don't load handle images until we construct the first tool, which should be after Gdiplus has started up. See class Initializer for details.
-	if (!handles_loaded) {
-		RESIZE_TOP_LEFT     = { image_from_resource(IDB_RESIZE_TOP_LEFT, L"PNG"),     image_from_resource(IDB_RESIZE_TOP_LEFT_SELECTED, L"PNG") };
-		RESIZE_TOP_RIGHT    = { image_from_resource(IDB_RESIZE_TOP_RIGHT, L"PNG"),    image_from_resource(IDB_RESIZE_TOP_RIGHT_SELECTED, L"PNG") };
-		RESIZE_HORIZONTAL   = { image_from_resource(IDB_RESIZE_HORIZONTAL, L"PNG"),   image_from_resource(IDB_RESIZE_HORIZONTAL_SELECTED, L"PNG") };
-		RESIZE_VERTICAL     = { image_from_resource(IDB_RESIZE_VERTICAL, L"PNG"),     image_from_resource(IDB_RESIZE_VERTICAL_SELECTED, L"PNG") };
+	if (!resources_loaded) {
+		HINSTANCE hInstance = GetModuleHandle(nullptr);
 
-		ROTATE_TOP_LEFT     = { image_from_resource(IDB_ROTATE_TOP_LEFT, L"PNG"),     image_from_resource(IDB_ROTATE_TOP_LEFT_SELECTED, L"PNG") };
-		ROTATE_TOP_RIGHT    = { image_from_resource(IDB_ROTATE_TOP_RIGHT, L"PNG"),    image_from_resource(IDB_ROTATE_TOP_RIGHT_SELECTED, L"PNG") };
-		ROTATE_BOTTOM_LEFT  = { image_from_resource(IDB_ROTATE_BOTTOM_LEFT, L"PNG"),  image_from_resource(IDB_ROTATE_BOTTOM_LEFT_SELECTED, L"PNG") };
-		ROTATE_BOTTOM_RIGHT = { image_from_resource(IDB_ROTATE_BOTTOM_RIGHT, L"PNG"), image_from_resource(IDB_ROTATE_BOTTOM_RIGHT_SELECTED, L"PNG") };
+		RESIZE_TOP_LEFT     = { image_from_resource(hInstance, IDB_RESIZE_TOP_LEFT, L"PNG"),     image_from_resource(hInstance, IDB_RESIZE_TOP_LEFT_SELECTED, L"PNG") };
+		RESIZE_TOP_RIGHT    = { image_from_resource(hInstance, IDB_RESIZE_TOP_RIGHT, L"PNG"),    image_from_resource(hInstance, IDB_RESIZE_TOP_RIGHT_SELECTED, L"PNG") };
+		RESIZE_HORIZONTAL   = { image_from_resource(hInstance, IDB_RESIZE_HORIZONTAL, L"PNG"),   image_from_resource(hInstance, IDB_RESIZE_HORIZONTAL_SELECTED, L"PNG") };
+		RESIZE_VERTICAL     = { image_from_resource(hInstance, IDB_RESIZE_VERTICAL, L"PNG"),     image_from_resource(hInstance, IDB_RESIZE_VERTICAL_SELECTED, L"PNG") };
+
+		ROTATE_TOP_LEFT     = { image_from_resource(hInstance, IDB_ROTATE_TOP_LEFT, L"PNG"),     image_from_resource(hInstance, IDB_ROTATE_TOP_LEFT_SELECTED, L"PNG") };
+		ROTATE_TOP_RIGHT    = { image_from_resource(hInstance, IDB_ROTATE_TOP_RIGHT, L"PNG"),    image_from_resource(hInstance, IDB_ROTATE_TOP_RIGHT_SELECTED, L"PNG") };
+		ROTATE_BOTTOM_LEFT  = { image_from_resource(hInstance, IDB_ROTATE_BOTTOM_LEFT, L"PNG"),  image_from_resource(hInstance, IDB_ROTATE_BOTTOM_LEFT_SELECTED, L"PNG") };
+		ROTATE_BOTTOM_RIGHT = { image_from_resource(hInstance, IDB_ROTATE_BOTTOM_RIGHT, L"PNG"), image_from_resource(hInstance, IDB_ROTATE_BOTTOM_RIGHT_SELECTED, L"PNG") };
 	
-		HANDLE_CIRCLE       = { image_from_resource(IDB_HANDLE_CIRCLE, L"PNG"),       image_from_resource(IDB_HANDLE_CIRCLE_SELECTED, L"PNG") };
-		HANDLE_SQUARE       = { image_from_resource(IDB_HANDLE_SQUARE, L"PNG"),       image_from_resource(IDB_HANDLE_SQUARE_SELECTED, L"PNG") };
-		HANDLE_DIAMOND      = { image_from_resource(IDB_HANDLE_DIAMOND, L"PNG"),      image_from_resource(IDB_HANDLE_DIAMOND_SELECTED, L"PNG") };
-		HANDLE_MOVE         = { image_from_resource(IDB_HANDLE_MOVE, L"PNG"),         image_from_resource(IDB_HANDLE_MOVE_SELECTED, L"PNG") };
+		HANDLE_CIRCLE       = { image_from_resource(hInstance, IDB_HANDLE_CIRCLE, L"PNG"),       image_from_resource(hInstance, IDB_HANDLE_CIRCLE_SELECTED, L"PNG") };
+		HANDLE_SQUARE       = { image_from_resource(hInstance, IDB_HANDLE_SQUARE, L"PNG"),       image_from_resource(hInstance, IDB_HANDLE_SQUARE_SELECTED, L"PNG") };
+		HANDLE_DIAMOND      = { image_from_resource(hInstance, IDB_HANDLE_DIAMOND, L"PNG"),      image_from_resource(hInstance, IDB_HANDLE_DIAMOND_SELECTED, L"PNG") };
+		HANDLE_MOVE         = { image_from_resource(hInstance, IDB_HANDLE_MOVE, L"PNG"),         image_from_resource(hInstance, IDB_HANDLE_MOVE_SELECTED, L"PNG") };
 
-		handles_loaded = true;
+		CURSOR_SELECT           = LoadCursor(hInstance, MAKEINTRESOURCE(IDC_CURSOR_SELECT));
+		CURSOR_SELECT_HIGHLIGHT = LoadCursor(hInstance, MAKEINTRESOURCE(IDC_CURSOR_SELECT_HIGHLIGHT));
+		CURSOR_PEN              = LoadCursor(hInstance, MAKEINTRESOURCE(IDC_CURSOR_PEN));
+
+		resources_loaded = true;
+
+		set_cursor(CURSOR_SELECT);
 	}
+	else
+		set_cursor(cursor);
+
+	set_application_cursor();
 }
 
 std::optional<std::string> Tool::try_select_handle(Gdiplus::PointF cursor_pos, float scale) {

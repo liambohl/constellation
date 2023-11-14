@@ -57,6 +57,9 @@ public:
 	// Redraw if overdue for a frame
 	void refresh_if_necessary();
 
+	// Set the cursor according to the state of the current tool
+	void set_cursor();
+
 	// Does the current drawing have any unsaved changes?
 	bool has_unsaved_changes() { return unsaved_changes != 0 || !unchanged_state_reachable; }
 

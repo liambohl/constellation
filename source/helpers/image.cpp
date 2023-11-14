@@ -2,8 +2,7 @@
 
 
 // Thanks to ChatGPT for this function
-Gdiplus::Bitmap* image_from_resource(int resourceID, const wchar_t* resourceType) {
-	HINSTANCE hInstance = GetModuleHandle(nullptr);
+Gdiplus::Bitmap* image_from_resource(HINSTANCE hInstance, int resourceID, const wchar_t* resourceType) {
 	HRSRC hResource = FindResource(hInstance, MAKEINTRESOURCE(resourceID), resourceType);
 	if (!hResource) return nullptr;
 

@@ -305,6 +305,10 @@ void ConstellationApp::refresh_if_necessary() {
 
 }
 
+void ConstellationApp::set_cursor() {
+    current_tool->set_application_cursor();
+}
+
 void ConstellationApp::do_action(Action* action) {
     action->apply(drawing);
     current_tool->update();

@@ -73,6 +73,9 @@
 #define IDB_HANDLE_DIAMOND_SELECTED     422
 #define IDB_HANDLE_MOVE                 423
 #define IDB_HANDLE_MOVE_SELECTED        424
+#define IDC_CURSOR_SELECT               425
+#define IDC_CURSOR_SELECT_HIGHLIGHT     426
+#define IDC_CURSOR_PEN                  427
 #define IDC_SAVE                        1004
 #define IDC_DONT_SAVE                   1006
 #define IDC_SAVE_PROMPT                 1007
@@ -105,7 +108,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
-#define _APS_NEXT_RESOURCE_VALUE        425
+#define _APS_NEXT_RESOURCE_VALUE        428
 #define _APS_NEXT_COMMAND_VALUE         32794
 #define _APS_NEXT_CONTROL_VALUE         1011
 #define _APS_NEXT_SYMED_VALUE           110

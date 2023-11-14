@@ -51,6 +51,14 @@ Action* ToolSelect::handle_mouse_event(UINT message, Gdiplus::PointF cursor_pos,
 				state = SELECTING_AREA;
 			}
 		}
+		else if (message == WM_MOUSEMOVE) {
+			// If an element is in selection range, indicate that by highlighting the cursor
+			std::shared_ptr<Element> element = drawing.select_element(cursor_pos, SELECTION_MARGIN, scale);
+			if (element != nullptr)
+				set_cursor(CURSOR_SELECT_HIGHLIGHT);
+			else
+				set_cursor(CURSOR_SELECT);
+		}
 		break;
 	case DRAGGING_HANDLE:
 		if (message == WM_LBUTTONUP) {
