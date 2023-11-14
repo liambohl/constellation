@@ -95,8 +95,8 @@ BEGIN
     "O",            ID_FILE_OPEN,           VIRTKEY, CONTROL, NOINVERT
     "S",            ID_FILE_SAVE,           VIRTKEY, CONTROL, NOINVERT
     "S",            ID_FILE_SAVE_AS,        VIRTKEY, SHIFT, CONTROL, NOINVERT
-    "/",            IDM_ABOUT,              ASCII,  ALT, NOINVERT
-    "?",            IDM_ABOUT,              ASCII,  ALT, NOINVERT
+    "/",            IDM_ABOUT,              ASCII, ALT, NOINVERT
+    "?",            IDM_ABOUT,              ASCII, ALT, NOINVERT
 END
 
 
@@ -267,62 +267,62 @@ IDB_SYMMETRY_P6M        BITMAP                  "..\\..\\img\\wallpaper_group_il
 // PNG
 //
 
-IDB_RESIZE_TOP_LEFT     PNG                     "C:\\Users\\liamb\\OneDrive\\Documents\\code\\C++\\Constellation\\img\\handles\\resize_top_left.png"
+IDB_RESIZE_TOP_LEFT                 PNG         "..\\..\\img\\handles\\resize_top_left.png"
 
-IDB_RESIZE_TOP_LEFT_SELECTED PNG                     "C:\\Users\\liamb\\OneDrive\\Documents\\code\\C++\\Constellation\\img\\handles\\resize_top_left_inverted.png"
+IDB_RESIZE_TOP_LEFT_SELECTED        PNG         "..\\..\\img\\handles\\resize_top_left_inverted.png"
 
-IDB_RESIZE_TOP_RIGHT    PNG                     "C:\\Users\\liamb\\OneDrive\\Documents\\code\\C++\\Constellation\\img\\handles\\resize_top_right.png"
+IDB_RESIZE_TOP_RIGHT                PNG         "..\\..\\img\\handles\\resize_top_right.png"
 
-IDB_RESIZE_TOP_RIGHT_SELECTED PNG                     "C:\\Users\\liamb\\OneDrive\\Documents\\code\\C++\\Constellation\\img\\handles\\resize_top_right_inverted.png"
+IDB_RESIZE_TOP_RIGHT_SELECTED       PNG         "..\\..\\img\\handles\\resize_top_right_inverted.png"
 
-IDB_RESIZE_HORIZONTAL   PNG                     "C:\\Users\\liamb\\OneDrive\\Documents\\code\\C++\\Constellation\\img\\handles\\resize_horizontal.png"
+IDB_RESIZE_HORIZONTAL               PNG         "..\\..\\img\\handles\\resize_horizontal.png"
 
-IDB_RESIZE_HORIZONTAL_SELECTED PNG                     "C:\\Users\\liamb\\OneDrive\\Documents\\code\\C++\\Constellation\\img\\handles\\resize_horizontal_inverted.png"
+IDB_RESIZE_HORIZONTAL_SELECTED      PNG         "..\\..\\img\\handles\\resize_horizontal_inverted.png"
 
-IDB_RESIZE_VERTICAL     PNG                     "C:\\Users\\liamb\\OneDrive\\Documents\\code\\C++\\Constellation\\img\\handles\\resize_vertical.png"
+IDB_RESIZE_VERTICAL                 PNG         "..\\..\\img\\handles\\resize_vertical.png"
 
-IDB_RESIZE_VERTICAL_SELECTED PNG                     "C:\\Users\\liamb\\OneDrive\\Documents\\code\\C++\\Constellation\\img\\handles\\resize_vertical_inverted.png"
+IDB_RESIZE_VERTICAL_SELECTED        PNG         "..\\..\\img\\handles\\resize_vertical_inverted.png"
 
-IDB_ROTATE_TOP_LEFT     PNG                     "C:\\Users\\liamb\\OneDrive\\Documents\\code\\C++\\Constellation\\img\\handles\\rotate_top_left.png"
+IDB_ROTATE_TOP_LEFT                 PNG         "..\\..\\img\\handles\\rotate_top_left.png"
 
-IDB_ROTATE_TOP_LEFT_SELECTED PNG                     "C:\\Users\\liamb\\OneDrive\\Documents\\code\\C++\\Constellation\\img\\handles\\rotate_top_left_inverted.png"
+IDB_ROTATE_TOP_LEFT_SELECTED        PNG         "..\\..\\img\\handles\\rotate_top_left_inverted.png"
 
-IDB_ROTATE_TOP_RIGHT    PNG                     "C:\\Users\\liamb\\OneDrive\\Documents\\code\\C++\\Constellation\\img\\handles\\rotate_top_right.png"
+IDB_ROTATE_TOP_RIGHT                PNG         "..\\..\\img\\handles\\rotate_top_right.png"
 
-IDB_ROTATE_TOP_RIGHT_SELECTED PNG                     "C:\\Users\\liamb\\OneDrive\\Documents\\code\\C++\\Constellation\\img\\handles\\rotate_top_right_inverted.png"
+IDB_ROTATE_TOP_RIGHT_SELECTED       PNG         "..\\..\\img\\handles\\rotate_top_right_inverted.png"
 
-IDB_ROTATE_BOTTOM_LEFT  PNG                     "C:\\Users\\liamb\\OneDrive\\Documents\\code\\C++\\Constellation\\img\\handles\\rotate_bottom_left.png"
+IDB_ROTATE_BOTTOM_LEFT              PNG         "..\\..\\img\\handles\\rotate_bottom_left.png"
 
-IDB_ROTATE_BOTTOM_LEFT_SELECTED PNG                     "C:\\Users\\liamb\\OneDrive\\Documents\\code\\C++\\Constellation\\img\\handles\\rotate_bottom_left_inverted.png"
+IDB_ROTATE_BOTTOM_LEFT_SELECTED     PNG         "..\\..\\img\\handles\\rotate_bottom_left_inverted.png"
 
-IDB_ROTATE_BOTTOM_RIGHT PNG                     "C:\\Users\\liamb\\OneDrive\\Documents\\code\\C++\\Constellation\\img\\handles\\rotate_bottom_right.png"
+IDB_ROTATE_BOTTOM_RIGHT             PNG         "..\\..\\img\\handles\\rotate_bottom_right.png"
 
-IDB_ROTATE_BOTTOM_RIGHT_SELECTED PNG                     "C:\\Users\\liamb\\OneDrive\\Documents\\code\\C++\\Constellation\\img\\handles\\rotate_bottom_right_inverted.png"
+IDB_ROTATE_BOTTOM_RIGHT_SELECTED    PNG         "..\\..\\img\\handles\\rotate_bottom_right_inverted.png"
 
-IDB_HANDLE_CIRCLE       PNG                     "C:\\Users\\liamb\\OneDrive\\Documents\\code\\C++\\Constellation\\img\\handles\\handle_circle.png"
+IDB_HANDLE_CIRCLE                   PNG         "..\\..\\img\\handles\\handle_circle.png"
 
-IDB_HANDLE_CIRCLE_SELECTED PNG                     "C:\\Users\\liamb\\OneDrive\\Documents\\code\\C++\\Constellation\\img\\handles\\handle_circle_selected.png"
+IDB_HANDLE_CIRCLE_SELECTED          PNG         "..\\..\\img\\handles\\handle_circle_selected.png"
 
-IDB_HANDLE_SQUARE       PNG                     "C:\\Users\\liamb\\OneDrive\\Documents\\code\\C++\\Constellation\\img\\handles\\handle_square.png"
+IDB_HANDLE_SQUARE                   PNG         "..\\..\\img\\handles\\handle_square.png"
 
-IDB_HANDLE_SQUARE_SELECTED PNG                     "C:\\Users\\liamb\\OneDrive\\Documents\\code\\C++\\Constellation\\img\\handles\\handle_square_selected.png"
+IDB_HANDLE_SQUARE_SELECTED          PNG         "..\\..\\img\\handles\\handle_square_selected.png"
 
-IDB_HANDLE_DIAMOND      PNG                     "C:\\Users\\liamb\\OneDrive\\Documents\\code\\C++\\Constellation\\img\\handles\\handle_diamond.png"
+IDB_HANDLE_DIAMOND                  PNG         "..\\..\\img\\handles\\handle_diamond.png"
 
-IDB_HANDLE_DIAMOND_SELECTED PNG                     "C:\\Users\\liamb\\OneDrive\\Documents\\code\\C++\\Constellation\\img\\handles\\handle_diamond_selected.png"
+IDB_HANDLE_DIAMOND_SELECTED         PNG         "..\\..\\img\\handles\\handle_diamond_selected.png"
 
-IDB_HANDLE_MOVE         PNG                     "C:\\Users\\liamb\\OneDrive\\Documents\\code\\C++\\Constellation\\img\\handles\\handle_move.png"
+IDB_HANDLE_MOVE                     PNG         "..\\..\\img\\handles\\handle_move.png"
 
-IDB_HANDLE_MOVE_SELECTED PNG                     "C:\\Users\\liamb\\OneDrive\\Documents\\code\\C++\\Constellation\\img\\handles\\handle_move_inverted.png"
+IDB_HANDLE_MOVE_SELECTED            PNG         "..\\..\\img\\handles\\handle_move_inverted.png"
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Cursors
 //
 
-IDC_CURSOR_SELECT           CURSOR "C:\\Users\\liamb\\OneDrive\\Documents\\code\\C++\\Constellation\\img\\cursors\\select.cur"
-IDC_CURSOR_SELECT_HIGHLIGHT CURSOR "C:\\Users\\liamb\\OneDrive\\Documents\\code\\C++\\Constellation\\img\\cursors\\select_highlight.cur"
-IDC_CURSOR_PEN              CURSOR "C:\\Users\\liamb\\OneDrive\\Documents\\code\\C++\\Constellation\\img\\cursors\\pen.cur"
+IDC_CURSOR_SELECT           CURSOR              "..\\..\\img\\cursors\\select.cur"
+IDC_CURSOR_SELECT_HIGHLIGHT CURSOR              "..\\..\\img\\cursors\\select_highlight.cur"
+IDC_CURSOR_PEN              CURSOR              "..\\..\\img\\cursors\\pen.cur"
 
 
 /////////////////////////////////////////////////////////////////////////////
