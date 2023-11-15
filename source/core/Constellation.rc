@@ -22,6 +22,7 @@
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -60,7 +61,7 @@ BEGIN
     POPUP "&Symmetry"
     BEGIN
         MENUITEM "&Choose Symmetry Group...",   ID_SYMMETRY_SYMMETRYGROUP
-        MENUITEM "&Edit Symmetry Parameters",   ID_SYMMETRY_EDITSYMMETRYPARAMETERS
+        MENUITEM "&Edit Symmetry Parameters",   ID_SYMMETRY_EDITSYMMETRYPARAMETERS, GRAYED
     END
     POPUP "&View"
     BEGIN
@@ -267,62 +268,65 @@ IDB_SYMMETRY_P6M        BITMAP                  "..\\..\\img\\wallpaper_group_il
 // PNG
 //
 
-IDB_RESIZE_TOP_LEFT                 PNG         "..\\..\\img\\handles\\resize_top_left.png"
+IDB_RESIZE_TOP_LEFT     PNG                     "..\\..\\img\\handles\\resize_top_left.png"
 
-IDB_RESIZE_TOP_LEFT_SELECTED        PNG         "..\\..\\img\\handles\\resize_top_left_inverted.png"
+IDB_RESIZE_TOP_LEFT_SELECTED PNG                "..\\..\\img\\handles\\resize_top_left_inverted.png"
 
-IDB_RESIZE_TOP_RIGHT                PNG         "..\\..\\img\\handles\\resize_top_right.png"
+IDB_RESIZE_TOP_RIGHT    PNG                     "..\\..\\img\\handles\\resize_top_right.png"
 
-IDB_RESIZE_TOP_RIGHT_SELECTED       PNG         "..\\..\\img\\handles\\resize_top_right_inverted.png"
+IDB_RESIZE_TOP_RIGHT_SELECTED PNG               "..\\..\\img\\handles\\resize_top_right_inverted.png"
 
-IDB_RESIZE_HORIZONTAL               PNG         "..\\..\\img\\handles\\resize_horizontal.png"
+IDB_RESIZE_HORIZONTAL   PNG                     "..\\..\\img\\handles\\resize_horizontal.png"
 
-IDB_RESIZE_HORIZONTAL_SELECTED      PNG         "..\\..\\img\\handles\\resize_horizontal_inverted.png"
+IDB_RESIZE_HORIZONTAL_SELECTED PNG              "..\\..\\img\\handles\\resize_horizontal_inverted.png"
 
-IDB_RESIZE_VERTICAL                 PNG         "..\\..\\img\\handles\\resize_vertical.png"
+IDB_RESIZE_VERTICAL     PNG                     "..\\..\\img\\handles\\resize_vertical.png"
 
-IDB_RESIZE_VERTICAL_SELECTED        PNG         "..\\..\\img\\handles\\resize_vertical_inverted.png"
+IDB_RESIZE_VERTICAL_SELECTED PNG                "..\\..\\img\\handles\\resize_vertical_inverted.png"
 
-IDB_ROTATE_TOP_LEFT                 PNG         "..\\..\\img\\handles\\rotate_top_left.png"
+IDB_ROTATE_TOP_LEFT     PNG                     "..\\..\\img\\handles\\rotate_top_left.png"
 
-IDB_ROTATE_TOP_LEFT_SELECTED        PNG         "..\\..\\img\\handles\\rotate_top_left_inverted.png"
+IDB_ROTATE_TOP_LEFT_SELECTED PNG                "..\\..\\img\\handles\\rotate_top_left_inverted.png"
 
-IDB_ROTATE_TOP_RIGHT                PNG         "..\\..\\img\\handles\\rotate_top_right.png"
+IDB_ROTATE_TOP_RIGHT    PNG                     "..\\..\\img\\handles\\rotate_top_right.png"
 
-IDB_ROTATE_TOP_RIGHT_SELECTED       PNG         "..\\..\\img\\handles\\rotate_top_right_inverted.png"
+IDB_ROTATE_TOP_RIGHT_SELECTED PNG               "..\\..\\img\\handles\\rotate_top_right_inverted.png"
 
-IDB_ROTATE_BOTTOM_LEFT              PNG         "..\\..\\img\\handles\\rotate_bottom_left.png"
+IDB_ROTATE_BOTTOM_LEFT  PNG                     "..\\..\\img\\handles\\rotate_bottom_left.png"
 
-IDB_ROTATE_BOTTOM_LEFT_SELECTED     PNG         "..\\..\\img\\handles\\rotate_bottom_left_inverted.png"
+IDB_ROTATE_BOTTOM_LEFT_SELECTED PNG             "..\\..\\img\\handles\\rotate_bottom_left_inverted.png"
 
-IDB_ROTATE_BOTTOM_RIGHT             PNG         "..\\..\\img\\handles\\rotate_bottom_right.png"
+IDB_ROTATE_BOTTOM_RIGHT PNG                     "..\\..\\img\\handles\\rotate_bottom_right.png"
 
-IDB_ROTATE_BOTTOM_RIGHT_SELECTED    PNG         "..\\..\\img\\handles\\rotate_bottom_right_inverted.png"
+IDB_ROTATE_BOTTOM_RIGHT_SELECTED PNG            "..\\..\\img\\handles\\rotate_bottom_right_inverted.png"
 
-IDB_HANDLE_CIRCLE                   PNG         "..\\..\\img\\handles\\handle_circle.png"
+IDB_HANDLE_CIRCLE       PNG                     "..\\..\\img\\handles\\handle_circle.png"
 
-IDB_HANDLE_CIRCLE_SELECTED          PNG         "..\\..\\img\\handles\\handle_circle_selected.png"
+IDB_HANDLE_CIRCLE_SELECTED PNG                  "..\\..\\img\\handles\\handle_circle_selected.png"
 
-IDB_HANDLE_SQUARE                   PNG         "..\\..\\img\\handles\\handle_square.png"
+IDB_HANDLE_SQUARE       PNG                     "..\\..\\img\\handles\\handle_square.png"
 
-IDB_HANDLE_SQUARE_SELECTED          PNG         "..\\..\\img\\handles\\handle_square_selected.png"
+IDB_HANDLE_SQUARE_SELECTED PNG                  "..\\..\\img\\handles\\handle_square_selected.png"
 
-IDB_HANDLE_DIAMOND                  PNG         "..\\..\\img\\handles\\handle_diamond.png"
+IDB_HANDLE_DIAMOND      PNG                     "..\\..\\img\\handles\\handle_diamond.png"
 
-IDB_HANDLE_DIAMOND_SELECTED         PNG         "..\\..\\img\\handles\\handle_diamond_selected.png"
+IDB_HANDLE_DIAMOND_SELECTED PNG                 "..\\..\\img\\handles\\handle_diamond_selected.png"
 
-IDB_HANDLE_MOVE                     PNG         "..\\..\\img\\handles\\handle_move.png"
+IDB_HANDLE_MOVE         PNG                     "..\\..\\img\\handles\\handle_move.png"
 
-IDB_HANDLE_MOVE_SELECTED            PNG         "..\\..\\img\\handles\\handle_move_inverted.png"
+IDB_HANDLE_MOVE_SELECTED PNG                    "..\\..\\img\\handles\\handle_move_inverted.png"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// Cursors
+// Cursor
 //
 
-IDC_CURSOR_SELECT           CURSOR              "..\\..\\img\\cursors\\select.cur"
+IDC_CURSOR_SELECT       CURSOR                  "..\\..\\img\\cursors\\select.cur"
+
 IDC_CURSOR_SELECT_HIGHLIGHT CURSOR              "..\\..\\img\\cursors\\select_highlight.cur"
-IDC_CURSOR_PEN              CURSOR              "..\\..\\img\\cursors\\pen.cur"
+
+IDC_CURSOR_PEN          CURSOR                  "..\\..\\img\\cursors\\pen.cur"
 
 
 /////////////////////////////////////////////////////////////////////////////

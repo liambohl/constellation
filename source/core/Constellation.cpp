@@ -39,7 +39,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	// Start up GDI Plus system
 	Initializer gdiPlusInitializer;
-	application = new ConstellationApp();
 
 	// Initialize global strings
 	LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
@@ -115,6 +114,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 		return FALSE;
 	}
 
+	application = new ConstellationApp(hWnd);
+
 	ShowWindow(hWnd, nCmdShow);
 	UpdateWindow(hWnd);
 
@@ -138,10 +139,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			{
 			// File menu
 			case ID_FILE_NEW:
-				PromptToSaveBeforeAction(hWnd, []() { application->new_drawing(); });
+				PromptToSaveBeforeAction(hWnd, [hWnd]() { application->new_drawing(hWnd); });
 				break;
 			case ID_FILE_OPEN:
-				PromptToSaveBeforeAction(hWnd, []() { application->open(); });
+				PromptToSaveBeforeAction(hWnd, [hWnd]() { application->open(hWnd); });
 				break;
 			case ID_FILE_SAVE:
 				application->save();

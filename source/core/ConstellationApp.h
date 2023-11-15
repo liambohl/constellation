@@ -15,11 +15,11 @@
 class ConstellationApp
 {
 public:
-	ConstellationApp();
+	ConstellationApp(HWND hWnd);
 
 	// File menu
-	void new_drawing();
-	void open();
+	void new_drawing(HWND hWnd);
+	void open(HWND hWnd);
 	void save();
 	void save_as();
 
@@ -71,7 +71,7 @@ private:
 	// Save to the file at drawing_file_path
 	void save_file();
 	// Open the file at drawing_file_path
-	void open_file();
+	void open_file(HWND hWnd);
 
 	// We definitely have no unsaved changes
 	void reset_unsaved_changes();

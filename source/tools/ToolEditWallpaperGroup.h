@@ -20,6 +20,8 @@ public:
 		float scale
 	) override;
 
+	bool update() override;
+
 private:
 	HandleMap get_handles(float scale) override;
 

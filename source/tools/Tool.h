@@ -26,7 +26,9 @@ public:
 	virtual boolean undo() { return false; }
 	virtual boolean redo() { return false; }
 
-	virtual void update() {}	// Check and update this tool's state after doing or undoing an action
+	// Check and update this tool's state after doing or undoing an action.
+	// Return true if this tool is no longer applicable and we should return to the select tool.
+	virtual bool update() { return false; }
 
 	virtual void select_all() {}
 	virtual void select_elements(std::vector<std::shared_ptr<Element>> elements) {}	// Select only the given elements

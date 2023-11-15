@@ -99,6 +99,13 @@ void ToolEditWallpaperGroup::draw(
 	draw_handles(graphics, selected_handle, cursor_pos, scale);
 }
 
+bool ToolEditWallpaperGroup::update() {
+	symmetry_group = dynamic_pointer_cast<WallpaperGroup>(drawing.get_symmetry_group());
+	if (symmetry_group == nullptr)
+		return true;	// The symmetry group is no longer a wallpaper group, and this tool is irrelevant
+	return false;
+}
+
 Tool::HandleMap ToolEditWallpaperGroup::get_handles(float scale) {
 	Gdiplus::PointF v1 = symmetry_group->get_v1();
 	Gdiplus::PointF v2 = symmetry_group->get_v2();

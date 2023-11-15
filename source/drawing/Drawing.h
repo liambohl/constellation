@@ -15,13 +15,13 @@ using json = nlohmann::json;
 class Drawing
 {
 public:
-	Drawing();
-	Drawing(json drawing_json);
+	Drawing(HWND hWnd);
+	Drawing(HWND hWnd, json drawing_json);
 
 	void draw(Gdiplus::Graphics* graphics);
 	void draw_original(Gdiplus::Graphics* graphics);
 
-	void set_symmetry_group(std::shared_ptr<SymmetryGroup> group) { symmetry_group = group; }
+	void set_symmetry_group(std::shared_ptr<SymmetryGroup> group);
 	std::shared_ptr<SymmetryGroup> get_symmetry_group() { return symmetry_group; }
 
 	std::optional<Gdiplus::RectF> get_bounding_box() { return elements.get_bounding_box(); }
@@ -35,6 +35,8 @@ public:
 	json to_json();
 
 private:
+	HWND hWnd;								// Handle to the window where this drawing is being displayed
+
 	Group elements;
 
 	Gdiplus::Color background;				// "transparent" color shown where there are no elements

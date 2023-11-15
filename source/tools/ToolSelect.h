@@ -22,7 +22,7 @@ public:
 		float scale
 	) override;
 
-	void update() override;
+	bool update() override;
 
 	void select_all() override;
 	virtual void select_elements(std::vector<std::shared_ptr<Element>> elements) override;

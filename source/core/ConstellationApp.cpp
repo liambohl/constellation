@@ -14,7 +14,7 @@
 #include "tools/ToolSelect.h"
 
 
-ConstellationApp::ConstellationApp()
+ConstellationApp::ConstellationApp(HWND hWnd) : drawing(hWnd)
 {
     set_tool(SELECT);
 
@@ -30,10 +30,10 @@ ConstellationApp::ConstellationApp()
     *Logger::get_instance() << "refresh interval: " << refresh_interval_ns << std::endl;
 }
 
-void ConstellationApp::new_drawing() {
+void ConstellationApp::new_drawing(HWND hWnd) {
     drawing_file_path = nullptr;
     drawing_folder = nullptr;
-    drawing = Drawing();
+    drawing = Drawing(hWnd);
     canvas.reset_transform();
     reset_unsaved_changes();
     reset_history();
@@ -42,9 +42,9 @@ void ConstellationApp::new_drawing() {
     *Logger::get_instance() << "New file" << std::endl;
 }
 
-void ConstellationApp::open() {
+void ConstellationApp::open(HWND hWnd) {
     if (open_cst_file(&drawing_file_path, drawing_folder)) {
-        open_file();
+        open_file(hWnd);
         *Logger::get_instance() << "Opened file \"" << drawing_file_path << "\"" << std::endl;
     }
 }
@@ -79,7 +79,9 @@ void ConstellationApp::undo() {
         undo_stack.pop();
         redo_stack.push(last);
 
-        current_tool->update();
+        // Tell current tool to reflect changes. If it is no longer relevant, revert to select tool
+        if (current_tool->update())
+            set_tool(SELECT);
         --unsaved_changes;
     }
 }
@@ -91,7 +93,8 @@ void ConstellationApp::redo() {
         redo_stack.pop();
         undo_stack.push(next);
 
-        current_tool->update();
+        if (current_tool->update())
+            set_tool(SELECT);
         ++unsaved_changes;
     }
 }
@@ -339,10 +342,10 @@ void ConstellationApp::save_file() {
     reset_unsaved_changes();
 }
 
-void ConstellationApp::open_file() {
+void ConstellationApp::open_file(HWND hWnd) {
     std::ifstream stream(drawing_file_path);
     json drawing_json = json::parse(stream);
-    drawing = Drawing(drawing_json);
+    drawing = Drawing(hWnd, drawing_json);
     stream.close();
 
     canvas.fit_drawing(drawing.get_bounding_box());

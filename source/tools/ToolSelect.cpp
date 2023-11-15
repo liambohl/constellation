@@ -222,7 +222,7 @@ void ToolSelect::draw(
 	}
 }
 
-void ToolSelect::update() {
+bool ToolSelect::update() {
 	// Remove any elements from the selection which are no longer in the drawing.
 	const auto& extant_elements = drawing.get_elements();
 	// std::remove_if moves these elements to the end of selection, then selection.erase deletes them.
@@ -238,6 +238,7 @@ void ToolSelect::update() {
 	);
 
 	update_bounds();
+	return false;	// Tool is still okay
 }
 
 void ToolSelect::select_all() {
