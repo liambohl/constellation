@@ -9,6 +9,7 @@
 #include "actions/ActionAddElements.h"
 #include "actions/ActionRemoveElements.h"
 #include "drawing/symmetry/SymmetryGroupFactory.h"
+#include "tools/ToolEditPathNodes.h"
 #include "tools/ToolEditWallpaperGroup.h"
 #include "tools/ToolNewPath.h"
 #include "tools/ToolSelect.h"
@@ -157,6 +158,9 @@ void ConstellationApp::set_tool(enum tool tool_type) {
         break;
     case SELECT:
         current_tool = new ToolSelect(drawing, defaults);
+        break;
+    case EDIT_PATH_NODES:
+        current_tool = new ToolEditPathNodes(drawing, defaults);
         break;
     case EDIT_SYMMETRY_PARAMETERS:
         current_tool = new ToolEditWallpaperGroup(drawing, defaults);

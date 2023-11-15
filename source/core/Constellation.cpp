@@ -185,6 +185,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			case ID_DRAW_PATH:
 				application->set_tool(NEW_PATH);
 				break;
+			case ID_DRAW_EDITPATHNODES:
+				application->set_tool(EDIT_PATH_NODES);
+				break;
 			// Symmetry menu
 			case ID_SYMMETRY_SYMMETRYGROUP:
 				DialogBox(hInst, MAKEINTRESOURCE(IDD_SELECT_SYMMETRY), hWnd, SelectSymmetry);

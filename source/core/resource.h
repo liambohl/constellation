@@ -73,9 +73,17 @@
 #define IDB_HANDLE_DIAMOND_SELECTED     422
 #define IDB_HANDLE_MOVE                 423
 #define IDB_HANDLE_MOVE_SELECTED        424
-#define IDC_CURSOR_SELECT               425
-#define IDC_CURSOR_SELECT_HIGHLIGHT     426
-#define IDC_CURSOR_PEN                  427
+#define IDB_NODE_CORNER                 425
+#define IDB_NODE_CORNER_SELECTED        426
+#define IDB_NODE_SMOOTH                 427
+#define IDB_NODE_SMOOTH_SELECTED        428
+#define IDB_NODE_SYMMETRIC              429
+#define IDB_NODE_SYMMETRIC_SELECTED     430
+#define IDC_CURSOR_SELECT               501
+#define IDC_CURSOR_SELECT_HIGHLIGHT     502
+#define IDC_CURSOR_NODES                503
+#define IDC_CURSOR_NODES_HIGHLIGHT      504
+#define IDC_CURSOR_PEN                  505
 #define IDC_SAVE                        1004
 #define IDC_DONT_SAVE                   1006
 #define IDC_SAVE_PROMPT                 1007
@@ -101,6 +109,7 @@
 #define ID_EDIT_DESELECT                32789
 #define ID_EDIT_DUPLICATE               32792
 #define ID_EDIT_DELETE                  32793
+#define ID_DRAW_EDITPATHNODES           32794
 #define IDC_STATIC                      -1
 
 // Next default values for new objects
@@ -108,8 +117,8 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
-#define _APS_NEXT_RESOURCE_VALUE        428
-#define _APS_NEXT_COMMAND_VALUE         32794
+#define _APS_NEXT_RESOURCE_VALUE        506
+#define _APS_NEXT_COMMAND_VALUE         32795
 #define _APS_NEXT_CONTROL_VALUE         1011
 #define _APS_NEXT_SYMED_VALUE           110
 #endif
