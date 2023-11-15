@@ -348,6 +348,9 @@ INT_PTR CALLBACK SavePrompt(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPara
 	UNREFERENCED_PARAMETER(lParam);
 	switch (message)
 	{
+	case WM_INITDIALOG:
+		SetFocus(hDlg);
+		return true;
 	case WM_COMMAND:
 		switch (LOWORD(wParam)) {
 		case IDCANCEL:		// "Escape" key sends this command
@@ -379,27 +382,28 @@ INT_PTR CALLBACK SelectSymmetry(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 	switch (message)
 	{
 	case WM_INITDIALOG: {
-		// On each button, draw an image of the corresponding symmetry group.
-		std::vector<std::tuple<const wchar_t*, int, int>> symmetry_groups {
-			{L"trivial",	IDC_SYMMETRY_TRIVIAL,	IDB_SYMMETRY_TRIVIAL},
-			{L"p1",			IDC_SYMMETRY_P1,		IDB_SYMMETRY_P1},
-			{L"p2",			IDC_SYMMETRY_P2,		IDB_SYMMETRY_P2},
-			{L"pm",			IDC_SYMMETRY_PM,		IDB_SYMMETRY_PM},
-			{L"pg",			IDC_SYMMETRY_PG,		IDB_SYMMETRY_PG},
-			{L"cm",			IDC_SYMMETRY_CM,		IDB_SYMMETRY_CM},
-			{L"pmm",		IDC_SYMMETRY_PMM,		IDB_SYMMETRY_PMM},
-			{L"pmg",		IDC_SYMMETRY_PMG,		IDB_SYMMETRY_PMG},
-			{L"pgg",		IDC_SYMMETRY_PGG,		IDB_SYMMETRY_PGG},
-			{L"cmm",		IDC_SYMMETRY_CMM,		IDB_SYMMETRY_CMM},
-			{L"p4",			IDC_SYMMETRY_P4,		IDB_SYMMETRY_P4},
-			{L"p4m",		IDC_SYMMETRY_P4M,		IDB_SYMMETRY_P4M},
-			{L"p4g",		IDC_SYMMETRY_P4G,		IDB_SYMMETRY_P4G},
-			{L"p3",			IDC_SYMMETRY_P3,		IDB_SYMMETRY_P3},
-			{L"p3m1",		IDC_SYMMETRY_P3M1,		IDB_SYMMETRY_P3M1},
-			{L"p31m",		IDC_SYMMETRY_P31M,		IDB_SYMMETRY_P31M},
-			{L"p6",			IDC_SYMMETRY_P6,		IDB_SYMMETRY_P6},
-			{L"p6m",		IDC_SYMMETRY_P6M,		IDB_SYMMETRY_P6M}
+		// For each symmetry group: {name, button ID, bitmap ID}
+		std::vector<std::tuple<std::string, int, int>> symmetry_groups {
+			{"trivial",		IDC_SYMMETRY_TRIVIAL,	IDB_SYMMETRY_TRIVIAL},
+			{"p1",			IDC_SYMMETRY_P1,		IDB_SYMMETRY_P1},
+			{"p2",			IDC_SYMMETRY_P2,		IDB_SYMMETRY_P2},
+			{"pm",			IDC_SYMMETRY_PM,		IDB_SYMMETRY_PM},
+			{"pg",			IDC_SYMMETRY_PG,		IDB_SYMMETRY_PG},
+			{"cm",			IDC_SYMMETRY_CM,		IDB_SYMMETRY_CM},
+			{"pmm",			IDC_SYMMETRY_PMM,		IDB_SYMMETRY_PMM},
+			{"pmg",			IDC_SYMMETRY_PMG,		IDB_SYMMETRY_PMG},
+			{"pgg",			IDC_SYMMETRY_PGG,		IDB_SYMMETRY_PGG},
+			{"cmm",			IDC_SYMMETRY_CMM,		IDB_SYMMETRY_CMM},
+			{"p4",			IDC_SYMMETRY_P4,		IDB_SYMMETRY_P4},
+			{"p4m",			IDC_SYMMETRY_P4M,		IDB_SYMMETRY_P4M},
+			{"p4g",			IDC_SYMMETRY_P4G,		IDB_SYMMETRY_P4G},
+			{"p3",			IDC_SYMMETRY_P3,		IDB_SYMMETRY_P3},
+			{"p3m1",		IDC_SYMMETRY_P3M1,		IDB_SYMMETRY_P3M1},
+			{"p31m",		IDC_SYMMETRY_P31M,		IDB_SYMMETRY_P31M},
+			{"p6",			IDC_SYMMETRY_P6,		IDB_SYMMETRY_P6},
+			{"p6m",			IDC_SYMMETRY_P6M,		IDB_SYMMETRY_P6M}
 		};
+		// On each button, draw an image of the corresponding symmetry group.
 		HBITMAP bitmap;
 		for (auto [text, control_id, bitmap_id] : symmetry_groups) {
 			bitmap = LoadBitmap(hInst, MAKEINTRESOURCE(bitmap_id));
@@ -408,6 +412,23 @@ INT_PTR CALLBACK SelectSymmetry(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 		RECT rect;
 		GetClientRect(hDlg, &rect);
 		InvalidateRect(hDlg, &rect, false);
+
+		// Select the button associated with the current symmetry group
+		std::string symmetry_group_name = application->get_drawing().get_symmetry_group()->name;
+		int symmetry_group_button = 0;											// ID of the button to select
+		for (const auto& [name, button, _] : symmetry_groups) {
+			if (name.compare(symmetry_group_name) == 0) {
+				symmetry_group_button = button;
+				break;
+			}
+		}
+		if (symmetry_group_button != 0) {
+			SendMessage(hDlg, DM_SETDEFID, (WPARAM)symmetry_group_button, 0);	// Set default
+			HWND hwndButton = GetDlgItem(hDlg, symmetry_group_button);
+			SetFocus(hwndButton);												// Set focus
+			return false;														// Return false since focus is set manually
+		}
+
 		return true;
 	}
 	case WM_COMMAND:

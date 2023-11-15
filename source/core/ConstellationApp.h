@@ -63,6 +63,8 @@ public:
 	// Does the current drawing have any unsaved changes?
 	bool has_unsaved_changes() { return unsaved_changes != 0 || !unchanged_state_reachable; }
 
+	Drawing& get_drawing() { return drawing; }
+
 private:
 	// Any action which changes the drawing must do so through this function.
 	// Undo, redo, file > open, and file > new are not actions and are exempt.
