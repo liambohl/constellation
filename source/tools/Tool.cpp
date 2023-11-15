@@ -22,8 +22,14 @@ Tool::Handle Tool::HANDLE_SQUARE       = { nullptr, nullptr };
 Tool::Handle Tool::HANDLE_DIAMOND      = { nullptr, nullptr };
 Tool::Handle Tool::HANDLE_MOVE         = { nullptr, nullptr };
 
+Tool::Handle Tool::NODE_CORNER         = { nullptr, nullptr };
+Tool::Handle Tool::NODE_SMOOTH         = { nullptr, nullptr };
+Tool::Handle Tool::NODE_SYMMETRIC      = { nullptr, nullptr };
+
 HCURSOR Tool::CURSOR_SELECT            = nullptr;
 HCURSOR Tool::CURSOR_SELECT_HIGHLIGHT  = nullptr;
+HCURSOR Tool::CURSOR_NODES             = nullptr;
+HCURSOR Tool::CURSOR_NODES_HIGHLIGHT   = nullptr;
 HCURSOR Tool::CURSOR_PEN               = nullptr;
 HCURSOR Tool::cursor = CURSOR_SELECT;
 
@@ -53,8 +59,14 @@ Tool::Tool(Drawing& drawing, Defaults& defaults, HCURSOR cursor) : drawing(drawi
 		HANDLE_DIAMOND      = { image_from_resource(hInstance, IDB_HANDLE_DIAMOND, L"PNG"),      image_from_resource(hInstance, IDB_HANDLE_DIAMOND_SELECTED, L"PNG") };
 		HANDLE_MOVE         = { image_from_resource(hInstance, IDB_HANDLE_MOVE, L"PNG"),         image_from_resource(hInstance, IDB_HANDLE_MOVE_SELECTED, L"PNG") };
 
+		NODE_CORNER         = { image_from_resource(hInstance, IDB_NODE_CORNER, L"PNG"),         image_from_resource(hInstance, IDB_NODE_CORNER_SELECTED, L"PNG") };
+		NODE_SMOOTH         = { image_from_resource(hInstance, IDB_NODE_SMOOTH, L"PNG"),         image_from_resource(hInstance, IDB_NODE_SMOOTH_SELECTED, L"PNG") };
+		NODE_SYMMETRIC      = { image_from_resource(hInstance, IDB_NODE_SYMMETRIC, L"PNG"),      image_from_resource(hInstance, IDB_NODE_SYMMETRIC_SELECTED, L"PNG") };
+
 		CURSOR_SELECT           = LoadCursor(hInstance, MAKEINTRESOURCE(IDC_CURSOR_SELECT));
 		CURSOR_SELECT_HIGHLIGHT = LoadCursor(hInstance, MAKEINTRESOURCE(IDC_CURSOR_SELECT_HIGHLIGHT));
+		CURSOR_NODES            = LoadCursor(hInstance, MAKEINTRESOURCE(IDC_CURSOR_NODES));
+		CURSOR_NODES_HIGHLIGHT  = LoadCursor(hInstance, MAKEINTRESOURCE(IDC_CURSOR_NODES_HIGHLIGHT));
 		CURSOR_PEN              = LoadCursor(hInstance, MAKEINTRESOURCE(IDC_CURSOR_PEN));
 
 		resources_loaded = true;

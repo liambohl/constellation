@@ -48,6 +48,8 @@ public:
 	static HCURSOR cursor;					// Current cursor
 	static HCURSOR CURSOR_SELECT;			// Default cursor
 	static HCURSOR CURSOR_SELECT_HIGHLIGHT;	// Shown when using select tool and hovering over an element
+	static HCURSOR CURSOR_NODES;			// Default cursor for edit path nodes tool
+	static HCURSOR CURSOR_NODES_HIGHLIGHT;	// Shown when using edit path nodes tool and hovering over a path, but not a node. Indicates that the user can drag the path.
 	static HCURSOR CURSOR_PEN;				// Shown when drawing paths
 
 protected:
@@ -97,6 +99,10 @@ protected:
 	static Handle HANDLE_SQUARE;
 	static Handle HANDLE_DIAMOND;
 	static Handle HANDLE_MOVE;
+
+	static Handle NODE_CORNER;
+	static Handle NODE_SMOOTH;
+	static Handle NODE_SYMMETRIC;
 
 	static bool resources_loaded;
 };
