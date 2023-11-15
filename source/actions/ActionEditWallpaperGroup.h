@@ -9,8 +9,8 @@ class ActionEditWallpaperGroup :
 public:
 	enum VECTOR { EDIT_V1, EDIT_V2 };
 
-	ActionEditWallpaperGroup(VECTOR vector, float old_x, float old_y, float new_x, float new_y) :
-		vector(vector), old_x(old_x), old_y(old_y), new_x(new_x), new_y(new_y)
+	ActionEditWallpaperGroup(VECTOR vector, Gdiplus::PointF vector_initial, Gdiplus::PointF vector_new) :
+		vector(vector), vector_initial(vector_initial), vector_new(vector_new)
 	{ }
 
 	virtual void apply(Drawing& drawing) override;
@@ -18,6 +18,6 @@ public:
 
 private:
 	VECTOR vector = EDIT_V1;
-	float old_x, old_y, new_x, new_y;
+	Gdiplus::PointF vector_initial, vector_new;
 };
 

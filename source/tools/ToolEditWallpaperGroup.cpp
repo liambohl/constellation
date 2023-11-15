@@ -23,47 +23,42 @@ Action* ToolEditWallpaperGroup::handle_mouse_event(UINT message, Gdiplus::PointF
 			// Grabbed v1?
 			if (handle == "v1") {
 				state = DRAGGING_V1;
-				old_x = v1.X;
-				old_y = v1.Y;
+				vector_initial = v1;
 			}
 			// Grabbed v2?
 			else if (handle == "v2") {
 				state = DRAGGING_V2;
-				old_x = v2.X;
-				old_y = v2.Y;
+				vector_initial = v2;
 			}
 		}
 	}
 	else {
-		float x_pos = cursor_pos.X;
-		float y_pos = cursor_pos.Y;
 
 		// If control pressed, snap cursor to 15°
 		bool control_pressed = key_state & MK_CONTROL;
 		if (control_pressed) {
-			float r = sqrtf(x_pos * x_pos + y_pos * y_pos);
-			float theta = atan2f(y_pos, x_pos);
+			float r = sqrtf(cursor_pos.X * cursor_pos.X + cursor_pos.Y * cursor_pos.Y);
+			float theta = atan2f(cursor_pos.Y, cursor_pos.X);
 			theta = roundf(theta * 12 / (float)std::numbers::pi) * (float)std::numbers::pi / 12;	// round theta to the nearest 15°
-			x_pos = r * cosf(theta);
-			y_pos = r * sinf(theta);
+			cursor_pos = { r * cosf(theta), r * sinf(theta) };
 		}
 
 		if (state == DRAGGING_V1) {
 			if (message == WM_MOUSEMOVE) {
-				symmetry_group->set_v1(x_pos, y_pos);
+				symmetry_group->set_v1(cursor_pos);
 			}
 			if (message == WM_LBUTTONUP) {
 				state = IDLE;
-				return new ActionEditWallpaperGroup(ActionEditWallpaperGroup::EDIT_V1, old_x, old_y, x_pos, y_pos);
+				return new ActionEditWallpaperGroup(ActionEditWallpaperGroup::EDIT_V1, vector_initial, cursor_pos);
 			}
 		}
 		else if (state == DRAGGING_V2) {
 			if (message == WM_MOUSEMOVE) {
-				symmetry_group->set_v2(x_pos, y_pos);
+				symmetry_group->set_v2(cursor_pos);
 			}
 			if (message == WM_LBUTTONUP) {
 				state = IDLE;
-				return new ActionEditWallpaperGroup(ActionEditWallpaperGroup::EDIT_V2, old_x, old_y, x_pos, y_pos);
+				return new ActionEditWallpaperGroup(ActionEditWallpaperGroup::EDIT_V2, vector_initial, cursor_pos);
 			}
 		}
 	}

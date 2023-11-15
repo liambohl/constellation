@@ -17,107 +17,97 @@ WallpaperGroup::WallpaperGroup(
 ):
 	SymmetryGroup(name), cell_shape(cell_shape), cell(cell), drawing_area(drawing_area), rotation_centers(rotation_centers), domain_boundaries(domain_boundaries)
 {
-	v1_x = 500.0f;
-	v1_y = 0.0f;
+	v1 = { 500.0f, 0.0f };
 	switch (cell_shape) {
 	case PARALLELOGRAM:
-		v2_x = 150.0f;		// Arbitrarily make the parallelogram half as tall as it is wide and skewed right like /
-		v2_y = -250.0f;
+		v2 = { 150.0f, -250.0f };		// Arbitrarily make the parallelogram half as tall as it is wide and skewed right like /
 		break;
 	case RECTANGLE:
-		v2_x = 0.0f;		// Arbitrarily make the rectangle half as tall as it is wide.
-		v2_y = -250.0f;
+		v2 = { 0.0f, -250.0f };			// Arbitrarily make the rectangle half as tall as it is wide.
 		break;
 	case RHOMBUS:
-		v2_x = 353.5534f;	// Arbitrarily make the rhombus a lozenge: a rhombus with angles of 45 and 135 degrees
-		v2_y = -353.5534f;	// = -sqrt(2) / 2 * 500
+		v2 = { 353.5534f, -353.5534f };	// Arbitrarily make the rhombus a lozenge: a rhombus with angles of 45 and 135 degrees. 353.5534 = -sqrt(2) / 2 * 500
 	case HEXAGON:
-		v2_x = 250.0f;
-		v2_y = -433.0127f;	// = -sqrt(3) / 2 * 500
+		v2 = { 250.0f, -433.0127f };	// 433.0127 = sqrt(3) / 2 * 500
 		break;
 	case SQUARE:
-		v2_x = 0.0f;
-		v2_y = -500.0f;
+		v2 = { 0.0f, -500.0f };
 		break;
 	}
 
 	// Try to match vectors
 	if (std::shared_ptr<WallpaperGroup> old_wallpaper = dynamic_pointer_cast<WallpaperGroup>(old)) {
-		set_v2(old_wallpaper->v2_x, old_wallpaper->v2_y);
-		set_v1(old_wallpaper->v1_x, old_wallpaper->v1_y);
+		set_v2(old_wallpaper->v2);
+		set_v1(old_wallpaper->v1);
 	}
 
 	update_transforms();
 }
 
-void WallpaperGroup::set_v1(float x, float y) {
-	v1_x = x;
-	v1_y = y;
+void WallpaperGroup::set_v1(Gdiplus::PointF v) {
+	v1 = v;
 
-	float v2_length = std::sqrt(v2_x * v2_x + v2_y * v2_y);
-	float v2_direction = std::atan2(v2_y, v2_x);
+	float v2_length = std::sqrt(v2.X * v2.X + v2.Y * v2.Y);
+	float v2_direction = std::atan2(v2.Y, v2.X);
 
 	switch (cell_shape) {
 	case PARALLELOGRAM:
 		break;
 	case RECTANGLE:
 		// make v2 90 degrees counter-clockwise from v1
-		v2_direction = (float)(std::atan2(v1_y, v1_x) - std::numbers::pi / 2);
+		v2_direction = (float)(std::atan2(v1.Y, v1.X) - std::numbers::pi / 2);
 		break;
 	case RHOMBUS:
 		// make v2 equal in length to v1
-		v2_length = std::sqrt(v1_x * v1_x + v1_y * v1_y);
+		v2_length = std::sqrt(v1.X * v1.X + v1.Y * v1.Y);
 		break;
 	case HEXAGON:
 		// make v2 equal in length and 60 degrees counter-clockwise from v1
-		v2_length = std::sqrt(v1_x * v1_x + v1_y * v1_y);
-		v2_direction = (float)(std::atan2(v1_y, v1_x) - std::numbers::pi / 3);
+		v2_length = std::sqrt(v1.X * v1.X + v1.Y * v1.Y);
+		v2_direction = (float)(std::atan2(v1.Y, v1.X) - std::numbers::pi / 3);
 		break;
 	case SQUARE:
 		// make v2 equal in length and 90 degrees counter-clockwise from v1
-		v2_length = std::sqrt(v1_x * v1_x + v1_y * v1_y);
-		v2_direction = (float)(std::atan2(v1_y, v1_x) - std::numbers::pi / 2);
+		v2_length = std::sqrt(v1.X * v1.X + v1.Y * v1.Y);
+		v2_direction = (float)(std::atan2(v1.Y, v1.X) - std::numbers::pi / 2);
 		break;
 	}
 
-	v2_x = v2_length * std::cos(v2_direction);
-	v2_y = v2_length * std::sin(v2_direction);
+	v2 = { v2_length * std::cos(v2_direction), v2_length * std::sin(v2_direction) };
 
 	update_transforms();
 }
 
-void WallpaperGroup::set_v2(float x, float y) {
-	v2_x = x;
-	v2_y = y;
+void WallpaperGroup::set_v2(Gdiplus::PointF v) {
+	v2 = v;
 
-	float v1_length = std::sqrt(v1_x * v1_x + v1_y * v1_y);
-	float v1_direction = std::atan2(v1_y, v1_x);
+	float v1_length = std::sqrt(v1.X * v1.X + v1.Y * v1.Y);
+	float v1_direction = std::atan2(v1.Y, v1.X);
 
 	switch (cell_shape) {
 	case PARALLELOGRAM:
 		break;
 	case RECTANGLE:
 		// make v1 90 degrees clockwise from v2
-		v1_direction = (float)(std::atan2(v2_y, v2_x) + std::numbers::pi / 2);
+		v1_direction = (float)(std::atan2(v2.Y, v2.X) + std::numbers::pi / 2);
 		break;
 	case RHOMBUS:
 		// make v1 equal in length to v2
-		v1_length = std::sqrt(v2_x * v2_x + v2_y * v2_y);
+		v1_length = std::sqrt(v2.X * v2.X + v2.Y * v2.Y);
 		break;
 	case HEXAGON:
 		// make v1 equal in length and 60 degrees clockwise from v2
-		v1_length = std::sqrt(v2_x * v2_x + v2_y * v2_y);
-		v1_direction = (float)(std::atan2(v2_y, v2_x) + std::numbers::pi / 3);
+		v1_length = std::sqrt(v2.X * v2.X + v2.Y * v2.Y);
+		v1_direction = (float)(std::atan2(v2.Y, v2.X) + std::numbers::pi / 3);
 		break;
 	case SQUARE:
 		// make v1 equal in length and 90 degrees clockwise from v2
-		v1_length = std::sqrt(v2_x * v2_x + v2_y * v2_y);
-		v1_direction = (float)(std::atan2(v2_y, v2_x) + std::numbers::pi / 2);
+		v1_length = std::sqrt(v2.X * v2.X + v2.Y * v2.Y);
+		v1_direction = (float)(std::atan2(v2.Y, v2.X) + std::numbers::pi / 2);
 		break;
 	}
 
-	v1_x = v1_length * std::cos(v1_direction);
-	v1_y = v1_length * std::sin(v1_direction);
+	v1 = { v1_length * std::cos(v1_direction), v1_length * std::sin(v1_direction) };
 
 	update_transforms();
 }
@@ -129,10 +119,10 @@ void WallpaperGroup::set_extent(int extent) {
 
 void WallpaperGroup::draw(Gdiplus::Graphics* graphics, Defaults& defaults, float scale) {
 	std::unordered_map<std::string, float> variables {
-		{ "v1_x", v1_x },
-		{ "v1_y", v1_y },
-		{ "v2_x", v2_x },
-		{ "v2_y", v2_y }
+		{ "v1_x", v1.X },
+		{ "v1_y", v1.Y },
+		{ "v2_x", v2.X },
+		{ "v2_y", v2.Y }
 	};
 
 	// draw drawing_area
@@ -152,13 +142,13 @@ void WallpaperGroup::draw(Gdiplus::Graphics* graphics, Defaults& defaults, float
 
 json WallpaperGroup::to_json() {
 	return {
-		{"type", "WallpaperGroup"},
-		{"name", name},
-		{"v1_x", v1_x},
-		{"v1_y", v1_y},
-		{"v2_x", v2_x},
-		{"v2_y", v2_y},
-		{"extent", extent}
+		{ "type", "WallpaperGroup" },
+		{ "name", name },
+		{ "v1_x", v1.X },
+		{ "v1_y", v1.Y },
+		{ "v2_x", v2.X },
+		{ "v2_y", v2.Y },
+		{ "extent", extent }
 	};
 }
 
@@ -166,7 +156,12 @@ void WallpaperGroup::update_transforms() {
 	transforms.clear();
 
 	// Evaluate all transforms in the cell with the current v1 and v2
-	std::unordered_map<std::string, float> vectors = { {"v1_x", v1_x}, {"v1_y", v1_y}, {"v2_x", v2_x}, {"v2_y", v2_y} };
+	std::unordered_map<std::string, float> vectors {
+		{ "v1_x", v1.X },
+		{ "v1_y", v1.Y },
+		{ "v2_x", v2.X },
+		{ "v2_y", v2.Y }
+	};
 	std::vector<std::shared_ptr<Gdiplus::Matrix>> cell_evaluated;
 	for (auto& symbolic_matrix : cell)
 		cell_evaluated.push_back(std::shared_ptr<Gdiplus::Matrix>(symbolic_matrix.evaluate(vectors).Clone()));
@@ -179,8 +174,8 @@ void WallpaperGroup::update_transforms() {
 				continue;
 
 			// total offset is a linear combination of v1 and v2
-			float offset_x = v1_factor * v1_x + v2_factor * v2_x;
-			float offset_y = v1_factor * v1_y + v2_factor * v2_y;
+			float offset_x = v1_factor * v1.X + v2_factor * v2.X;
+			float offset_y = v1_factor * v1.Y + v2_factor * v2.Y;
 
 			// For each copy of the fundamental domain in a cell
 			for (auto matrix : cell_evaluated) {

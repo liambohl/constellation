@@ -38,6 +38,6 @@ private:
 
 	std::shared_ptr<WallpaperGroup> symmetry_group;
 
-	float old_x = 0.0f, old_y = 0.0f;
+	Gdiplus::PointF vector_initial;	// Initial value of v1 or v2 before we started moving it
 };
 

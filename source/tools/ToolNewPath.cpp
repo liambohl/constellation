@@ -56,27 +56,25 @@ Action* ToolNewPath::handle_mouse_event(UINT message, Gdiplus::PointF cursor_pos
 			tool_path.push_back(cursor_pos);
 		}
 		else if (message == WM_LBUTTONDOWN) {
-			next_node_x = cursor_pos.X;
-			next_node_y = cursor_pos.Y;
+			next_node = cursor_pos;
 			state = NTH_RELEASE;
 		}
 		break;
 
 	case NTH_RELEASE:	// tool_path is a curve. wip_path is a sequence of zero or more Bezier curves.
 	{
-		float trailing_handle_x = 2 * next_node_x - cursor_pos.X;
-		float trailing_handle_y = 2 * next_node_y - cursor_pos.Y;
+		Gdiplus::PointF trailing_handle = next_node + next_node - cursor_pos;
 		tool_path.pop_back();
 		tool_path.pop_back();
-		tool_path.push_back({ trailing_handle_x, trailing_handle_y });	// trailing handle
-		tool_path.push_back({ next_node_x, next_node_y });				// node
+		tool_path.push_back(trailing_handle);	// trailing handle
+		tool_path.push_back(next_node);			// node
 
 		if (message == WM_LBUTTONUP) {
 			std::copy(tool_path.begin() + 1, tool_path.end(), std::back_inserter(wip_path));
 			// For now, tool_path is a line segment. As we move the cursor, the 3rd and 4th points will move with it.
 			// The first two points are set in stone.
 			tool_path.clear();
-			tool_path.push_back({ next_node_x, next_node_y });
+			tool_path.push_back(next_node);
 			tool_path.push_back(cursor_pos);
 			tool_path.push_back(cursor_pos);
 			tool_path.push_back(cursor_pos);
@@ -99,8 +97,7 @@ Action* ToolNewPath::handle_mouse_event(UINT message, Gdiplus::PointF cursor_pos
 			tool_path.push_back(cursor_pos);
 		}
 		else if (message == WM_LBUTTONDOWN) {
-			next_node_x = cursor_pos.X;
-			next_node_y = cursor_pos.Y;
+			next_node = cursor_pos;
 			state = NTH_RELEASE;
 		}
 		else if (message == WM_RBUTTONDOWN) {
@@ -161,10 +158,9 @@ boolean ToolNewPath::undo() {
 		tool_path.pop_back();
 		Gdiplus::PointF trailing_handle = tool_path.back();
 		tool_path.pop_back();
-		float handle_x = 2 * node.X - trailing_handle.X;
-		float handle_y = 2 * node.Y - trailing_handle.Y;
-		tool_path.push_back({ handle_x, handle_y });
-		tool_path.push_back({ handle_x, handle_y });
+		Gdiplus::PointF handle = node + node - trailing_handle;
+		tool_path.push_back(handle);
+		tool_path.push_back(handle);
 		if (n_nodes == 1)
 			state = SECOND_DOWN;
 		else

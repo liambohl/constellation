@@ -244,7 +244,7 @@ void ConstellationApp::handle_mouse_event(UINT message, WPARAM wParam, LPARAM lP
     int key_state = GET_KEYSTATE_WPARAM(wParam);
 
     // Give the canvas a chance to handle the event. If it can't, the current tool should handle it.
-    if (canvas.handle_mouse_event(message, x_pos, y_pos, key_state))
+    if (canvas.handle_mouse_event(message, { x_pos, y_pos }, key_state))
         return;
 
     // translate cursor position to world space before passing to tool

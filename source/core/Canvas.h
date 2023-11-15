@@ -15,7 +15,7 @@ public:
 	~Canvas();
 
 	// If this canvas can handle the event, do so and return true. Else, return false.
-	bool handle_mouse_event(UINT message, int x_pos, int y_pos, int key_state);
+	bool handle_mouse_event(UINT message, Gdiplus::Point cursor_pos, int key_state);
 	bool handle_mouse_wheel_event(UINT message, int x_pos_window, int y_pos_window, int key_state, int wheel_delta);
 
 	// Resize application window
@@ -57,11 +57,11 @@ private:
 	static const float GHOST_OPACITY;
 
 	// Pan the canvas by the given delta, measured in pixels.
-	void pan(float delta_x, float delta_y);
+	void pan(Gdiplus::Point delta);
 	// Zoom in or out by a given factor, around the cursor.
 	// Zoom in if scale_factor > 1; out if scale_factor < 1.
-	// (x_pos, y_pos) is the cursor position in page coordinates.
-	void zoom(float scale_factor, float x_pos, float y_pos);
+	// cursor_pos is the cursor position in page coordinates.
+	void zoom(float scale_factor, Gdiplus::Point cursor_pos);
 
 	HDC hdc = nullptr;							// Handle to device context; this is the window we paint to
 	PAINTSTRUCT ps = {};
@@ -77,8 +77,7 @@ private:
 
 	// Cursor position, in pixels, measured from top-left of client area, last time a mouse event was handled.
 	// Used for panning the view with middle mouse button drag.
-	int prev_x_pos = 0;
-	int prev_y_pos = 0;
+	Gdiplus::Point prev_cursor_pos;
 
 	// Window size, in pixels
 	int prev_width = 0;

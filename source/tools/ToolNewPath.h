@@ -41,6 +41,5 @@ private:
 
 	int n_nodes = 0;			// number of nodes in wip_path
 
-	float next_node_x = 0;
-	float next_node_y = 0;
+	Gdiplus::PointF next_node;
 };

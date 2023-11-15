@@ -41,12 +41,12 @@ public:
 	std::vector<std::shared_ptr<Gdiplus::Matrix>> get_transforms() override { return transforms; }
 
 	// Set v1 and ensure that v2 maintains this wallpaper group's shape
-	void set_v1(float x, float y);
+	void set_v1(Gdiplus::PointF v);
 	// Set v2 and ensure that v1 maintains this wallpaper group's shape
-	void set_v2(float x, float y);
+	void set_v2(Gdiplus::PointF v);
 
-	Gdiplus::PointF get_v1() { return Gdiplus::PointF(v1_x, v1_y); }
-	Gdiplus::PointF get_v2() { return Gdiplus::PointF(v2_x, v2_y); }
+	Gdiplus::PointF get_v1() { return v1; }
+	Gdiplus::PointF get_v2() { return v2; }
 
 	// Make this symmetry group draw more or fewer copies of its cell
 	void set_extent(int extent);
@@ -59,8 +59,8 @@ private:
 	// Calculate transforms based on current value of v1 and v2
 	void update_transforms();
 
-	// coordinates of the vectors that form two edges of a cell
-	float v1_x, v1_y, v2_x, v2_y;
+	// coordinates of the vectors that describe how the cell can be copied to tile the plane
+	Gdiplus::PointF v1, v2;
 
 	// how many times, in both the positive and negative direction, to copy the cell
 	int extent = 2;

@@ -790,8 +790,8 @@ std::shared_ptr<SymmetryGroup> SymmetryGroupFactory::from_json(json symm_json) {
 			std::string error_message = "error: unknown wallpaper group " + name;
 			throw std::exception(error_message.c_str());
 		}
-		wallpaper_group->set_v1(symm_json["v1_x"], symm_json["v1_y"]);
-		wallpaper_group->set_v2(symm_json["v2_x"], symm_json["v2_y"]);
+		wallpaper_group->set_v1({ symm_json["v1_x"], symm_json["v1_y"] });
+		wallpaper_group->set_v2({ symm_json["v2_x"], symm_json["v2_y"] });
 		wallpaper_group->set_extent(symm_json["extent"]);
 		return wallpaper_group;
 	}

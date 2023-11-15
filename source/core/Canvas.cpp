@@ -27,22 +27,20 @@ Canvas::~Canvas() {
 	delete transform;
 }
 
-bool Canvas::handle_mouse_event(UINT message, int x_pos, int y_pos, int key_state) {
+bool Canvas::handle_mouse_event(UINT message, Gdiplus::Point cursor_pos, int key_state) {
 	// Unpack key state
 	bool middle_button_down = key_state & MK_MBUTTON;
 
 	// Start pan with middle mouse button
 	if (message == WM_MBUTTONDOWN) {
-		prev_x_pos = x_pos;
-		prev_y_pos = y_pos;
+		prev_cursor_pos = cursor_pos;
 		return true;
 	}
 
 	// Pan with middle mouse button drag
 	if (message == WM_MOUSEMOVE && middle_button_down) {
-		pan((float)(x_pos - prev_x_pos), (float)(y_pos - prev_y_pos));
-		prev_x_pos = x_pos;
-		prev_y_pos = y_pos;
+		pan(cursor_pos - prev_cursor_pos);
+		prev_cursor_pos = cursor_pos;
 		return true;
 	}
 
@@ -58,31 +56,29 @@ bool Canvas::handle_mouse_wheel_event(UINT message, int x_pos_window, int y_pos_
 	// (For mouse wheel events, the mouse position is bizarrely given in window coordinates)
 	POINT cursor_pos{ x_pos_window, y_pos_window };
 	ScreenToClient(hWnd, &cursor_pos);
-	float x_pos = (float)cursor_pos.x;
-	float y_pos = (float)cursor_pos.y;
 
 	// Pan vertically with scroll
 	if (message == WM_MOUSEWHEEL && !shift_pressed && !control_pressed) {
-		pan(0, (float)wheel_delta);
+		pan({ 0, wheel_delta });
 		return true;
 	}
 
 	// Pan horizontally with horizontal scroll
 	if (message == WM_MOUSEHWHEEL && !shift_pressed && !control_pressed) {
-		pan(-(float)wheel_delta, 0);
+		pan({ -wheel_delta, 0 });
 		return true;
 	}
 
 	// Pan horizontally with shift-scroll
 	if (message == WM_MOUSEWHEEL && shift_pressed && !control_pressed) {
-		pan((float)wheel_delta, 0);
+		pan({ wheel_delta, 0 });
 		return true;
 	}
 
 	// Zoom with ctrl-scroll
 	if (message == WM_MOUSEWHEEL && !shift_pressed && control_pressed) {
 		float scale_factor = powf(1.25f, (float)wheel_delta / WHEEL_DELTA);	// One "wheel delta" of scrolling should scale by a factor of 5/4
-		zoom(scale_factor, x_pos, y_pos);
+		zoom(scale_factor, { cursor_pos.x, cursor_pos.y });
 		return true;
 	}
 
@@ -97,7 +93,7 @@ void Canvas::resize(HWND hWnd, WPARAM wParam, LPARAM lParam) {
 		*Logger::get_instance() << "rezising. width = " << width << ", height = " << height << std::endl;
 
 		// Keep drawing centered in the client area
-		pan((width - prev_width) / 2.0f, (height - prev_height) / 2.0f);
+		pan({ (width - prev_width) / 2, (height - prev_height) / 2 });
 
 		// Zoom to fill the same amount of the client area
 		if (prev_width != 0 && prev_height != 0) {
@@ -105,7 +101,7 @@ void Canvas::resize(HWND hWnd, WPARAM wParam, LPARAM lParam) {
 			float scale_y = (float)height / prev_height;
 			float scale = powf(scale_x * scale_y, 0.5);	// geometric mean
 			*Logger::get_instance() << "rezising. scale_x = " << scale_x << ", scale_y = " << scale_y << ", scale = " << scale << std::endl;
-			zoom(scale, width / 2.0f, height / 2.0f);
+			zoom(scale, { width / 2, height / 2 });
 		}
 		else if (width != 0 && height != 0) {	// This is probably a new window which has just been given a size
 			reset_transform(width, height);
@@ -193,8 +189,9 @@ void Canvas::reset_transform(int client_width, int client_height) {
 	delete transform;
 	transform = new Gdiplus::Matrix();
 
-	pan(client_width / 2.0f, client_height / 2.0f);
-	zoom(DEFAULT_SCALE, client_width / 2.0f, client_height / 2.0f);
+	Gdiplus::Point center { client_width / 2, client_height / 2 };
+	pan(center);
+	zoom(DEFAULT_SCALE, center);
 }
 
 void Canvas::fit_drawing(std::optional<Gdiplus::RectF> bounding_box) {
@@ -215,13 +212,14 @@ void Canvas::fit_drawing(std::optional<Gdiplus::RectF> bounding_box) {
 	float scale = ZOOM_FIT_FACTOR * min(width / bounding_box->Width, height / bounding_box->Height);
 
 	// Centers of drawing and window
-	float drawing_center_x = bounding_box->X + bounding_box->Width / 2.0f;
-	float drawing_center_y = bounding_box->Y + bounding_box->Height / 2.0f;
-	float window_center_x = width / 2.0f;
-	float window_center_y = height / 2.0f;
+	Gdiplus::Point drawing_center {
+		(int)(bounding_box->X + bounding_box->Width / 2.0f),
+		(int)(bounding_box->Y + bounding_box->Height / 2.0f)
+	};
+	Gdiplus::Point window_center { width / 2, height / 2 };
 
-	pan(window_center_x - drawing_center_x, window_center_y - drawing_center_y);
-	zoom(scale, window_center_x, window_center_y);
+	pan(window_center - drawing_center);
+	zoom(scale, window_center);
 }
 
 void Canvas::page_to_world_coordinates(Gdiplus::PointF* point_page) {
@@ -244,15 +242,12 @@ float Canvas::get_scale() {
 }
 
 // Pan the canvas by the given delta, measured in pixels.
-void Canvas::pan(float delta_x, float delta_y) {
-	transform->Translate(delta_x, delta_y, Gdiplus::MatrixOrderAppend);
+void Canvas::pan(Gdiplus::Point delta) {
+	transform->Translate((float)delta.X, (float)delta.Y, Gdiplus::MatrixOrderAppend);
 }
 
-// Zoom in or out by a given factor, around the cursor.
-// Zoom in if scale_factor > 1; out if scale_factor < 1.
-// (x_pos, y_pos) is the cursor position in page coordinates.
-void Canvas::zoom(float scale_factor, float x_pos, float y_pos) {
-	transform->Translate(-x_pos, -y_pos, Gdiplus::MatrixOrderAppend);
+void Canvas::zoom(float scale_factor, Gdiplus::Point cursor_pos) {
+	transform->Translate(-(float)cursor_pos.X, -(float)cursor_pos.Y, Gdiplus::MatrixOrderAppend);
 	transform->Scale(scale_factor, scale_factor, Gdiplus::MatrixOrderAppend);
-	transform->Translate(x_pos, y_pos, Gdiplus::MatrixOrderAppend);
+	transform->Translate((float)cursor_pos.X, (float)cursor_pos.Y, Gdiplus::MatrixOrderAppend);
 }
