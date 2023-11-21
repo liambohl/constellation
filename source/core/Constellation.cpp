@@ -18,6 +18,7 @@ HINSTANCE hInst;                                // current instance
 WCHAR szTitle[MAX_LOADSTRING];                  // The title bar text
 WCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
 ConstellationApp* application = nullptr;        // Current state of this Constellation window
+LPWSTR file_to_open = nullptr;                  // If we open a .cst file, e.g. in File Explorer, this will hold the file path for that file.
 
 // Forward declarations of functions included in this code module:
 ATOM                RegisterClassConstellation(HINSTANCE hInstance);
@@ -44,6 +45,17 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
     LoadStringW(hInstance, IDC_CONSTELLATION, szWindowClass, MAX_LOADSTRING);
     RegisterClassConstellation(hInstance);
+
+    // Check if there are command line arguments
+    if (lpCmdLine != NULL && wcslen(lpCmdLine) > 0) {
+        // Open the file specified by lpCmdLine
+        file_to_open = lpCmdLine;
+        // If the file path is quoted, trim the quotes
+        while (file_to_open[0] == L'"' && file_to_open[wcslen(file_to_open) - 1] == L'"') {
+            file_to_open[wcslen(file_to_open) - 1] = L'\0';
+            ++file_to_open;
+        }
+    }
 
     // Perform application initialization:
     if (!InitInstance(hInstance, nCmdShow))
@@ -115,6 +127,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
     }
 
     application = new ConstellationApp(hWnd);
+    if (file_to_open)
+        application->open_file(hWnd, file_to_open);
 
     ShowWindow(hWnd, nCmdShow);
     UpdateWindow(hWnd);

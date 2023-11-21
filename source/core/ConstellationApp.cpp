@@ -30,6 +30,11 @@ ConstellationApp::ConstellationApp(HWND hWnd) : drawing(hWnd)
     *Logger::get_instance() << "refresh interval: " << refresh_interval_ns << std::endl;
 }
 
+void ConstellationApp::open_file(HWND hWnd, LPWSTR file_path) {
+    drawing_file_path = file_path;
+    open_file(hWnd);
+}
+
 void ConstellationApp::new_drawing(HWND hWnd) {
     drawing_file_path = nullptr;
     drawing_folder = nullptr;

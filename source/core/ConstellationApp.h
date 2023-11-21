@@ -17,6 +17,8 @@ class ConstellationApp
 public:
     ConstellationApp(HWND hWnd);
 
+    void open_file(HWND hWnd, LPWSTR file_path);    // This is only used when starting the program by opening a file.
+
     // File menu
     void new_drawing(HWND hWnd);
     void open(HWND hWnd);
