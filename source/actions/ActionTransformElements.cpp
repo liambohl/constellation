@@ -2,19 +2,19 @@
 
 
 ActionTransformElements::~ActionTransformElements() {
-	delete transform;
+    delete transform;
 }
 
 void ActionTransformElements::apply(Drawing& drawing) {
-	for (auto& element : elements) {
-		element->transform(transform);
-	}
+    for (auto& element : elements) {
+        element->transform(transform);
+    }
 }
 
 void ActionTransformElements::undo(Drawing& drawing) {
-	transform->Invert();
-	for (auto& element : elements) {
-		element->transform(transform);
-	}
-	transform->Invert();
+    transform->Invert();
+    for (auto& element : elements) {
+        element->transform(transform);
+    }
+    transform->Invert();
 }

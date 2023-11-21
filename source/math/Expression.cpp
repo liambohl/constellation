@@ -2,5 +2,5 @@
 
 
 std::ostream& operator<<(std::ostream& os, const Expression* expression) {
-	return expression->insert(os);
+    return expression->insert(os);
 }

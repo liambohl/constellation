@@ -8,12 +8,12 @@
 class Expression
 {
 public:
-	virtual float evaluate(const std::unordered_map<std::string, float>& map = {}) = 0;
+    virtual float evaluate(const std::unordered_map<std::string, float>& map = {}) = 0;
 
-	virtual std::ostream& insert(std::ostream& os) const = 0;
+    virtual std::ostream& insert(std::ostream& os) const = 0;
 
 protected:
-	Expression() {}
+    Expression() {}
 
-	friend std::ostream& operator<<(std::ostream& os, const Expression* expression);
+    friend std::ostream& operator<<(std::ostream& os, const Expression* expression);
 };

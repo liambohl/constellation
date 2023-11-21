@@ -9,20 +9,20 @@ class CompoundExpression :
     public Expression
 {
 public:
-	CompoundExpression(std::shared_ptr<Expression> left, char op, std::shared_ptr<Expression> right) :
-		left(left),
-		op(op),
-		right(right)
-	{}
+    CompoundExpression(std::shared_ptr<Expression> left, char op, std::shared_ptr<Expression> right) :
+        left(left),
+        op(op),
+        right(right)
+    {}
 
-	float evaluate(const std::unordered_map<std::string, float>& map);
+    float evaluate(const std::unordered_map<std::string, float>& map);
 
-	std::ostream& insert(std::ostream& os) const;
+    std::ostream& insert(std::ostream& os) const;
 
 private:
-	std::shared_ptr<Expression> left;	// left of operator
-	std::shared_ptr<Expression> right;	// right of operator
+    std::shared_ptr<Expression> left;   // left of operator
+    std::shared_ptr<Expression> right;  // right of operator
 
-	char op;	// operator
+    char op;    // operator
 };
 

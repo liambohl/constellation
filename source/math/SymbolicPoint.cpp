@@ -4,7 +4,7 @@
 
 
 SymbolicPoint::SymbolicPoint(std::string x, std::string y) {
-	ExpressionFactory factory;
-	this->x = factory.parse(x);
-	this->y = factory.parse(y);
+    ExpressionFactory factory;
+    this->x = factory.parse(x);
+    this->y = factory.parse(y);
 }
