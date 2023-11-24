@@ -8,9 +8,9 @@ an oversight, and I plan to support earlier versions of Windows
 in future releases. Visit [the releases page](https://github.com/liambohl/constellation/releases)
 to find the latest release, where you can find both an installer
 and a portable version of Constellation under Assets.
-If you download and run the installer, Windows Defender
-SmartScreen will discourage you from installing Constellation
-because I haven't signed the installer. This is because
+Windows Defender SmartScreen will discourage you from running
+either the portable version or the installer
+because I haven't signed the .exe files. This is because
 code-signing certificates are expensive, but I may fix this
 in the future. Ignore the warning from SmartScreen.
 
