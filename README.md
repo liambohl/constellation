@@ -6,15 +6,16 @@
 Constellation is currently only supported on Windows 11. This is
 an oversight, and I plan to support earlier versions of Windows
 in future releases. Visit [the releases page](https://github.com/liambohl/constellation/releases)
-to find the latest release, and find Constellation.Setup.exe
-under Assets. When you run the installer, Windows Defender
+to find the latest release, where you can find both an installer
+and a portable version of Constellation under Assets.
+If you download and run the installer, Windows Defender
 SmartScreen will discourage you from installing Constellation
 because I haven't signed the installer. This is because
 code-signing certificates are expensive, but I may fix this
 in the future. Ignore the warning from SmartScreen.
 
 ### Step 1: Draw a path
-A Bézier curve is a smooth curve defined by four control points.
+A BÃ©zier curve is a smooth curve defined by four control points.
 The curve starts at the first and ends at the last control point,
 while the other two control points define tangent lines to the path
 at the first and last control point. If the first and second control
@@ -22,7 +23,7 @@ point are equal, and the third and fourth control point are equal,
 the curve is a line segment.
 
 In Constellation, you can draw *paths*, which consist of one or more
-Bézier curves joined end-to-end.
+BÃ©zier curves joined end-to-end.
 To Draw a path, press 'p' or select Draw -> New Path.
 Click to set the first control point, drag, and release to set the
 second control point. Then click to set the *fourth* control point,
